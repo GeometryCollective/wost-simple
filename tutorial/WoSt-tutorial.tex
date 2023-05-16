@@ -60,7 +60,7 @@ A good place to start understanding WoSt is the simpler \emph{walk on spheres (W
    \item Return the estimate \(\widehat{u}/M\).
 \end{itemize}
 
-\begin{figure}
+\begin{figure}[h!]
    \todo{A diagram showing a single walk with all the spheres on the left, another diagram in the center just showing the trajectories for a few walks, and a pseudocolor plot of the PDE solution (and boundary conditions) on the right.}
    \caption{\emph{Left:} an example walk taken by the WoS algorithm. \emph{Center:} the paths taken by a collection of walks. \emph{Right:} The final solution estimated by WoS.\label{fig:WoSExample}}
 \end{figure}
@@ -76,7 +76,7 @@ In fact, this basic structure will be the same for any ``walk on X'' algorithm (
 \subsection{Walk on Stars (WoSt)}
 \label{sec:WalkOnStarsOverview}
 
-\begin{figure}
+\begin{figure}[h!]
    \todo{figure showing a region that is / is not star shaped relative to a point $\vec{x}$, and a ray from $\vec{x}$ in some direction $\vec{v}$ hitting the boundary} 
    \caption{A region \(R\) is \emph{star shaped} relative to a point \(\vec{x}\) if every point \(\vec{y} \in R\) is visible from \(\vec{x}\) along a straight line.  WoSt samples points on the boundary of a star shaped region by shooting a ray in a random direction \(\vec{v}\).\label{fig:StarShapedRegions}}
 \end{figure}
@@ -106,17 +106,9 @@ Here we've omitted a couple small but important details which we'll cover later-
 
 A wide variety of algorithms in visual, geometric, and scientific computing need to perform \emph{geometric queries}: given a piece of geometry (\eg{}, a polygon mesh or implicit surface), answer some question about this geometry, relative to a query point \(x\) (\eg{}, how far away is the closest point?).  Many of these queries are well-studied, with extremely efficient implementations available on a variety of platforms.  When the number of geometric primitives gets very large (\eg{}, thousands or millions of triangles), it becomes especially important to use a \emph{spatial data structure} like a bounding volume hierarchy (BVH) or binary space partition (BSP) to accelerate computation.  To keep things simple, we'll here just assume that the number of primitives is small, and check each primitive directly.  For an implementation-oriented introduction to spatial data structures, see \citet[Section 4.2]{pharr2016physically}.
 
-\paragraph{Assumptions.} To keep our discussion (and our code) simple, we'll assume that the geometry of the domain \(\Omega\) is a collection of closed simple polygons in the 2D plane, possibly with holes.  More explicitly, we'll assume we're given two lists of polylines: one for the Dirichlet boundary, and one for the Neumann boundary.  Each polyline is given by a list of 2D points \(\vec{p}_1, \ldots, \vec{p}_m \in \mathbb{R}^2\), which are encoded via a \code{Vec2D} type with all the usual 2D vector operations.  We also assume that all polylines have a consistent winding direction---for instance, if the domain is the letter ``A'', then polylines around the outer boundary should go in counter-clockwise order, and polylines around the inner hole should go in clockwise order.  This final assumption will just make it easier to get a consistent normal direction, and to do inside-outside tests if needed.  In fact, most of these assumptions are not strictly required by the WoSt algorithm itself; they largely just make coding easier.  See especially \citet[Appendix B]{Sawhney:2023:WoSt} for handling of ``messier'' input geometry.
+\paragraph{Assumptions.} To keep our discussion (and our code) simple, we'll assume that the geometry of the domain \(\Omega\) is a collection of closed simple polygons in the 2D plane, possibly with holes.  More explicitly, we'll assume we're given two lists of polylines: one for the Dirichlet boundary, and one for the Neumann boundary.  Each polyline is given by a list of 2D points \(\vec{p}_0, \ldots, \vec{p}_m \in \mathbb{R}^2\), which are encoded via a \code{Vec2D} type with all the usual 2D vector operations.  We also assume that all polylines have a consistent winding direction---for instance, if the domain is the letter ``A'', then polylines around the outer boundary should go in counter-clockwise order, and polylines around the inner hole should go in clockwise order.  This final assumption will just make it easier to get a consistent normal direction, and to do inside-outside tests if needed.  In fact, most of these assumptions are not strictly required by the WoSt algorithm itself; they largely just make coding easier.  See especially \citet[Appendix B]{Sawhney:2023:WoSt} for handling of ``messier'' input geometry.
 
 We'll break each query down into an ``atomic'' query for a single line segment, and a ``global'' query which basically just applies the atomic query to each segment in the overall list of polylines.
-
-\subsection{Closest Ray Intersection}
-\label{sec:ClosestRayIntersection}
-
-\paragraph{Atomic.}
-
-\paragraph{Global.}
-
 
 \subsection{Closest Point Query}
 \label{sec:ClosestPointQuery}
@@ -134,7 +126,7 @@ A \emph{closest point query} seeks the point closest to the geometry relative to
 
 \paragraph{Global.} To find the distance from a query point \(x\) to a collection of polylines, we now just need to apply our atomic closest point query to all segments and keep the smallest distance:
 
-\inputminted[firstline=63,lastline=73,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[firstline=65,lastline=75,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 The function \(\code{length}\) computes the length of the given vector, and the constant \code{infinity} is equal to floating-point infinity (INF); as long as the polylines \code{P} contain at least one segment, the final distance \code{d} will be a finite value.
 
 \subsection{Closest Silhouette Point Query}
@@ -155,17 +147,42 @@ The logic here is simply that if \(\vec{x}\) is on the same side of both segment
 
 \paragraph{Global.} To find the distance to the closest silhouette point we can once again iterate over all the geometry, check if each point is a silhouette point, and keep track of the closest distance seen so far:
 
-\inputminted[firstline=75,lastline=86,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
-Note that in our code we check only the interior vertices of the polyline (by skipping the first and last index), since we assume that the domain boundary includes no open curves---hence the endpoint of any Neumann curve will be a Dirichlet point.  In general, however, one may want to generalize this code to handle open curves and closed pure-Neumann loops.
+\inputminted[firstline=77,lastline=88,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+Note that in this code we check only the interior vertices of the polyline (by skipping the first and last index), since we assume that the domain boundary includes no open curves.  In general, however, one should account for the possibility that the endpoints of a polyline may be silhouette points.  Closed pure-Neumann loops can still be represented in the present code, by just repeating the points \(\vec{p}_0, \vec{p}_1\) at the end of the list.
 
+Note that if all evaluation points \(x_0\) are inside the domain, an easy acceleration is to pre-process the Neumann boundary and keep only concave edge pairs (or triangle pairs, in the 3D case).  We do not however implement that acceleration here.
 
-\subsection{Inside-Outside Test (optional)}
-\label{sec:InsideOutsideTest}
+\subsection{Closest Ray Intersection}
+\label{sec:ClosestRayIntersection}
+
+\begin{figure}[h!]
+   \todo{Diagram showing a hit and a miss for a ray-segment intersection, with the times $s$ and $t$ annotated.}
+   \label{fig:RayIntersectionExample}
+\end{figure}
+
+Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest ray intersection query} seeks the ``time'' \(t\) at which the ray \(\vec{x} + t\vec{v}\) first hits a given set.  In our case the set we want to consider is the boundary of the star-shaped domain \(\St(x,r)\).  Equivalently, we want to find the first \(t\) such that the ray hits either (i) the sphere \(S_r(x)\) of radius \(r\) around \(x\), or (ii) the Neumann boundary \(\partial\Omega_N\) of the domain.  Our atomic query is still just an ordinary ray-segment intersection; logic in the global query then takes care of the ball radius.
+
+\paragraph{Atomic.} There are many ways to derive (and implement) ray-segment intersection, but the basic idea is that if we express the line along the ray as \(\vec{f}(t) := \vec{x} + t\vec{v}\) and the line along the segment as \(\vec{g}(s) := (1-s)\vec{a} + s\vec{b}\), then we want to solve for the values \(s,t\) such that \(\vec{f}(t) = \vec{g}(s)\), \ie, the point at which the two lines coincide.  We then check whether \(s\) is between 0 and 1 (\ie, the intersection is within the segment) and \(t > 0\) (\ie, the intersection is in the direction of the ray).  After some algebraic manipulation, we arrive at one possible implementation:
+
+\inputminted[firstline=48,lastline=60,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+\paragraph{Global.} To find the first hit, we can now iterate over all segments in the given polylines and keep the minimum time \(t\) at which any intersection occurs.  Since we also want to intersect with a sphere of given radius \(r\), we can use \(r\) as the initial value for \(t\)---if we never encounter a closer segment, then we've hit the sphere:
+
+\inputminted[firstline=90,lastline=109,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+Notice that we also compute location and normal of the intersection point, which we'll need for the WoSt algorithm.
 
 \section{Walk on Stars}
 \label{sec:WalkOnStars}
 
 \bibliographystyle{plainnat}
 \bibliography{WoSt-tutorial}
+
+
+\appendix
+
+\subsection{Inside-Outside Test (optional)}
+\label{sec:InsideOutsideTest}
+
 
 \end{document}

@@ -48,13 +48,15 @@ bool isSilhouette( Vec2D x, Vec2D a, Vec2D b, Vec2D c ) {
 // returns the time t at which the ray x+tv intersects segment ab,
 // or infinity if there is no intersection
 double rayIntersection( Vec2D x, Vec2D v, Vec2D a, Vec2D b ) {
-   double d = cross(v,a) + cross(b,v);
-   double s = (cross(v,a) + cross(x,v)) / d;
-   double t = infinity;
-   if( 0.0 <= s && s <= 1.0 ) {
-      t = (cross(b,a) + cross(a,x) + cross(x,b)) / d;
+   Vec2D u = b - a;
+   Vec2D w = x - a;
+   double d = cross(v,u);
+   double s = cross(v,w) / d;
+   double t = cross(u,w) / d;
+   if (t > 0. && 0. <= s && s <= 1.) {
+      return t;
    }
-   return t;
+   return infinity;
 }
 
 // boundary geometry is represented by polylines
@@ -76,13 +78,13 @@ double distancePolylines( Vec2D x, const vector<Polyline>& P ) {
 double silhouetteDistancePolylines( Vec2D x, const vector<Polyline>& P ){
    double d = infinity; // minimum distance so far
    for( int i = 0; i < P.size(); i++ ) { // iterate over polylines
-      for( int j = 1; j < P[i].size()-1; j++ ) { // iterate over segments
+      for( int j = 1; j < P[i].size()-1; j++ ) { // iterate over segment pairs
          if( isSilhouette( x, P[i][j-1], P[i][j], P[i][j+1] )) {
             d = min( d, length(x-P[i][j]) ); // update minimum distance
          }
       }
    }
-   return minDistance;
+   return d;
 }
 
 // finds the first intersection y of the ray x+tv with the given polylines P,
@@ -91,19 +93,19 @@ double silhouetteDistancePolylines( Vec2D x, const vector<Polyline>& P ){
 Vec2D intersectPolylines( Vec2D x, Vec2D v, double r,
                          const vector<Polyline>& P,
                          Vec2D& n ) {
-   double tMin = r;      // first hit time
+   double tMin = r; // smallest hit time so far
    n = Vec2D{ 0.0, 0.0 }; // first hit normal
-   for( int i = 0; i < P.size(); i++ ) {
-      for( int j = 0; j < P[i].size()-1; j++ ) {
+   for( int i = 0; i < P.size(); i++ ) { // iterate over polylines
+      for( int j = 0; j < P[i].size()-1; j++ ) { // iterate over segments
          double t = rayIntersection( x, v, P[i][j], P[i][j+1] );
-         if( 0.0 < t && t < tMin ) {
+         if( t < tMin ) { // closest hit so far
             tMin = t;
-            n = rotate90( P[i][j+1] - P[i][j] );
+            n = rotate90( P[i][j+1] - P[i][j] ); // get normal
             n /= length(n); // make normal unit length
          }
       }
    }
-   return x + tMin*v; // return first hit location
+   return x + tMin*v; // first hit location
 }
 
 // solves a Laplace equation Delta u = 0 at x0, where the Dirichlet and Neumann
