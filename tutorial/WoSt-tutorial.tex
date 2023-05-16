@@ -110,8 +110,18 @@ A wide variety of algorithms in visual, geometric, and scientific computing need
 
 We'll break each query down into an ``atomic'' query for a single line segment, and a ``global'' query which basically just applies the atomic query to each segment in the overall list of polylines.
 
+\subsection{Closest Ray Intersection}
+\label{sec:ClosestRayIntersection}
+
+\paragraph{Atomic.}
+
+\paragraph{Global.}
+
+
 \subsection{Closest Point Query}
 \label{sec:ClosestPointQuery}
+
+A \emph{closest point query} seeks the point closest to the geometry relative to a given query point \(\vec{x}\).  Although closest point queries sometimes come up in the context of signed distance fields, we won't need to worry about sign or orientation here: we simply want to find the closest point, full stop.
 
 \begin{figure}[h!]
    \todo{A line segment and the closest points for a bunch of example query points.}
@@ -130,16 +140,24 @@ The function \(\code{length}\) computes the length of the given vector, and the 
 \subsection{Closest Silhouette Point Query}
 \label{sec:ClosestSilhouettePointQuery}
 
-\paragraph{Atomic.}
+\begin{figure}[h!]
+   \todo{Diagram showing a pair of segments that are and are not a silhouette relative to the query point.}
+   \caption{A point \(\vec{b}\) is a \emph{silhouette point} if the segments \(\vec{a}\vec{b}\) and \(\vec{b}\vec{c}\) are front- and back-facing relative to a point \(\vec{x}\), or vice-versa.}
+\end{figure}
 
-\paragraph{Global.}
+Silhouette points are points where geometry changes from front-facing to back-facing, relative to a query point \(\vec{x}\).  A \emph{closest silhouette point query} seeks the closest such point along the entire silhouette.  In general, queries of the visibility silhouette are far less common than closest ray or closest point queries---a good reference is the work on \emph{spatialized normal cone hierarchies (SNCH)} by \citet{johnson2001spatialized}; \citet[Section 5.1]{Sawhney:2023:WoSt} explains how to accelerate closest silhouette point queries using an SNCH.  Here we'll again just perform brute-force evaluation, rather than use an acceleration scheme.
 
-\subsection{Closest Ray Intersection}
-\label{sec:ClosestRayIntersection}
+\paragraph{Atomic.} Given a query point \(\vec{x}\), we want to determine whether the point \(\vec{b}\) on a connected pair of line segments \(\vec{a}\vec{b}\), \(\vec{b}\vec{c}\) is a silhouette point.  Equivalently, we want to know if \(\vec{x}\) is on opposite sides of these two segments (\eg{}, in front of \(\vec{a}\vec{b}\) and behind \(\vec{b}\vec{c}\)).  We can easily check which side of \(\vec{a}\vec{b}\) the point \(\vec{x}\) is on by just computing the determinant of the vectors \(\vec{u} := \vec{a}-\vec{x}\) and \(\vec{v} := \vec{b}-\vec{x}\).  Explicitly, \(\det(\vec{u},\vec{v}) = \vec{u}_1 \vec{v}_2 - \vec{u}_2 \vec{v}_1\).  Since this operation looks a lot like a cross product, we'll call it \code{cross} rather than \code{det} in our code (which also helps to distinguish it from \code{dot}!).  Our final routine is the quite simple:
 
-\paragraph{Atomic.}
+\inputminted[firstline=43,lastline=46,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
-\paragraph{Global.}
+The logic here is simply that if \(\vec{x}\) is on the same side of both segments, then the determinants will have the same sign---hence their product will be positive.  Otherwise it will be negative.
+
+\paragraph{Global.} To find the distance to the closest silhouette point we can once again iterate over all the geometry, check if each point is a silhouette point, and keep track of the closest distance seen so far:
+
+\inputminted[firstline=75,lastline=86,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+Note that in our code we check only the interior vertices of the polyline (by skipping the first and last index), since we assume that the domain boundary includes no open curves---hence the endpoint of any Neumann curve will be a Dirichlet point.  In general, however, one may want to generalize this code to handle open curves and closed pure-Neumann loops.
+
 
 \subsection{Inside-Outside Test (optional)}
 \label{sec:InsideOutsideTest}

@@ -74,11 +74,11 @@ double distancePolylines( Vec2D x, const vector<Polyline>& P ) {
 
 // returns distance from x to closest silhouette point on the given polylines P
 double silhouetteDistancePolylines( Vec2D x, const vector<Polyline>& P ){
-   double minDistance = infinity;
-   for( int i = 0; i < P.size(); i++ ) {
-      for( int j = 0; j < P[i].size()-1; j++ ) {
+   double d = infinity; // minimum distance so far
+   for( int i = 0; i < P.size(); i++ ) { // iterate over polylines
+      for( int j = 1; j < P[i].size()-1; j++ ) { // iterate over segments
          if( isSilhouette( x, P[i][j-1], P[i][j], P[i][j+1] )) {
-            minDistance = min( minDistance, length(x-P[i][j]) );
+            d = min( d, length(x-P[i][j]) ); // update minimum distance
          }
       }
    }
