@@ -88,13 +88,15 @@ double silhouetteDistancePolylines( Vec2D x, const vector<Polyline>& P ){
 }
 
 // finds the first intersection y of the ray x+tv with the given polylines P,
-// restricted to a ball of radius r around x; also gives the unit normal n
-// at y, or n=(0,0) if the ray first hits the boundary of the ball
+// restricted to a ball of radius r around x.  The flag onBoundary indicates
+// whether the first hit is on a boundary segment (rather than the sphere), and
+// if so sets n to the normal at the hit point.
 Vec2D intersectPolylines( Vec2D x, Vec2D v, double r,
                          const vector<Polyline>& P,
-                         Vec2D& n ) {
+                         Vec2D& n, bool& onBoundary ) {
    double tMin = r; // smallest hit time so far
    n = Vec2D{ 0.0, 0.0 }; // first hit normal
+   onBoundary = false; // will be true only if the first hit is on a segment
    for( int i = 0; i < P.size(); i++ ) { // iterate over polylines
       for( int j = 0; j < P[i].size()-1; j++ ) { // iterate over segments
          double t = rayIntersection( x, v, P[i][j], P[i][j+1] );
@@ -102,6 +104,7 @@ Vec2D intersectPolylines( Vec2D x, Vec2D v, double r,
             tMin = t;
             n = rotate90( P[i][j+1] - P[i][j] ); // get normal
             n /= length(n); // make normal unit length
+            onBoundary = true;
          }
       }
    }
@@ -112,25 +115,25 @@ Vec2D intersectPolylines( Vec2D x, Vec2D v, double r,
 // boundaries are each given by a collection of polylines, the Neumann
 // boundary conditions are all zero, and the Dirichlet boundary conditions
 // are given by a function g that can be evaluated at any point in space
-double solve( Vec2D x0,
-             vector<Polyline> boundaryDirichlet,
-             vector<Polyline> boundaryNeumann,
-             function<double(Vec2D)> g ) {
+double solve( Vec2D x0, // evaluation point
+              vector<Polyline> boundaryDirichlet, // absorbing part of the boundary
+              vector<Polyline> boundaryNeumann, // reflecting part of the boundary
+              function<double(Vec2D)> g ) { // Dirichlet boundary values
    const double eps = 0.01; // stopping tolerance
    const double rMin = 0.01; // minimum step size
    const int nWalks = 128; // number of Monte Carlo samples
-   const int maxSteps = 32; // maximum walk length
+   const int maxSteps = 100; // maximum walk length
 
-   double sum = 0.0;
+   double sum = 0.0; // running sum of boundary contributions
    for( int i = 0; i < nWalks; i++ ) {
-      // assume we start on an interior point (hence have no normal)
-      Vec2D x = x0;
-      Vec2D n{ 0.0, 0.0 };
-      bool onBoundary = false;
+      Vec2D x = x0; // start walk at the evaluation point
+      Vec2D n{ 0.0, 0.0 }; // assume x0 is an interior point, and has no normal
+      bool onBoundary = false; // flag whether x is on the interior or boundary
 
-      double r;
+      double r; // radius used to define star shaped region
       int steps = 0;
-      do {
+      do { // loop until the walk hits the Dirichlet boundary
+           
          // compute the radius of the largest star-shaped region
          double dDirichlet = distancePolylines( x, boundaryDirichlet );
          double dSilhouette = silhouetteDistancePolylines( x, boundaryNeumann );
@@ -138,21 +141,17 @@ double solve( Vec2D x0,
 
          // intersect a ray with the star-shaped region boundary
          double theta = random( -M_PI, M_PI );
-         if( onBoundary ) {
+         if( onBoundary ) { // sample from a hemisphere around the normal
             theta = theta/2. + angleOf(n);
          }
-         Vec2D v{ cos(theta), sin(theta) };
-         x = intersectPolylines( x, v, r, boundaryNeumann, n );
-         if( length(n) < .5 )
-            onBoundary = false;
-         else
-            onBoundary = true;
+         Vec2D v{ cos(theta), sin(theta) }; // unit ray direction
+         x = intersectPolylines( x, v, r, boundaryNeumann, n, onBoundary );
 
          steps++;
       }
-      while( r > eps && steps < maxSteps );
+      while(r > eps && steps < maxSteps); //hit the boundary, or walk is too long
 
-      sum += g(x);
+      sum += g(x); // accumulate contribution of the boundary value
    }
    return sum/nWalks; // Monte Carlo estimate
 }
@@ -184,12 +183,18 @@ double solidAngle( Vec2D x, const vector<Polyline>& P )
          Theta += arg( (P[i][j+1]-x)/(P[i][j]-x) );
    return Theta;
 }
+
+// Returns true if the point x is contained in the region bounded by the Dirichlet
+// and Neumann curves.  We assume these curves form a collection of closed polygons,
+// and are given in a consistent counter-clockwise winding order.
 bool insideDomain( Vec2D x,
-                   const vector<Polyline>& PD,
-                   const vector<Polyline>& PN )
+                   const vector<Polyline>& boundaryDirichlet,
+                   const vector<Polyline>& boundaryNeumann )
 {
-   double Theta = solidAngle(x,PD) + solidAngle(x,PN);
-   return abs(Theta-2.*M_PI) < 0.01;
+   double Theta = solidAngle( x, boundaryDirichlet ) +
+                  solidAngle( x, boundaryNeumann );
+   const double delta = 1e-4; // numerical tolerance
+   return abs(Theta-2.*M_PI) < delta; // boundary winds around x exactly once
 }
 
 int main( int argc, char** argv ) {
@@ -214,3 +219,4 @@ int main( int argc, char** argv ) {
    }
    return 0;
 }
+

@@ -29,7 +29,9 @@
    \caption{The domain for our problem.\label{fig:ProblemDomain}}
 \end{figure}
 
-This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work (as detailed in the paper), the final algorithm itself is quite easy to implement.  To put focus on the ``core'' ideas of the WoSt algorithm, we here describe a bare-bones 2D version that solves the Laplace equation
+This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work (as detailed in the paper), the final algorithm itself is quite easy to implement---a full implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.
+
+To put focus on the ``core'' ideas of the WoSt algorithm, this tutorial describes a bare-bones 2D version of WoSt that solves the Laplace equation
 \[
    \begin{array}{rcll}
       \Delta u &=& 0 & \text{on}\ \Omega, \\
@@ -43,7 +45,7 @@ where \(\Omega \subset \mathbb{R}^2\) is a closed polygon in the plane, \(g\) is
 \label{sec:Overview}
 
 \subsection{Walk on Spheres (WoS)}
-\label{sec:WalkonSpheresOverview}
+\label{sec:WalkOnSpheresOverview}
 
 A good place to start understanding WoSt is the simpler \emph{walk on spheres (WoS)} algorithm, which solves the same problem but with only Dirichlet boundary conditions (\ie, \(\partial_N = \emptyset\)).  The basic idea of WoS is really simple: to estimate the solution value at a point \(\vec{x}_0 \in \Omega\), you just take \(M\) random walks to the boundary \(\partial\Omega\) (for some large number \(M\)), and take the average value \(g\) at these boundary points.  That's it!  The reason it's called ``walk on \emph{spheres}'' is that you simulate these random walks by repeatedly jumping to the boundary of the largest empty sphere \(S_r(\vec{x}_k) \subset \Omega\) around the current point \(\vec{x}_k\) to get the next point \(\vec{x}_{k+1}\).  This way, steps tend to be big and you can quickly make progress toward the boundary (versus taking small, fixed-sized steps).  In a bit more detail, the WoS algorithm goes like this:
 
@@ -122,11 +124,11 @@ A \emph{closest point query} seeks the point closest to the geometry relative to
 
 \paragraph{Atomic.} Given a query point \(\vec{x}\), we want to find the closest point on a line segment with endpoints \(\vec{a}, \vec{b}\) (Figure~\ref{fig:ClosestPointExamples}).  To find this point, we could first find the closest point on the full line, check if it's inside the segment, and if not, take the closer of the two endpoints.  Fortunately, all these operations boil down to a very simple subroutine (\citet{Quilez:2020:SLS} gives a nice derivation):
 
-\inputminted[firstline=36,lastline=41,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=36,lastline=41,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 \paragraph{Global.} To find the distance from a query point \(x\) to a collection of polylines, we now just need to apply our atomic closest point query to all segments and keep the smallest distance:
 
-\inputminted[firstline=65,lastline=75,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=65,lastline=75,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 The function \(\code{length}\) computes the length of the given vector, and the constant \code{infinity} is equal to floating-point infinity (INF); as long as the polylines \code{P} contain at least one segment, the final distance \code{d} will be a finite value.
 
 \subsection{Closest Silhouette Point Query}
@@ -141,13 +143,13 @@ Silhouette points are points where geometry changes from front-facing to back-fa
 
 \paragraph{Atomic.} Given a query point \(\vec{x}\), we want to determine whether the point \(\vec{b}\) on a connected pair of line segments \(\vec{a}\vec{b}\), \(\vec{b}\vec{c}\) is a silhouette point.  Equivalently, we want to know if \(\vec{x}\) is on opposite sides of these two segments (\eg{}, in front of \(\vec{a}\vec{b}\) and behind \(\vec{b}\vec{c}\)).  We can easily check which side of \(\vec{a}\vec{b}\) the point \(\vec{x}\) is on by just computing the determinant of the vectors \(\vec{u} := \vec{a}-\vec{x}\) and \(\vec{v} := \vec{b}-\vec{x}\).  Explicitly, \(\det(\vec{u},\vec{v}) = \vec{u}_1 \vec{v}_2 - \vec{u}_2 \vec{v}_1\).  Since this operation looks a lot like a cross product, we'll call it \code{cross} rather than \code{det} in our code (which also helps to distinguish it from \code{dot}!).  Our final routine is the quite simple:
 
-\inputminted[firstline=43,lastline=46,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=43,lastline=46,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 The logic here is simply that if \(\vec{x}\) is on the same side of both segments, then the determinants will have the same sign---hence their product will be positive.  Otherwise it will be negative.
 
 \paragraph{Global.} To find the distance to the closest silhouette point we can once again iterate over all the geometry, check if each point is a silhouette point, and keep track of the closest distance seen so far:
 
-\inputminted[firstline=77,lastline=88,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=77,lastline=88,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 Note that in this code we check only the interior vertices of the polyline (by skipping the first and last index), since we assume that the domain boundary includes no open curves.  In general, however, one should account for the possibility that the endpoints of a polyline may be silhouette points.  Closed pure-Neumann loops can still be represented in the present code, by just repeating the points \(\vec{p}_0, \vec{p}_1\) at the end of the list.
 
 Note that if all evaluation points \(x_0\) are inside the domain, an easy acceleration is to pre-process the Neumann boundary and keep only concave edge pairs (or triangle pairs, in the 3D case).  We do not however implement that acceleration here.
@@ -160,29 +162,71 @@ Note that if all evaluation points \(x_0\) are inside the domain, an easy accele
    \label{fig:RayIntersectionExample}
 \end{figure}
 
-Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest ray intersection query} seeks the ``time'' \(t\) at which the ray \(\vec{x} + t\vec{v}\) first hits a given set.  In our case the set we want to consider is the boundary of the star-shaped domain \(\St(x,r)\).  Equivalently, we want to find the first \(t\) such that the ray hits either (i) the sphere \(S_r(x)\) of radius \(r\) around \(x\), or (ii) the Neumann boundary \(\partial\Omega_N\) of the domain.  Our atomic query is still just an ordinary ray-segment intersection; logic in the global query then takes care of the ball radius.
+Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest ray intersection query} seeks the ``time'' \(t\) at which the ray \(\vec{x} + t\vec{v}\) first hits a given set.  In our case the set we want to consider is the boundary of the star-shaped domain \(\St(\vec{x},r)\).  Equivalently, we want to find the first \(t\) such that the ray hits either (i) the sphere \(S_r(\vec{x})\) of radius \(r\) around \(\vec{x}\), or (ii) the Neumann boundary \(\partial\Omega_N\) of the domain.  Our atomic query is still just an ordinary ray-segment intersection; logic in the global query then takes care of the ball radius.
 
 \paragraph{Atomic.} There are many ways to derive (and implement) ray-segment intersection, but the basic idea is that if we express the line along the ray as \(\vec{f}(t) := \vec{x} + t\vec{v}\) and the line along the segment as \(\vec{g}(s) := (1-s)\vec{a} + s\vec{b}\), then we want to solve for the values \(s,t\) such that \(\vec{f}(t) = \vec{g}(s)\), \ie, the point at which the two lines coincide.  We then check whether \(s\) is between 0 and 1 (\ie, the intersection is within the segment) and \(t > 0\) (\ie, the intersection is in the direction of the ray).  After some algebraic manipulation, we arrive at one possible implementation:
 
-\inputminted[firstline=48,lastline=60,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=48,lastline=60,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 \paragraph{Global.} To find the first hit, we can now iterate over all segments in the given polylines and keep the minimum time \(t\) at which any intersection occurs.  Since we also want to intersect with a sphere of given radius \(r\), we can use \(r\) as the initial value for \(t\)---if we never encounter a closer segment, then we've hit the sphere:
 
-\inputminted[firstline=90,lastline=109,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=90,lastline=109,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 Notice that we also compute location and normal of the intersection point, which we'll need for the WoSt algorithm.
 
 \section{Walk on Stars}
 \label{sec:WalkOnStars}
 
+With all of our geometric queries in place, the actual WoSt algorithm is quite short.  The input is a query point \(\vec{x}_0\), a collection of polylines specifying the Dirichlet and Neumann parts of the boundary, and a function \(g\) that evaluates the Dirichlet value at any point \(x\) near the Dirichlet boundary \(\partial\Omega_D\):
+
+\inputminted[fontsize=\small,linenos,firstline=118,lastline=127,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+Here we also specify several solver parameters, which provide trade offs between speed and accuracy:
+\begin{itemize}
+   \item a value \(\varepsilon > 0\) which says how close we need to get to the Dirichlet boundary before we stop and grab the boundary value,
+   \item the parameter \(r_{\min} > 0\) similarly limits how small our steps will shrink near the silhouette,
+   \item the \code{nWalks} parameter says how many total walks we should take (hence how many boundary values we should average) to get our solution estimate, and
+   \item the \code{maxSteps} parameter limits the number of steps taken by any walk.
+\end{itemize}
+The value \code{sum} will be used to accumulate all the values \(g\) we encounter at the boundary; normalizing this value by the number of walks gives us our final Monte Carlo estimate of the solution.  
+
+At the beginning of each step, we assume that we're at an interior point (and hence the normal \(n\) is not well-defined):
+
+\inputminted[fontsize=\small,linenos,firstline=128,lastline=131,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+For each step, the first thing we do is compute the radius of the ball used to define a star shaped region \(\St(\vec{x},r)\).  This radius is the either the distance to the Dirichlet boundary, or the distance to the silhouette of the Neumann boundary---whichever one is closer.  We also limit the ball size to be at \emph{least} as big as the smallest step size parameter \(r_{\min}\):
+
+\inputminted[fontsize=\small,linenos,firstline=133,lastline=140,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+Next, we shoot a ray from the current point \(x\) in a random direction \(v\).  If \(x\) is on the domain interior, then we sample \(v\) from the full sphere (or in 2D: circle) around \(x\); if it's on the boundary, then we sample the hemisphere around the inward-pointing normal direction \(v\), so that the next point ends up inside the domain:
+
+\inputminted[fontsize=\small,linenos,firstline=142,lastline=148,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+Recall that the routine \code{intersectPolylines} will also update the flag \code{onBoundary}, and sets the normal \(\vec{n}\) if the new point is on the boundary.  This loop continues taking steps along the walk until we get within \(\varepsilon\) of the boundary, or until we've exceeded the maximum number of steps---at this point we stop walking, and add the boundary contribution at the final location of \(\vec{x}\):
+
+\inputminted[fontsize=\small,linenos,firstline=150,lastline=157,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+After all walks are finished we return the average boundary value, which gives our solution estimate.  Again, if you're curious about \emph{why} this algorithm works, you'll have to take a look at the paper!
+
 \bibliographystyle{plainnat}
 \bibliography{WoSt-tutorial}
 
-
 \appendix
 
-\subsection{Inside-Outside Test (optional)}
+\section{Inside-Outside Test (optional)}
 \label{sec:InsideOutsideTest}
 
+Though not strictly part of the WoSt algorithm itself, we may also want to know whether a given evaluation point \(\vec{x}_0\) is inside or outside the problem domain \(\Omega\) (\eg, for visualizing the solution).  To answer this query, we can just measure the total signed solid angle of the boundary polygon, relative to the query point:
+
+\inputminted[fontsize=\small,linenos,firstline=150,lastline=157,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+This signed angle is computed by just looping over all segments in the polylines, and adding up the signed angle of the individual segments.  If we represent points by complex numbers, the angle for a segment with endpoints \(\vec{a},\vec{b}\) is just \(\theta := \arg((\vec{b}-\vec{x})/(\vec{a}-\vec{x}))\), \ie, the angle that rotates the vector \(\vec{a}-\vec{x}\) to the vector \(\vec{b}-\vec{x}\):
+
+\inputminted[fontsize=\small,linenos,firstline=176,lastline=185,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+
+\begin{figure}
+   \todo{A diagram of a polygon and two segments which give different angle orientations/signs.}
+   \caption{The signed angle subtended by a segment with endpoints \(\vec{a}\) and \(\vec{b}\) relative to the point \(\vec{x}\).  Summing these angles over all edges of a closed simple polygon will yield \(+2\pi\) if \(\vec{x}\) is contained in the polygon.}
+\end{figure}
 
 \end{document}
