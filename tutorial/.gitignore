@@ -1,0 +1,6 @@
+WoSt-tutorial.pdf
+*.aux
+*.bbl
+*.blg
+*.log
+_minted-WoSt-tutorial/
