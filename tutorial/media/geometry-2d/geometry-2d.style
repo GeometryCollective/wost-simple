@@ -138,6 +138,10 @@ where r := RayFrom(p,v) {
 forall Point q; Ray r; Point p; Vector v; Segment s; Point a; Point b
 where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b) {
    override q.x = lineLineIntersection(a.x,b.x,r.icon.start,r.icon.end)
+
+   override q.icon.fillColor = colors.white
+   override q.icon.strokeColor = colors.black
+   override q.icon.strokeWidth = global.dotStroke
 }
 
 --- Overlap constraints --------------------------------------------------------
@@ -161,5 +165,9 @@ where X has label; Y has label {
 
 forall Point p; Segment s {
    layer p.icon above s.icon
+}
+
+forall Point p; Ray r {
+   layer p.icon above r.icon
 }
 
