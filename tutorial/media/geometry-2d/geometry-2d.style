@@ -1,0 +1,115 @@
+canvas {
+   width = 200
+   height = 200
+}
+
+colors {
+   color black = rgba(0,0,0,1)
+   color white = rgba(1,1,1,1)
+   color lightGray = rgba(0,0,0,.2)
+}
+
+global {
+   scalar dotRadius = 2.0
+   scalar labelDistance = 10.0 -- rough guide for how far labels should be from dots
+   string labelSize = "9px"
+   scalar lineWidth = 1.5
+   scalar dotStroke = 1.0
+   scalar padding = 5.0 -- amount of padding to prevent overlap
+}
+
+forall Point p {
+
+   p.x = (?,?) -- point location
+
+   shape p.icon = Circle {
+      fillColor: colors.black
+      r: global.dotRadius
+      center: p.x
+   }
+}
+
+forall Point p
+where p has label {
+   p.labelText = Equation {
+      string: p.label
+      fontSize: global.labelSize
+   }
+
+   scalar d = norm( p.labelText.center - p.x )
+   encourage d == global.labelDistance
+}
+
+forall Segment s {
+
+   -- endpoints of the segment
+   -- (may be overriden by later
+   -- matches with specific data)
+   vec2 s.x0 = (?,?)
+   vec2 s.x1 = (?,?)
+
+   shape s.icon = Line {
+      start: s.x0
+      end: s.x1
+      strokeColor: colors.black
+      strokeWidth: global.lineWidth
+   }
+}
+
+forall Segment s; Point p; Point q
+where s := LineSegment(p,q) {
+   -- replace the endpoints with the
+   -- locations of the given points
+   override s.x0 = p.x
+   override s.x1 = q.x
+}
+
+forall Segment s
+where s has label {
+   s.labelText = Equation {
+      string: s.label
+   }
+   vec2 m = (s.x0 + s.x1)/2.
+   scalar d = norm( m - s.labelText.center )
+   encourage d == global.labelDistance
+   ensure disjoint( s.labelText, s.icon, global.padding )
+}
+
+forall Segment t; Segment s; Point p
+where t := ClosestSegment( s, p ) {
+   override t.x0 = p.x
+   override t.x1 = closestPoint( s.icon, p.x )
+   override t.icon.strokeColor = colors.lightGray
+}
+
+forall Point q; Segment s; Point p
+where q := ClosestPoint( s, p ) {
+   override q.x = closestPoint( s.icon, p.x )
+   override q.icon.fillColor = colors.white
+   override q.icon.strokeColor = colors.black
+   override q.icon.strokeWidth = global.dotStroke
+}
+
+--- Overlap constraints --------------------------------------------------------
+
+forall Set X; Set Y
+where X has label {
+   ensure disjoint( X.labelText, Y.icon, global.padding )
+}
+
+forall Set X; Set Y
+where Y has label {
+   ensure disjoint( X.icon, Y.labelText, global.padding )
+}
+
+forall Set X; Set Y
+where X has label; Y has label {
+   ensure disjoint( X.labelText, Y.labelText, global.padding )
+}
+
+--- Layering -------------------------------------------------------------------
+
+forall Point p; Segment s {
+   layer p.icon above s.icon
+}
+

@@ -1,0 +1,7 @@
+type Set
+type Point <: Set
+type Segment <: Set
+
+constructor LineSegment( Point p, Point q ) -> Segment
+constructor ClosestPoint( Segment s, Point p ) -> Point
+constructor ClosestSegment( Segment s, Point p ) -> Segment
