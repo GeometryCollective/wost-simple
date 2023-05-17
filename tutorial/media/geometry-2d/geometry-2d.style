@@ -16,6 +16,7 @@ global {
    scalar lineWidth = 1.5
    scalar dotStroke = 1.0
    scalar padding = 5.0 -- amount of padding to prevent overlap
+   scalar vectorLength = 25.0
 }
 
 -- Basic sets ------------------------------------------------------------------
@@ -48,7 +49,7 @@ forall Vector v {
 
    shape v.icon = Line {
       start: v.x
-      end: v.x + v.v
+      end: v.x + global.vectorLength*unit(v.v)
       strokeColor: colors.black
       strokeWidth: global.lineWidth
       endArrowhead: "straight"
@@ -122,12 +123,21 @@ forall Ray r {
 
 forall Ray r; Point p; Vector v
 where r := RayFrom(p,v) {
-
+   -- draw the ray as a line whose length
+   -- is equal to the diameter of the canvas,
+   -- so that it always goes "off screen" (but
+   -- isn't so crazy long that it causes problems
+   -- for display, editing, etc.)
    vec2 d = (canvas.width,canvas.height)
-   scalar L = normsq(d)
-
+   scalar L = norm(d)
+   vec2 u = unit(v.v)
    r.icon.start = p.x
-   r.icon.end = p.x + L*v.v
+   r.icon.end = p.x + L*u
+}
+
+forall Point q; Ray r; Point p; Vector v; Segment s; Point a; Point b
+where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b) {
+   override q.x = lineLineIntersection(a.x,b.x,r.icon.start,r.icon.end)
 }
 
 --- Overlap constraints --------------------------------------------------------
