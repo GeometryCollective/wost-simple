@@ -18,6 +18,8 @@ global {
    scalar padding = 5.0 -- amount of padding to prevent overlap
 }
 
+-- Basic sets ------------------------------------------------------------------
+
 forall Point p {
 
    p.x = (?,?) -- point location
@@ -38,6 +40,25 @@ where p has label {
 
    scalar d = norm( p.labelText.center - p.x )
    encourage d == global.labelDistance
+}
+
+forall Vector v {
+   v.x = (?,?)
+   v.v = (?,?)
+
+   shape v.icon = Line {
+      start: v.x
+      end: v.x + v.v
+      strokeColor: colors.black
+      strokeWidth: global.lineWidth
+      endArrowhead: "straight"
+      endArrowheadSize: .5
+   }
+}
+
+forall Vector v; Point p
+where RootedAt(p,v) {
+   override v.x = p.x
 }
 
 forall Segment s {
@@ -88,6 +109,25 @@ where q := ClosestPoint( s, p ) {
    override q.icon.fillColor = colors.white
    override q.icon.strokeColor = colors.black
    override q.icon.strokeWidth = global.dotStroke
+}
+
+forall Ray r {
+   r.icon = Line {
+      strokeColor: colors.lightGray
+      style: "dashed"
+      strokeDasharray: "4,4"
+      ensureOnCanvas: false
+   }
+}
+
+forall Ray r; Point p; Vector v
+where r := RayFrom(p,v) {
+
+   vec2 d = (canvas.width,canvas.height)
+   scalar L = normsq(d)
+
+   r.icon.start = p.x
+   r.icon.end = p.x + L*v.v
 }
 
 --- Overlap constraints --------------------------------------------------------
