@@ -1,23 +1,23 @@
 canvas {
-   width = 200
-   height = 200
+   width = 150
+   height = 150
 }
 
 colors {
    color black = rgba(0,0,0,1)
    color white = rgba(1,1,1,1)
    color lightGray = rgba(0,0,0,.2)
+   color darkBlue = #1b1f8a
 }
 
 global {
    scalar dotRadius = 2.0
-   scalar labelDistance = 10.0 -- rough guide for how far labels should be from dots
-   string labelSize = "9px"
+   string labelSize = "12px"
    scalar lineWidth = 1.5
    scalar dotStroke = 1.0
-   scalar padding = 5.0 -- amount of padding to prevent overlap
+   scalar padding = 1.0 -- amount of padding to prevent overlap
    scalar vectorLength = 25.0
-   scalar minLength = .2 * canvas.width
+   scalar minLength = .5 * canvas.width
 }
 
 -- Basic sets ------------------------------------------------------------------
@@ -40,8 +40,7 @@ where p has label {
       fontSize: global.labelSize
    }
 
-   scalar d = norm( p.labelText.center - p.x )
-   encourage d == global.labelDistance
+   encourage near( p.icon, p.labelText )
 }
 
 forall Vector v {
@@ -51,7 +50,7 @@ forall Vector v {
    shape v.icon = Line {
       start: v.x
       end: v.x + global.vectorLength*unit(v.v)
-      strokeColor: colors.black
+      strokeColor: colors.darkBlue
       strokeWidth: global.lineWidth
       endArrowhead: "straight"
       endArrowheadSize: .5
@@ -61,6 +60,7 @@ forall Vector v {
 forall Vector v; Point p
 where RootedAt(p,v) {
    override v.x = p.x
+   layer p.icon above v.icon
 }
 
 forall Segment s {
@@ -143,11 +143,18 @@ forall Point q; Ray r; Point p; Vector v; Segment s; Point a; Point b
 where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b) {
 
    -- put the intersection point at some random point in the segment
-   scalar u = unitRandom()
+   scalar u = random(.2,.8)
    override q.x = (1-u)*a.x + u*b.x
 
    -- make the ray point toward the intersection point
    override v.v = unit(q.x - p.x)
+
+   -- make the ray origin reasonably far from the intersection point
+   ensure norm(p.x-q.x) > 1.5*global.vectorLength
+
+   -- make sure the angle of intersection is not too shallow
+   vec2 w = unit(b.x-a.x)
+   ensure sqr(dot(v.v,w)) < .25
 
    -- draw the intersection point as a white dot
    override q.icon.fillColor = colors.white
@@ -212,6 +219,11 @@ where OfDisk(c,d) {
 }
 
 --- Overlap constraints --------------------------------------------------------
+
+forall Set X
+where X has label {
+   ensure disjoint( X.icon, X.labelText, global.padding )
+}
 
 forall Set X; Set Y
 where X has label {

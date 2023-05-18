@@ -4,6 +4,7 @@ Segment s := LineSegment(a,b)
 Point x
 Vector v
 
+
 Label a $a$
 Label b $b$
 Label x $x$
