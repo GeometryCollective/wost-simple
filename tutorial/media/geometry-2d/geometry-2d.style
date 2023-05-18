@@ -17,6 +17,7 @@ global {
    scalar dotStroke = 1.0
    scalar padding = 5.0 -- amount of padding to prevent overlap
    scalar vectorLength = 25.0
+   scalar minLength = .2 * canvas.width
 }
 
 -- Basic sets ------------------------------------------------------------------
@@ -69,6 +70,9 @@ forall Segment s {
    -- matches with specific data)
    vec2 s.x0 = (?,?)
    vec2 s.x1 = (?,?)
+
+   -- by default, make sure that segments are not too short
+   constraint s.lengthConstraint = ensure norm(s.x0-s.x1) > global.minLength
 
    shape s.icon = Line {
       start: s.x0
@@ -137,11 +141,74 @@ where r := RayFrom(p,v) {
 
 forall Point q; Ray r; Point p; Vector v; Segment s; Point a; Point b
 where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b) {
-   override q.x = lineLineIntersection(a.x,b.x,r.icon.start,r.icon.end)
 
+   -- put the intersection point at some random point in the segment
+   scalar u = unitRandom()
+   override q.x = (1-u)*a.x + u*b.x
+
+   -- make the ray point toward the intersection point
+   override v.v = unit(q.x - p.x)
+
+   -- draw the intersection point as a white dot
    override q.icon.fillColor = colors.white
    override q.icon.strokeColor = colors.black
    override q.icon.strokeWidth = global.dotStroke
+}
+
+forall Triangle t; Point p1; Point p2; Point p3
+where t := Tri(p1, p2, p3)
+{
+
+   shape t.icon = Polygon {
+      points: [ p1.x, p2.x, p3.x ]
+   }
+}
+
+forall Point p; Triangle t; Point q0; Point q1; Point q2
+where InTri( p, t ); t := Tri(q0, q1, q2) {
+   override p.x = triangleRandom(q0.x, q1.x, q2.x)
+}
+
+forall Circle c {
+   shape c.icon = Circle {
+      center: (?,?)
+      r: random(10,50)
+      fillColor: none()
+      strokeColor: colors.black
+      strokeWidth: global.lineWidth
+   }
+}
+
+forall Point p; Circle c
+where OnCircle( p, c ) {
+   override p.x = c.icon.r*circleRandom() + c.icon.center
+}
+
+forall Disk d {
+   shape d.icon = Circle {
+      center: (?,?)
+      r: random(10,50)
+   }
+}
+
+forall Point p; Disk d
+where InDisk( p, d ) {
+   override p.x = d.icon.r*diskRandom() + d.icon.center
+}
+
+forall Chord c {
+   shape c.icon = Line {
+      strokeWidth: .25*global.lineWidth
+      strokeColor: colors.black
+   }
+}
+
+forall Chord c; Disk d
+where OfDisk(c,d) {
+   scalar t0 = 2.*random(0,MathPI())
+   scalar t1 = 2.*random(0,MathPI())
+   c.icon.start = d.icon.r*(cos(t0),sin(t0)) + d.icon.center
+   c.icon.end = d.icon.r*(cos(t1),sin(t1)) + d.icon.center
 }
 
 --- Overlap constraints --------------------------------------------------------
