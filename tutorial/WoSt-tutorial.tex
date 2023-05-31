@@ -1,5 +1,14 @@
 \documentclass{article}
-\usepackage{blogpost}
+\usepackage[margin=1in]{geometry}
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
+%\renewcommand{\ttdefault}{txtt}
+\usepackage{DejaVuSansMono}
+\usepackage[fontsize=9pt]{scrextend} % match document font size to label font used int Style program
+\usepackage[inkscapearea=page]{svg} % import SVGs with same document size as specified in SVG
+\usepackage[outline]{contour}
+\contourlength{.1em}
+
 \usepackage{natbib}
 \usepackage{xcolor}
 
@@ -11,6 +20,26 @@
 \usepackage{soul}
 \sethlcolor{yellow}
 \newcommand{\todo}[1]{\textbf{\hl{TODO: #1}}}
+
+\newcommand{\Eg}{\emph{E.g.}} % "for example"
+\newcommand{\eg}{\emph{e.g.}} % "for example"
+\newcommand{\Ie}{\emph{I.e.}} % "that is"
+\newcommand{\ie}{\emph{i.e.}} % "that is"
+\newcommand{\cf}{\emph{cf.\ }} % "confer"
+\newcommand{\Etc}{\emph{Etc.}} % "et cetera" (and so on)
+\newcommand{\etc}{\emph{etc.}} % "et cetera" (and so on)
+\newcommand{\etal}{\emph{et al.}} % "and others"
+\newcommand{\resp}{\emph{resp.}} % "respectively"
+\newcommand{\ala}{\emph{\`{a} la}} % "in the style of"
+\newcommand{\apriori}{\emph{a priori}} % based on deduction rather than experience
+\newcommand{\aposteriori}{\emph{a posteriori}} % based on observation
+\newcommand{\Aposteriori}{\emph{A posteriori}} % based on observation
+\newcommand{\invivo}{\emph{in vivo}} % taking place in a living organism
+\newcommand{\invitro}{\emph{in vitro}} % taking place in an artifical environment
+\newcommand{\inutero}{\emph{in utero}} % taking place before birth
+\newcommand{\adlibitum}{\emph{ad libitum}} % without preparation
+\newcommand{\abinitio}{\emph{ab initio}} % without preparation
+
 
 \newcommand{\St}{\text{St}}
 
