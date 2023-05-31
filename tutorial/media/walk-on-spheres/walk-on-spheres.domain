@@ -1,0 +1,22 @@
+type Domain -- a region in ℝⁿ
+predicate hasMixedBoundaryConditions( Domain D )
+
+type Point
+predicate isSourceSample( Point p )
+
+type Subdomain
+type Ball <: Subdomain
+type Star <: Subdomain
+constructor sampleBoundary( Subdomain S ) -> Point p
+constructor sampleInterior( Subdomain S ) -> Point p
+
+constructor ballAround( Point p ) -> Ball
+constructor starAround( Point p ) -> Star
+-- TODO can we replace both with subdomainAround( Point p ) -> Subdomain ?
+predicate isOffCenter( Ball B ) -- is not centered around p
+
+type NestedPoint
+constructor startWalkFrom( Subdomain S ) -> NestedPoint p
+constructor nestedBallAround( NestedPoint p ) -> Ball
+constructor sampleBoundaryNested( Subdomain S ) -> NestedPoint p
+

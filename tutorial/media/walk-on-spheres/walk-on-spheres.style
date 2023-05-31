@@ -1,0 +1,622 @@
+layout = [ walkStage, nestStage, labelStage ]
+
+-- diagram dimensions (in px)
+canvas {
+   width = 180
+   height = 150
+}
+
+-- some colors re-used throughout
+Colors {
+   color black = rgba(0,0,0,1)
+   color white = rgba(1,1,1,1)
+   color darkGray = #b3b3b3
+   color lightGray = #e5e5e5
+}
+
+-- global shapes and constants
+Global {
+   -- default appearance for label text
+   string labelFont = "Linux Libertine"
+   string labelSize = "9px"
+   color labelColor = Colors.black
+   color labelStrokeColor = Colors.white
+   scalar labelStrokeWidth = 1.5
+
+   -- appearance of dots/points
+   scalar dotSize = 1.5
+
+   -- style of domains/subdomains
+   color ballColor = rgba( .2, .8, .2, .15 )
+   color sphereColor = rgba( .4, .5, .4, 1 )
+   scalar sphereStrokeWidth = .5
+   scalar domainStrokeWidth = 1
+   scalar ballShadingOpacity = 0.0
+
+   -- style of lines along a walk
+   -- (set color to none() to disable)
+   color walkColor = #1b1f8a4c
+   color walkStrokeWidth = 1
+
+}
+
+-- label the domain if it was assigned a label in the Substance program
+forall Domain D
+where D has label {
+
+   scalar x = ? in labelStage
+   scalar y = ? in labelStage
+   shape D.labelText = Text {
+      string: D.label
+      center: (x,y)
+      fontSize: Global.labelSize
+      fontFamily: Global.labelFont
+      fillColor: Colors.black
+      ensureOnCanvas: false
+   }
+
+   -- draw the domain as a polygon with some random variation, by
+   -- perturbing the vertices of a hexagon by some bounded amount
+   -- Note: if the domain shape is changed to something else (like
+   -- an ellipse or a rectangle), things _should_ still work as
+   -- expected, since later methods just make a call to `signedDistance`
+   -- to determine ball radii.  However, signed distance may not yet
+   -- be supported for all shapes (like arbitrary Bézier curves).
+   scalar maxPerturbation = 15
+   scalar w = .8*canvas.width/2
+   scalar h = .8*canvas.height/2
+   vec2 D.p0 = ( w, -h) + maxPerturbation*diskRandom()
+   vec2 D.p1 = ( 0, -h) + maxPerturbation*diskRandom()
+   vec2 D.p2 = (-w, -h) + maxPerturbation*diskRandom()
+   vec2 D.p3 = (-w,  h) + maxPerturbation*diskRandom()
+   vec2 D.p4 = ( 0,  h) + maxPerturbation*diskRandom()
+   vec2 D.p5 = ( w,  h) + maxPerturbation*diskRandom()
+   shape D.geometry = Polygon {
+      points: [ D.p0, D.p1, D.p2, D.p3, D.p4, D.p5 ]
+      fillColor: Colors.lightGray
+      strokeColor: Colors.darkGray
+      strokeWidth: Global.domainStrokeWidth
+      ensureOnCanvas: false
+   }
+
+   ensure lessThan( signedDistance( D.geometry, D.labelText.center ), -9. ) in labelStage
+
+   layer D.labelText above D.geometry -- make sure the label doesn't get covered by the domain shape
+}
+
+forall Domain D
+where hasMixedBoundaryConditions( D ) {
+   override D.geometry.strokeColor = none()
+
+   override D.p4 = (0,0)
+
+   shape D.dirichletBoundary = Polyline {
+      points: [ D.p5, D.p0, D.p1, D.p2, D.p3 ]
+      strokeColor: Colors.black
+      strokeWidth: 1.0
+      ensureOnCanvas: false
+      strokeLinecap: "round"
+   }
+   layer D.dirichletBoundary above D.geometry
+
+   shape D.neumannBoundary = Polyline {
+      points: [ D.p3, D.p4, D.p5 ]
+      strokeColor: Colors.black
+      strokeWidth: 0.65
+      ensureOnCanvas: false
+      style: "dashed"
+      strokeDasharray: "2,2"
+   }
+   layer D.neumannBoundary above D.dirichletBoundary
+}
+
+-- draw each point as a small dot
+forall Point p {
+   scalar x = ? in walkStage
+   scalar y = ? in walkStage
+   vec2 p.location = (x,y)
+
+   -- The `dot` shape represents the sample point associated
+   -- with the ball.  Ordinarily this point will be at the
+   -- center of the ball, but in general it could be at a
+   -- different location (e.g., for an off-center walk).
+   shape p.dot = Circle {
+      center: p.location
+      r: Global.dotSize
+      fillColor: Colors.black
+      ensureOnCanvas: false
+   }
+}
+
+-- draw each Ball as the largest ball tangent to the domain boundary
+forall Ball B; Domain D {
+
+   -- Make sure the ball is inside the problem domain by
+   -- setting its radius to (minus) the signed distance to
+   -- the domain boundary.  This value is negated since, by
+   -- convention, points inside the domain have negative
+   -- signed distance.
+   scalar x = ? in walkStage
+   scalar y = ? in walkStage
+   vec2 B.center = (x,y)
+   scalar B.radius = -signedDistance( D.geometry, B.center ) - Global.sphereStrokeWidth/2 - Global.domainStrokeWidth/2.
+
+   -- The `ball` shape is a flat-shaded semi-transparent
+   -- disk that determines the color of the ball.
+   -- The ball radius equals the distance from the
+   -- ball center to the closest point on the domain boundary
+   -- (just as in the WoS algorithm!).  We also subtract half
+   -- the stroke widths so that visually the ball makes perfect
+   -- tangential contact with the domain boundary.
+   -- Note that we don't need to
+   -- explicitly enforce that the ball remains on the canvas,
+   -- since the domain shape already has an onCanvas constraint,
+   -- and the balls are always contained in the domain shape, by
+   -- construction.
+   shape B.ball = Circle {
+      center: B.center
+      r: B.radius
+      fillColor: Global.ballColor
+      strokeColor: none()
+      ensureOnCanvas: false
+   }
+
+   -- The `sphere` shape represents the boundary of the ball,
+   -- and is drawn as an empty circle with a thick line.
+   shape B.sphere = Circle {
+      center: B.center
+      r: B.radius
+      fillColor: none()
+      strokeColor: Global.sphereColor
+      strokeWidth: Global.sphereStrokeWidth
+      ensureOnCanvas: false
+   }
+
+   -- To give the balls a three-dimensional appearance, blend
+   -- a shading image behind the flat colored disk.
+   shape B.shading = Image {
+      center: B.center
+      width: B.radius * 2.0
+      height: B.radius * 2.0
+      href: "walk-on-spheres-ball.svg"
+      ensureOnCanvas: false
+      opacity: Global.ballShadingOpacity
+   }
+
+   -- Make sure all components of the ball get drawn in the
+   -- proper order, and are not covered up by the domain shape.
+   layer B.shading above D.geometry
+   layer B.ball above B.shading
+   layer B.sphere above B.ball
+
+   -- This constant determines how much balls shrink from one
+   -- step of the walk to the next.  We define it as a named
+   -- constant so that specialized types of balls (say, those
+   -- coming from a nested walk) can use a different factor.
+   scalar B.shrinkFactor = .55
+}
+
+-- Make sure the domain's label isn't covered up by a ball.
+forall Ball B; Domain U
+where U has label {
+   scalar padding = 10.
+   ensure disjoint( U.labelText, B.sphere, padding ) in labelStage
+}
+
+-- If a ball is constructed around a point, center it around that point
+forall Point p; Ball B
+where B := ballAround( p ) {
+   override B.center = p.location
+   layer p.dot above B.ball
+}
+
+-- For a step of an off-centered walk, we want to clearly
+-- indicate that the sample point may not be at the ball center.
+forall Ball B; Point p
+where B := ballAround(p); isOffCenter(B) {
+
+   -- We can no longer just copy the ball center from the point center,
+   -- but will instead let the layout engine determine its location.
+   scalar x = ? in walkStage
+   scalar y = ? in walkStage
+   override B.center = (x,y)
+
+   -- Still keep the center within the middle 25–75% of the ball, since
+   -- the dot may be hard to see if it gets too close to the boundary
+   -- (especially for very small balls).
+   scalar r = B.radius * random(.25,.75)
+   ensure norm(B.center - p.location) == r in walkStage
+}
+
+-- If a point has a label, draw a label string near the dot.
+forall Point p
+where p has label {
+   shape p.labelText = Text {
+      string: p.label
+      fontSize: Global.labelSize
+      fontFamily: Global.labelFont
+      fontStyle: "italic"
+      fillColor: Global.labelColor
+      strokeColor: Global.labelStrokeColor
+      strokeWidth: Global.labelStrokeWidth
+      strokeLinejoin: "round"
+      paintOrder: "stroke"
+      ensureOnCanvas: false
+   }
+
+   -- We want the label to be near the dot, but don't want it
+   -- to overlap the dot (which makes it hard to read).
+   scalar theta = ? in labelStage
+   p.labelText.center = p.dot.center + 8.*( cos(theta), sin(theta) )
+
+   -- If we fail to avoid overlap, we should
+   -- at least draw the label on top of the dot
+   layer p.labelText above p.dot
+}
+
+-- Make sure a point's label doesn't get covered by a ball
+-- containing it, by layering it above the topmost ball shape.
+forall Point p; Ball B
+where B := ballAround( p ); p has label {
+   layer p.labelText above B.sphere
+}
+
+-- If a point p is sampled from the boundary of a ball B,
+-- make sure it sits on the corresponding sphere ∂B.
+forall Ball B; Point p
+where p := sampleBoundary( B ) {
+   constraint p.ballConstraint = ensure equal( norm(p.location - B.center), B.radius ) in walkStage
+
+   -- Make sure the dot is not covered by the sphere.
+   layer p.dot above B.sphere
+}
+
+-- If a point p is sampled from the interior of a ball B,
+-- make sure it sits somewhere between 20% and 80% away
+-- from the center, so that it's clearly visible and doesn't
+-- run into the center point or the boundary.
+forall Ball B; Point p
+where p := sampleInterior( B ) {
+   scalar r = B.radius * random(.2,.8)
+   constraint p.ballConstraint = ensure norm( p.location - B.center ) == r in walkStage
+
+   -- Make sure the dot is not covered by the ball.
+   layer p.dot above B.ball
+}
+
+
+-- Adjust the drawing for consecutive steps x0, x1 along a walk on spheres,
+-- where B0, B1 are the associated spheres.
+forall Ball B0; Ball B1; Point x0; Point x1
+where x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
+   -- draw later steps of a walk as smaller balls (which is often, but
+   -- not always, the behavior of the WoS algorithm)
+   ensure equal( B1.radius, B1.shrinkFactor * B0.radius ) in walkStage
+
+   -- It's typically easier to see labels, etc., if later, smaller
+   -- balls are drawn on top of earlier, bigger ones.
+   layer B1.shading above B0.sphere
+}
+
+-- Draw a line between the consecutive points on a walk on spheres
+forall Point x0; Point x1; Ball B0; Ball B1; Domain D
+where x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
+
+   shape x0.walkLine = Line {
+      start: x0.location
+      end: x1.location
+      strokeColor: Global.walkColor
+      strokeWidth: Global.walkStrokeWidth
+      ensureOnCanvas: false
+   }
+   layer x0.walkLine above D.geometry
+
+   -- Use layering to help clarify the direction of the walk.
+   layer x0.walkLine above B0.shading
+   layer x0.walkLine below B1.shading
+}
+
+-- If points have labels, make sure they don't overlap the walk line
+forall Point x0; Point x1; Ball B0; Ball B1
+where x0 has label; x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
+   ensure disjoint ( x0.walkLine, x0.labelText, 3. ) in labelStage
+}
+forall Point x0; Point x1; Ball B0; Ball B1
+where x1 has label; x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
+   ensure disjoint ( x0.walkLine, x1.labelText, 3. ) in labelStage
+}
+
+-- Draw sample points that are used to estimate the source term
+-- as just dots contained in the ball of interest.  These sample
+-- points are different from steps of a walk, since we never
+-- need to consider a ball around these points (and hence do not
+-- want to draw one).
+forall Point p; Ball B
+where p := sampleInterior( B ); isSourceSample( p ) {
+   scalar x = ? in walkStage
+   scalar y = ? in walkStage
+   -- Draw source samples in a different style
+   override p.location = (x,y)
+   override p.dot.r = 2
+   override p.dot.fillColor = Colors.white
+   override p.dot.strokeColor = Colors.black
+   override p.dot.strokeWidth = 1
+}
+
+-- Nested walks --------------------------------------------
+
+-- Draw nested points in a different style
+forall NestedPoint p {
+   scalar x = ? in nestStage
+   scalar y = ? in nestStage
+   vec2 p.location = (x,y)
+
+   shape p.dot = Circle {
+      center: p.location
+      r: 2.5
+      fillColor: Colors.white
+      ensureOnCanvas: false
+   }
+}
+
+-- Draw nested balls in a different style
+forall Ball B; NestedPoint p
+where B := nestedBallAround(p) {
+
+   override B.center = p.location
+
+   -- Change to a color palette that is more white & opaque.
+   override B.ball.fillColor = none()
+   override B.ball.strokeColor = none()
+   override B.sphere.strokeColor = none()
+   override B.shading = Circle{
+      center: B.center
+      r: B.radius
+      fillColor: rgba(1,1,1,.2)
+      strokeColor: rgba(1,1,1,.5)
+      strokeWidth: 1
+      ensureOnCanvas: false
+   }
+
+   override B.shrinkFactor = .7
+}
+
+forall NestedPoint p; Point p0; Ball B; Ball B0; Domain D
+where p := startWalkFrom(B0); B := nestedBallAround(p); B0 := ballAround(p0) {
+   vec2 y = closestPoint( D.geometry, B0.center )
+   scalar u = .75
+   vec2 q = (1-u)*B0.center + u*y
+   --override p.location = B0.center + B0.radius*diskRandom()
+   override p.location = q
+   override B.center = p.location
+   override B.radius = -signedDistance( D.geometry, p.location )
+}
+
+forall NestedPoint p; Ball B; Ball B0
+where p := sampleBoundaryNested(B0); B := nestedBallAround(p) {
+
+   ensure norm(p.location - B0.center) == B0.radius in nestStage
+   ensure B.radius == B.shrinkFactor * B0.radius in nestStage
+}
+
+-- Draw a line between the consecutive points on a nested walk
+forall NestedPoint x0; NestedPoint x1; Ball B0; Ball B1; Domain D
+where x1 := sampleBoundaryNested( B0 ); B0 := nestedBallAround( x0 ); B1 := nestedBallAround( x1 ) {
+
+   shape x0.walkLine = Line {
+      start: x0.location
+      end: x1.location
+      strokeColor: Colors.white
+      strokeWidth: Global.walkStrokeWidth
+      ensureOnCanvas: false
+   }
+   layer x0.walkLine above D.geometry
+
+   -- Use layering to help clarify the direction of the walk.
+   layer x0.walkLine above B0.shading
+   layer x0.walkLine below B1.shading
+}
+
+-- draw nested walks above regular walks
+forall NestedPoint p; Ball B {
+   layer p.dot above B.sphere
+}
+forall NestedPoint p; Point p0; Ball B; Ball B0
+where B := nestedBallAround(p); B0 := ballAround(p0)
+{
+   layer B.sphere above B0.sphere
+}
+
+-- Walk on Stars -------------------------------------------
+
+-- If the domain has mixed boundary conditions (and
+-- hence we're using walk on stars), we want to keep
+-- track of the normal at point p, which we'll set
+-- to zero if p is not on the domain boundary.
+forall Domain D; Point p
+where hasMixedBoundaryConditions( D ) {
+
+   override p.location = triangleRandom( D.p4, D.p5, D.p0 )
+
+   vec2 p.normal = (0,0)
+
+   -- rays from p will be sampled from baseAngle + [-angleRange,angleRange]
+   scalar p.baseAngle = 0
+   scalar p.angleRange = MathPI()
+
+   layer p.dot above D.neumannBoundary
+
+   -- -- draw an arrow for the normal at p (transparent if the normal is zero)
+   -- scalar eps = 1e-7 -- prevents NaNs for zero-length normals
+   -- shape p.normalArrow = Line {
+   --    start: p.location
+   --    end: p.location + 20*p.normal + eps*(1,1)
+   --    fill: "none"
+   --    strokeWidth: 1
+   --    strokeColor: rgba(1,1,1,.5*norm(p.normal))
+   --    ensureOnCanvas: false
+   --    endArrowhead: "straight"
+   --    endArrowheadSize: .5
+   -- }
+   -- layer p.normalArrow below p.dot
+}
+
+forall Star St; Point p; Domain D
+where St := starAround(p) {
+   scalar yDirichlet = closestPoint( D.dirichletBoundary, p.location )
+   scalar yNeumann = closestSilhouettePoint( D.neumannBoundary, p.location )
+   scalar dDirichlet = norm( yDirichlet - p.location )
+   scalar dNeumann = norm( yNeumann - p.location )
+   scalar rMin = 1
+   scalar R = max( rMin, min( dDirichlet, dNeumann ))
+
+   -- Widgets to draw the smallest ball touching the Dirichlet boundary,
+   -- and the smallest ball toughing the Neumann silhouette (currently disabled)
+   -- shape St.dirichletBall = Circle {
+   --    center: p.location
+   --    r: dDirichlet
+   --    fillColor: none()
+   --    strokeColor: #ff6666
+   --    strokeWidth: Global.sphereStrokeWidth
+   --    ensureOnCanvas: false
+   -- }
+   -- shape St.neumannBall = Circle {
+   --    center: p.location
+   --    r: dNeumann
+   --    fillColor: none()
+   --    strokeColor: #6666ff
+   --    strokeWidth: Global.sphereStrokeWidth
+   --    ensureOnCanvas: false
+   -- }
+
+   -- color the boundary of the ball according to whether it's defined
+   -- by the closest Dirichlet point or closest Neumann silhouette point
+   scalar t = (dDirichlet - R)/(dDirichlet - dNeumann)
+   -- vec3 c0 = (.4,.6,.4)
+   -- vec3 c1 = (.4,.4,.7)
+   vec3 f0 = (154,160,204)/255.
+   vec3 f1 = (255,255,255)/255.
+   vec3 s0 = (27,31,138)/255.
+   vec3 s1 = (27,31,138)/255.
+   vec3 s = (1-t)*s0 + t*s1
+   vec3 f = (1-t)*f0 + t*f1
+
+   shape St.ball = Circle {
+      center: p.location
+      r: R
+      fillColor: rgba( f[0], f[1], f[2], 1 )
+      strokeColor: rgba( s[0], s[1], s[2], 1 )
+      strokeWidth: Global.sphereStrokeWidth
+      ensureOnCanvas: false
+      opacity: .35
+   }
+
+   -- shape St.shading = Image {
+   --    center: p.location
+   --    width: R * 2.0
+   --    height: R * 2.0
+   --    href: "walk-on-spheres-ball.svg"
+   --    ensureOnCanvas: false
+   --    opacity: Global.ballShadingOpacity
+   -- }
+   -- layer St.shading above D.geometry
+   -- layer St.ball above St.shading
+
+   layer St.ball above D.geometry
+
+   -- TODO clip balls against domain
+}
+
+forall Point p; Star St {
+   layer p.dot above St.ball
+}
+
+forall Point p0; Point p1; Star St; Domain D
+where p1 := sampleBoundary(St); St := starAround(p0) {
+
+   -- sample a random ray from p0
+   scalar theta = p0.baseAngle + p0.angleRange * random(-1,1)
+   scalar eps = 1e-1 -- offset ray origin to avoid intersecting at x again
+   vec2 v = -( cos(theta), sin(theta) )
+   vec2 x = p0.location + eps*v
+
+   -- intersect the star boundary
+   scalar tBoundary = rayIntersectDistance( D.neumannBoundary, x, v )
+   scalar tBall = St.ball.r
+   scalar t = min( tBoundary, tBall )
+   override p1.location = x + t*v 
+
+   -- set the normal at the intersection point, or set it to zero if
+   -- the ray hits the ball boundary first
+   vec2 n = rayIntersectNormal( D.neumannBoundary, x, v )
+   scalar k = 100. -- steepness parameter for indicator function
+   scalar s = 1. - exp(-k*sqr(t - tBall)) -- equals zero near tBall and 1 otherwise
+   override p1.normal = s * n -- scales n to zero if t == tBall
+   override p1.angleRange = (1-s/2)*MathPI() -- s=0 -> MathPI(); s=1 -> MathPI()/2
+   scalar delta = 1e-7 -- to get valid angle if normal is zero
+   override p1.baseAngle = atan2( p1.normal[1], p1.normal[0] + delta )
+
+   -- draw the point in white if it's on the Neumann boundary
+   override p1.dot.fillColor = rgba(s,s,s,1)
+   override p1.dot.strokeWidth = .5*s
+   override p1.dot.strokeColor = rgba(0,0,0,1)
+
+   -- draw the ray
+   shape p0.rayArrow = Line {
+      start: p0.location
+      end: p1.location - Global.dotSize*v
+      fill: "none"
+      strokeColor: Global.walkColor
+      strokeWidth: 1
+      --endArrowhead: "straight"
+      --endArrowheadSize: .5
+      ensureOnCanvas: false
+   }
+
+   layer p0.dot above p0.rayArrow
+}
+
+forall Point p0; Point p1; Star St; Domain D; Star St2
+where p1 := sampleBoundary(St); St := starAround(p0) {
+   layer p0.rayArrow above St2.ball
+}
+
+-- Labeling ------------------------------------------------
+
+-- Put all labels above all balls
+forall Point p; Ball B
+where p has label {
+   layer p.labelText above B.sphere
+}
+
+-- Put all labels above all dots and
+-- encourage labels not to overlap
+forall Point p; Point q
+where p has label; q has label {
+   layer p.labelText above q.dot
+   layer q.labelText above p.dot
+
+   vec2 px = p.location
+   vec2 qx = q.location
+   vec2 pc = p.labelText.center
+   vec2 qc = q.labelText.center
+   encourage 1000./norm(pc - qc) == 0. in labelStage
+}
+
+forall Point p; Point q
+where p has label {
+   layer p.labelText above q.dot
+}
+
+forall Point p; Point q
+where p has label; isSourceSample(q) {
+   vec2 pc = p.labelText.center
+   vec2 qx = q.location
+   encourage 1000./norm(pc - qx) == 0. in labelStage
+}
+
+forall Point p; Domain D
+where p has label; hasMixedBoundaryConditions(D) {
+   layer p.labelText above D.dirichletBoundary
+}
+
