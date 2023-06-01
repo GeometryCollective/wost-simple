@@ -1,4 +1,4 @@
--- TODO layout = [ shapeStage, labelStage ]
+layout = [ shapeStage, labelStage ]
 
 canvas {
    width = 150
@@ -12,29 +12,39 @@ colors {
    color darkBlue = #1b1f8a
 }
 
+-- default styles
 global {
+   -- dot style
+   color dotColor = colors.black
    scalar dotRadius = 1.75
-   scalar lineWidth = 1
    scalar dotStroke = .75
-   scalar padding = 2.0 -- amount of padding to prevent overlap
-   scalar vectorLength = 25.0
-   scalar minLength = .5 * canvas.width
 
+   -- line and arrow style
+   scalar lineWidth = 1
+   scalar arrowLength = 25.0
+
+   -- label style
    string labelStyle = "italic"
    string labelFamily = "Linux Libertine"
    color labelColor = #000
    string labelSize = "10px"
    scalar labelDistance = 8.0
+
+   -- layout parameters
+   scalar padding = 2.0 -- amount of padding to prevent overlap
 }
 
 -- Basic sets ------------------------------------
 
 forall Point p {
 
-   p.x = (?,?) -- point location
+   -- location
+   scalar x0 = ? in shapeStage
+   scalar x1 = ? in shapeStage
+   p.x = (x0,x1)
 
    shape p.icon = Circle {
-      fillColor: colors.black
+      fillColor: global.dotColor
       r: global.dotRadius
       center: p.x
    }
@@ -51,16 +61,24 @@ where p has label {
    }
    layer p.labelText above p.icon
 
-   encourage near( p.icon, p.labelText )
+   encourage near( p.icon, p.labelText ) in labelStage
 }
 
 forall Vector v {
-   v.x = (?,?)
-   v.v = (?,?)
+
+   -- vector origin
+   scalar x0 = ? in shapeStage
+   scalar x1 = ? in shapeStage
+   v.x = (x0,x1)
+
+   -- vector direction
+   scalar v0 = ? in shapeStage
+   scalar v1 = ? in shapeStage
+   v.v = (v0,v1)
 
    shape v.icon = Line {
       start: v.x
-      end: v.x + global.vectorLength*unit(v.v)
+      end: v.x + global.arrowLength*unit(v.v)
       strokeColor: colors.darkBlue
       strokeWidth: global.lineWidth
       endArrowhead: "straight"
@@ -76,11 +94,15 @@ where RootedAt(p,v) {
 
 forall Segment s {
 
-   -- endpoints of the segment
-   -- (may be overriden by later
-   -- matches with specific data)
-   vec2 s.a = (?,?)
-   vec2 s.b = (?,?)
+   -- first endpoint
+   scalar a0 = ? in shapeStage
+   scalar a1 = ? in shapeStage
+   vec2 s.a = (a0,a1)
+
+   -- second endpoint
+   scalar b0 = ? in shapeStage
+   scalar b1 = ? in shapeStage
+   vec2 s.b = (b0,b1)
 
    shape s.icon = Line {
       start: s.a
@@ -106,14 +128,15 @@ where s has label {
       fontStyle: global.labelStyle
       fontFamily: global.labelFamily
       fillColor: global.labelColor
+      ensureOnCanvas: false
    }
    layer s.labelText above s.icon
 
    vec2 m = (s.a + s.b)/2.
    scalar d = norm( m - s.labelText.center )
-   encourage d == global.labelDistance
+   encourage d == global.labelDistance in labelStage
 
-   ensure disjoint( s.labelText, s.icon, global.padding )
+   ensure disjoint( s.labelText, s.icon, global.padding ) in labelStage
 }
 
 forall Segment t; Segment s; Point p
@@ -138,41 +161,50 @@ where q := ClosestPoint( s, p ) {
 -- draw length markers as segments with perpendicular markers at the ends
 forall Length l {
 
-   -- endpoints of labeled segment
-   vec2 l.a = (?,?)
-   vec2 l.b = (?,?)
+   -- marker parameters
+   scalar l.markerSize = 2*global.dotRadius
+   scalar l.shortening = 2*global.dotRadius
+
+   -- first endpoint of labeled segment
+   scalar a0 = ? in shapeStage
+   scalar a1 = ? in shapeStage
+   vec2 l.a = (a0,a1)
+
+   -- second endpoint of labeled segment
+   scalar b0 = ? in shapeStage
+   scalar b1 = ? in shapeStage
+   vec2 l.b = (b0,b1)
 
    vec2 l.t = unit( l.a - l.b ) -- tangent
    vec2 l.n = rot90( l.t ) -- normal
-   scalar l.shortening = 2*global.dotRadius
-   scalar l.markerSize = 3
 
    -- offset length marker by +/- offset size
-   scalar offsetSize = 8.0
-   scalar h = ?
-   ensure h*h == sqr(offsetSize)
+   -- scalar offsetSize = 8.0
+   -- scalar h = ? in shapeStage
+   -- ensure h*h == sqr(offsetSize) in shapeStage
+   scalar h = 8
 
    -- endpoints of length marker
-   scalar y0 = l.a - l.shortening*l.t + h*l.n
-   scalar y1 = l.b + l.shortening*l.t + h*l.n
+   scalar l.x = l.a - l.shortening*l.t + h*l.n
+   scalar l.y = l.b + l.shortening*l.t + h*l.n
 
    l.icon = Line {
-      start: y0
-      end: y1
+      start: l.x
+      end: l.y
       strokeWidth: .75
       strokeColor: colors.lightGray
       fill: "none"
    }
    l.end0 = Line {
-      start: y0 - l.markerSize*l.n
-      end: y0 + l.markerSize*l.n
+      start: l.x - l.markerSize*l.n
+      end: l.x + l.markerSize*l.n
       strokeWidth: l.icon.strokeWidth
       strokeColor: l.icon.strokeColor
       fill: "none"
    }
    l.end1 = Line {
-      start: y1 - l.markerSize*l.n
-      end: y1 + l.markerSize*l.n
+      start: l.y - l.markerSize*l.n
+      end: l.y + l.markerSize*l.n
       strokeWidth: l.icon.strokeWidth
       strokeColor: l.icon.strokeColor
       fill: "none"
@@ -200,12 +232,13 @@ where l has label {
       fontStyle: global.labelStyle
       fontFamily: global.labelFamily
       fillColor: l.icon.strokeColor
+      ensureOnCanvas: false
    }
    layer l.labelText above l.icon
 
-   vec2 m = (l.a + l.b)/2.
+   vec2 m = (l.x + l.y)/2.
    scalar d = norm( m - l.labelText.center )
-   encourage d == global.labelDistance
+   encourage d == global.labelDistance in labelStage
 }
 
 forall Ray r {
@@ -242,11 +275,11 @@ where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b)
    override v.v = unit(q.x - p.x)
 
    -- make the ray origin reasonably far from the intersection point
-   ensure norm(p.x-q.x) > 1.5*global.vectorLength
+   ensure norm(p.x-q.x) > 1.5*global.arrowLength in shapeStage
 
    -- make sure the angle of intersection is not too shallow
    vec2 w = unit(b.x-a.x)
-   ensure sqr(dot(v.v,w)) < .25
+   ensure sqr(dot(v.v,w)) < .25 in shapeStage
 
    -- draw the intersection point as a white dot
    override q.icon.fillColor = colors.white
@@ -269,9 +302,17 @@ where InTri( p, t ); t := Tri(q0, q1, q2) {
 }
 
 forall Circle c {
+   -- center
+   scalar x0 = ? in shapeStage
+   scalar x1 = ? in shapeStage
+   vec2 c.x = ( x0, x1 )
+
+   -- radius
+   scalar c.r = ? in shapeStage
+
    shape c.icon = Circle {
-      center: (?,?)
-      r: random(10,50)
+      center: c.x
+      r: c.r
       fillColor: none()
       strokeColor: colors.black
       strokeWidth: global.lineWidth
@@ -284,9 +325,17 @@ where OnCircle( p, c ) {
 }
 
 forall Disk d {
+   -- center
+   scalar x0 = ? in shapeStage
+   scalar x1 = ? in shapeStage
+   vec2 c.x = ( x0, x1 )
+
+   -- radius
+   scalar c.r = ? in shapeStage
+
    shape d.icon = Circle {
-      center: (?,?)
-      r: random(10,50)
+      center: c.x
+      r: c.r
    }
 }
 
@@ -314,17 +363,17 @@ where OfDisk(c,d) {
 
 forall Set X
 where X has label {
-   ensure disjoint( X.icon, X.labelText, global.padding )
+   ensure disjoint( X.icon, X.labelText, global.padding ) in labelStage
 }
 
 forall Set X; Set Y
 where X has label {
-   ensure disjoint( X.labelText, Y.icon, global.padding )
+   ensure disjoint( X.labelText, Y.icon, global.padding ) in labelStage
 }
 
 forall Set X; Set Y
 where X has label; Y has label {
-   ensure disjoint( X.labelText, Y.labelText, global.padding )
+   ensure disjoint( X.labelText, Y.labelText, global.padding ) in labelStage
 }
 
 -- Layering --------------------------------------
@@ -345,13 +394,13 @@ where p has label {
 -- AtomicClosestPoint.substance ------------------
 
 forall Segment `ab` {
-   ensure norm( `ab`.a - `ab`.b ) == canvas.width
+   ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
 }
 forall Segment `s` {
-   ensure norm( `s`.a - `s`.b ) == canvas.width * .5
+   ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
 }
 forall Length `l` {
-   ensure norm( `l`.a - `l`.b ) > canvas.width * .2
-   ensure norm( `l`.a - `l`.b ) < canvas.width * .8
+   ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
+   ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
 }
 

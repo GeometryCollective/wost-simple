@@ -8,10 +8,7 @@ Segment s := ClosestSegment(ab,x)
 
 Length l := LengthBetween(a,y)
 
--- Label a "$\vec{a}$"
--- Label b "$\vec{b}$"
--- Label x1 "$\vec{x}$"
--- Label a "a"
--- Label b "b"
--- Label x "x"
--- Label l "t"
+Label a "a"
+Label b "b"
+Label x "x"
+Label l "t"
