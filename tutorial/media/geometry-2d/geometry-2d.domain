@@ -7,6 +7,7 @@ type Triangle <: Set
 type Circle <: Set
 type Disk <: Set
 type Chord <: Set
+type Length <: Set
 
 constructor LineSegment( Point p, Point q ) -> Segment
 constructor ClosestPoint( Segment s, Point p ) -> Point
@@ -14,6 +15,7 @@ constructor ClosestSegment( Segment s, Point p ) -> Segment
 constructor RayFrom( Point p, Vector v ) -> Ray
 constructor RaySegmentIntersection( Ray r, Segment s ) -> Point
 constructor Tri( Point p1, Point p2, Point p3 ) -> Triangle
+constructor LengthBetween( Point x, Point y ) -> Length
 
 predicate RootedAt( Point p, Vector v )
 predicate InTri( Point p, Triangle t )

@@ -1,3 +1,5 @@
+-- TODO layout = [ shapeStage, labelStage ]
+
 canvas {
    width = 150
    height = 150
@@ -6,15 +8,15 @@ canvas {
 colors {
    color black = rgba(0,0,0,1)
    color white = rgba(1,1,1,1)
-   color lightGray = rgba(0,0,0,.2)
+   color lightGray = rgba(.8,.8,.8,1)
    color darkBlue = #1b1f8a
 }
 
 global {
-   scalar dotRadius = 2.0
-   scalar lineWidth = 1.5
-   scalar dotStroke = 1.0
-   scalar padding = 1.0 -- amount of padding to prevent overlap
+   scalar dotRadius = 1.75
+   scalar lineWidth = 1
+   scalar dotStroke = .75
+   scalar padding = 2.0 -- amount of padding to prevent overlap
    scalar vectorLength = 25.0
    scalar minLength = .5 * canvas.width
 
@@ -22,9 +24,10 @@ global {
    string labelFamily = "Linux Libertine"
    color labelColor = #000
    string labelSize = "10px"
+   scalar labelDistance = 8.0
 }
 
--- Basic sets ------------------------------------------------------------------
+-- Basic sets ------------------------------------
 
 forall Point p {
 
@@ -46,6 +49,7 @@ where p has label {
       fontFamily: global.labelFamily
       fillColor: global.labelColor
    }
+   layer p.labelText above p.icon
 
    encourage near( p.icon, p.labelText )
 }
@@ -79,7 +83,7 @@ forall Segment s {
    vec2 s.x1 = (?,?)
 
    -- by default, make sure that segments are not too short
-   constraint s.lengthConstraint = ensure norm(s.x0-s.x1) > global.minLength
+   --constraint s.lengthConstraint = ensure norm(s.x0-s.x1) > global.minLength
 
    shape s.icon = Line {
       start: s.x0
@@ -106,9 +110,12 @@ where s has label {
       fontFamily: global.labelFamily
       fillColor: global.labelColor
    }
+   layer s.labelText above s.icon
+
    vec2 m = (s.x0 + s.x1)/2.
    scalar d = norm( m - s.labelText.center )
    encourage d == global.labelDistance
+
    ensure disjoint( s.labelText, s.icon, global.padding )
 }
 
@@ -117,6 +124,9 @@ where t := ClosestSegment( s, p ) {
    override t.x0 = p.x
    override t.x1 = closestPoint( s.icon, p.x )
    override t.icon.strokeColor = colors.lightGray
+   override t.icon.ensureOnCanvas = false
+   override t.icon.strokeStyle = "dashed"
+   override t.icon.strokeDasharray = "4,3"
 }
 
 forall Point q; Segment s; Point p
@@ -125,6 +135,71 @@ where q := ClosestPoint( s, p ) {
    override q.icon.fillColor = colors.white
    override q.icon.strokeColor = colors.black
    override q.icon.strokeWidth = global.dotStroke
+   override q.icon.ensureOnCanvas = false
+}
+
+-- draw length markers as segments with perpendicular markers at the ends
+forall Length l {
+
+   vec2 l.x0 = (?,?)
+   vec2 l.x1 = (?,?)
+
+   l.icon = Line {
+      start: l.x0
+      end: l.x1
+      strokeWidth: .75
+      strokeColor: colors.lightGray
+      fill: "none"
+   }
+
+   vec2 l.n = rot90( unit( l.x1 - l.x0 ) )
+   scalar l.markerSize = 3
+
+   l.end0 = Line {
+      start: l.x0 - l.markerSize*l.n
+      end: l.x0 + l.markerSize*l.n
+      strokeWidth: l.icon.strokeWidth
+      strokeColor: l.icon.strokeColor
+      fill: "none"
+   }
+   l.end1 = Line {
+      start: l.x1 - l.markerSize*l.n
+      end: l.x1 + l.markerSize*l.n
+      strokeWidth: l.icon.strokeWidth
+      strokeColor: l.icon.strokeColor
+      fill: "none"
+   }
+}
+
+forall Length l; Point a; Point b
+where l := LengthBetween(a,b) {
+
+   vec2 n = rot90(unit(b.x-a.x))
+   scalar h = ?
+   ensure h*h == 8*8
+
+   override l.x0 = a.x - h*n
+   override l.x1 = b.x - h*n
+
+   override l.icon.ensureOnCanvas = false
+}
+
+forall Length l
+where l has label {
+   l.labelText = Text {
+      string: l.label
+      fontSize: global.labelSize
+      fontStyle: global.labelStyle
+      fontFamily: global.labelFamily
+      fillColor: l.icon.strokeColor
+   }
+   layer l.labelText above l.icon
+
+   vec2 m = (l.x0 + l.x1)/2.
+   scalar d = norm( m - l.labelText.center )
+   encourage d == global.labelDistance
+
+   ensure disjoint( l.labelText, l.icon, global.padding )
 }
 
 forall Ray r {
@@ -229,7 +304,7 @@ where OfDisk(c,d) {
    c.icon.end = d.icon.r*(cos(t1),sin(t1)) + d.icon.center
 }
 
---- Overlap constraints --------------------------------------------------------
+-- Overlap constraints ---------------------------
 
 forall Set X
 where X has label {
@@ -242,16 +317,11 @@ where X has label {
 }
 
 forall Set X; Set Y
-where Y has label {
-   ensure disjoint( X.icon, Y.labelText, global.padding )
-}
-
-forall Set X; Set Y
 where X has label; Y has label {
    ensure disjoint( X.labelText, Y.labelText, global.padding )
 }
 
---- Layering -------------------------------------------------------------------
+-- Layering --------------------------------------
 
 forall Point p; Segment s {
    layer p.icon above s.icon
@@ -259,5 +329,23 @@ forall Point p; Segment s {
 
 forall Point p; Ray r {
    layer p.icon above r.icon
+}
+
+forall Point p; Point q
+where p has label {
+   layer p.labelText above q.icon
+}
+
+-- AtomicClosestPoint.substance ------------------
+
+forall Segment `ab` {
+   ensure norm( `ab`.x0 - `ab`.x1 ) == canvas.width
+}
+forall Segment `s` {
+   ensure norm( `s`.x0 - `s`.x1 ) == canvas.width * .5
+}
+forall Length `l` {
+   ensure norm( `l`.x0 - `l`.x1 ) > canvas.width * .2
+   ensure norm( `l`.x0 - `l`.x1 ) < canvas.width * .8
 }
 
