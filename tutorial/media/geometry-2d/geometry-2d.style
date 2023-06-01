@@ -149,8 +149,11 @@ forall Length l {
    scalar l.shortening = 2*global.dotRadius
    scalar l.markerSize = 3
 
-   scalar y0 = l.x0 + l.shortening * l.t
-   scalar y1 = l.x1 - l.shortening * l.t
+   scalar h = ?
+   ensure h*h == 8*8
+
+   scalar y0 = l.x0 + l.shortening*l.t + h*l.n
+   scalar y1 = l.x1 - l.shortening*l.t + h*l.n
 
    l.icon = Line {
       start: y0
@@ -174,18 +177,20 @@ forall Length l {
       strokeColor: l.icon.strokeColor
       fill: "none"
    }
+
 }
 
 forall Length l; Point a; Point b
 where l := LengthBetween(a,b) {
+   override l.x0 = a.x
+   override l.x1 = b.x
+   override l.icon.ensureOnCanvas = false
+}
 
-   vec2 n = rot90(unit(b.x-a.x))
-   scalar h = ?
-   ensure h*h == 8*8
-
-   override l.x0 = a.x - h*n
-   override l.x1 = b.x - h*n
-
+forall Length l; Segment s
+where l := LengthOf(s) {
+   override l.x0 = s.x0
+   override l.x1 = s.x1
    override l.icon.ensureOnCanvas = false
 }
 
