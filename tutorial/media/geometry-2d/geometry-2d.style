@@ -144,27 +144,32 @@ forall Length l {
    vec2 l.x0 = (?,?)
    vec2 l.x1 = (?,?)
 
+   vec2 l.t = unit( l.x1 - l.x0 ) -- tangent
+   vec2 l.n = rot90( l.t )
+   scalar l.shortening = 2*global.dotRadius
+   scalar l.markerSize = 3
+
+   scalar y0 = l.x0 + l.shortening * l.t
+   scalar y1 = l.x1 - l.shortening * l.t
+
    l.icon = Line {
-      start: l.x0
-      end: l.x1
+      start: y0
+      end: y1
       strokeWidth: .75
       strokeColor: colors.lightGray
       fill: "none"
    }
 
-   vec2 l.n = rot90( unit( l.x1 - l.x0 ) )
-   scalar l.markerSize = 3
-
    l.end0 = Line {
-      start: l.x0 - l.markerSize*l.n
-      end: l.x0 + l.markerSize*l.n
+      start: y0 - l.markerSize*l.n
+      end: y0 + l.markerSize*l.n
       strokeWidth: l.icon.strokeWidth
       strokeColor: l.icon.strokeColor
       fill: "none"
    }
    l.end1 = Line {
-      start: l.x1 - l.markerSize*l.n
-      end: l.x1 + l.markerSize*l.n
+      start: y1 - l.markerSize*l.n
+      end: y1 + l.markerSize*l.n
       strokeWidth: l.icon.strokeWidth
       strokeColor: l.icon.strokeColor
       fill: "none"
@@ -198,8 +203,6 @@ where l has label {
    vec2 m = (l.x0 + l.x1)/2.
    scalar d = norm( m - l.labelText.center )
    encourage d == global.labelDistance
-
-   ensure disjoint( l.labelText, l.icon, global.padding )
 }
 
 forall Ray r {
