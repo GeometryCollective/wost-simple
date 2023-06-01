@@ -79,15 +79,12 @@ forall Segment s {
    -- endpoints of the segment
    -- (may be overriden by later
    -- matches with specific data)
-   vec2 s.x0 = (?,?)
-   vec2 s.x1 = (?,?)
-
-   -- by default, make sure that segments are not too short
-   --constraint s.lengthConstraint = ensure norm(s.x0-s.x1) > global.minLength
+   vec2 s.a = (?,?)
+   vec2 s.b = (?,?)
 
    shape s.icon = Line {
-      start: s.x0
-      end: s.x1
+      start: s.a
+      end: s.b
       strokeColor: colors.black
       strokeWidth: global.lineWidth
    }
@@ -97,8 +94,8 @@ forall Segment s; Point p; Point q
 where s := LineSegment(p,q) {
    -- replace the endpoints with the
    -- locations of the given points
-   override s.x0 = p.x
-   override s.x1 = q.x
+   override s.a = p.x
+   override s.b = q.x
 }
 
 forall Segment s
@@ -112,7 +109,7 @@ where s has label {
    }
    layer s.labelText above s.icon
 
-   vec2 m = (s.x0 + s.x1)/2.
+   vec2 m = (s.a + s.b)/2.
    scalar d = norm( m - s.labelText.center )
    encourage d == global.labelDistance
 
@@ -121,8 +118,8 @@ where s has label {
 
 forall Segment t; Segment s; Point p
 where t := ClosestSegment( s, p ) {
-   override t.x0 = p.x
-   override t.x1 = closestPoint( s.icon, p.x )
+   override t.a = p.x
+   override t.b = closestPoint( s.icon, p.x )
    override t.icon.strokeColor = colors.lightGray
    override t.icon.ensureOnCanvas = false
    override t.icon.strokeStyle = "dashed"
@@ -141,19 +138,23 @@ where q := ClosestPoint( s, p ) {
 -- draw length markers as segments with perpendicular markers at the ends
 forall Length l {
 
-   vec2 l.x0 = (?,?)
-   vec2 l.x1 = (?,?)
+   -- endpoints of labeled segment
+   vec2 l.a = (?,?)
+   vec2 l.b = (?,?)
 
-   vec2 l.t = unit( l.x1 - l.x0 ) -- tangent
-   vec2 l.n = rot90( l.t )
+   vec2 l.t = unit( l.a - l.b ) -- tangent
+   vec2 l.n = rot90( l.t ) -- normal
    scalar l.shortening = 2*global.dotRadius
    scalar l.markerSize = 3
 
+   -- offset length marker by +/- offset size
+   scalar offsetSize = 8.0
    scalar h = ?
-   ensure h*h == 8*8
+   ensure h*h == sqr(offsetSize)
 
-   scalar y0 = l.x0 + l.shortening*l.t + h*l.n
-   scalar y1 = l.x1 - l.shortening*l.t + h*l.n
+   -- endpoints of length marker
+   scalar y0 = l.a - l.shortening*l.t + h*l.n
+   scalar y1 = l.b + l.shortening*l.t + h*l.n
 
    l.icon = Line {
       start: y0
@@ -162,7 +163,6 @@ forall Length l {
       strokeColor: colors.lightGray
       fill: "none"
    }
-
    l.end0 = Line {
       start: y0 - l.markerSize*l.n
       end: y0 + l.markerSize*l.n
@@ -177,20 +177,18 @@ forall Length l {
       strokeColor: l.icon.strokeColor
       fill: "none"
    }
-
 }
 
 forall Length l; Point a; Point b
 where l := LengthBetween(a,b) {
-   override l.x0 = a.x
-   override l.x1 = b.x
-   override l.icon.ensureOnCanvas = false
+   override l.a = a.x
+   override l.b = b.x
 }
 
 forall Length l; Segment s
 where l := LengthOf(s) {
-   override l.x0 = s.x0
-   override l.x1 = s.x1
+   override l.a = s.a
+   override l.b = s.b
    override l.icon.ensureOnCanvas = false
 }
 
@@ -205,7 +203,7 @@ where l has label {
    }
    layer l.labelText above l.icon
 
-   vec2 m = (l.x0 + l.x1)/2.
+   vec2 m = (l.a + l.b)/2.
    scalar d = norm( m - l.labelText.center )
    encourage d == global.labelDistance
 }
@@ -347,13 +345,13 @@ where p has label {
 -- AtomicClosestPoint.substance ------------------
 
 forall Segment `ab` {
-   ensure norm( `ab`.x0 - `ab`.x1 ) == canvas.width
+   ensure norm( `ab`.a - `ab`.b ) == canvas.width
 }
 forall Segment `s` {
-   ensure norm( `s`.x0 - `s`.x1 ) == canvas.width * .5
+   ensure norm( `s`.a - `s`.b ) == canvas.width * .5
 }
 forall Length `l` {
-   ensure norm( `l`.x0 - `l`.x1 ) > canvas.width * .2
-   ensure norm( `l`.x0 - `l`.x1 ) < canvas.width * .8
+   ensure norm( `l`.a - `l`.b ) > canvas.width * .2
+   ensure norm( `l`.a - `l`.b ) < canvas.width * .8
 }
 
