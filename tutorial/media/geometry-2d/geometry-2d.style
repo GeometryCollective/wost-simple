@@ -265,10 +265,15 @@ where InTri( p, t ); t := Tri(q0, q1, q2) {
 forall Polyline M {
 
    vec2 M.p0 = (? in shapeStage, ? in shapeStage)
-   vec2 M.p1 = (? in shapeStage, ? in shapeStage)
-   vec2 M.p2 = (? in shapeStage, ? in shapeStage)
-   vec2 M.p3 = (? in shapeStage, ? in shapeStage)
-   vec2 M.p4 = (? in shapeStage, ? in shapeStage)
+   scalar theta0 = random(0,1)*2.*MathPI()
+   scalar theta1 = theta0 + random(.5,1)*MathPI()/3
+   scalar theta2 = theta1 + random(.5,1)*MathPI()/3
+   scalar theta3 = theta2 - random(.5,1)*MathPI()/3
+   scalar L = canvas.width/5
+   vec2 M.p1 = M.p0 + L*(cos(theta0),sin(theta0))
+   vec2 M.p2 = M.p1 + L*(cos(theta1),sin(theta1))
+   vec2 M.p3 = M.p2 + L*(cos(theta2),sin(theta2))
+   vec2 M.p4 = M.p3 + L*(cos(theta3),sin(theta3))
 
    shape M.icon = Polyline {
       points: [ M.p0, M.p1, M.p2, M.p3, M.p4 ]
@@ -445,29 +450,32 @@ where X has label; Y has label {
 -- Layering --------------------------------------
 --------------------------------------------------
 
-forall Point p; Segment s {
-   layer p.icon above s.icon
+forall Point p; Set X {
+   layer p.icon above X.icon
 }
 
-forall Point p; Ray r {
-   layer p.icon above r.icon
-}
-
-forall Point p; Point q
+forall Point p; Set X
 where p has label {
-   layer p.labelText above q.icon
+   layer p.labelText above X.icon
 }
 
 -- AtomicClosestPoint.substance ------------------
+-- 
+-- forall Segment `ab` {
+--    ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
+-- }
+-- forall Segment `s` {
+--    ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
+-- }
+-- forall Length `l` {
+--    ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
+--    ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
+-- }
 
-forall Segment `ab` {
-   ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
-}
-forall Segment `s` {
-   ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
-}
-forall Length `l` {
-   ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
-   ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
-}
+-- ClosestPoint.substance ------------------
+
+-- forall Point xi; Point xj; Point yi; Point yj; Polyline M
+-- where yi := ClosestPoint(M,xi); yj := ClosestPoint(M,xj) {
+--    encourage 100/norm(xi.x-xj.x) == 0
+-- }
 

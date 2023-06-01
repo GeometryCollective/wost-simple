@@ -1,9 +1,19 @@
 -- Draw a bunch of examples of point-segment closest point queries
 Polyline M
 
-Point x
-Point y := ClosestPoint(M,x)
-Segment s := ClosestSegment(M,x)
+Point x1, x2, x3, x4, x5, x6, x7
+Point y1 := ClosestPoint(M,x1)
+Point y2 := ClosestPoint(M,x2)
+Point y3 := ClosestPoint(M,x3)
+Point y4 := ClosestPoint(M,x4)
+Point y5 := ClosestPoint(M,x5)
+Point y6 := ClosestPoint(M,x6)
+Point y7 := ClosestPoint(M,x7)
+Segment s1 := ClosestSegment(M,x1)
+Segment s2 := ClosestSegment(M,x2)
+Segment s3 := ClosestSegment(M,x3)
+Segment s4 := ClosestSegment(M,x4)
+Segment s5 := ClosestSegment(M,x5)
+Segment s6 := ClosestSegment(M,x6)
+Segment s7 := ClosestSegment(M,x7)
 
-Label x "x"
-Label y "y"
