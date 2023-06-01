@@ -161,7 +161,7 @@ A \emph{closest point query} seeks the point closest to the geometry relative to
    \centering
    \includesvg{images/AtomicClosestPoint.svg}
    % \todo{A line segment and the closest points for a bunch of example query points.}
-   \caption{Given a query point \(\vec{x}\), the closest point on a line segment between \(\vec{a}\) and \(\vec{b}\) can be at either an interior point or one of the endpoints.\label{fig:ClosestPointExamples}}
+   \caption{Given a query point \(\vec{x}\), the closest point \(\vec{y}\) on a line segment between \(\vec{a}\) and \(\vec{b}\) can be at either an interior point or one of the endpoints.\label{fig:ClosestPointExamples}}
 \end{figure}
 
 \paragraph{Atomic.} Given a query point \(\vec{x}\), we want to find the closest point on a line segment with endpoints \(\vec{a}, \vec{b}\) (Figure~\ref{fig:ClosestPointExamples}).  To find this point, we could first find the closest point on the full line, check if it's inside the segment, and if not, take the closer of the two endpoints.  Fortunately, all these operations boil down to a very simple subroutine (\citet{Quilez:2020:SLS} gives a nice derivation):

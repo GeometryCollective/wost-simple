@@ -1,0 +1,9 @@
+-- Draw a bunch of examples of point-segment closest point queries
+Polyline M
+
+Point x
+Point y := ClosestPoint(M,x)
+Segment s := ClosestSegment(M,x)
+
+Label x "x"
+Label y "y"

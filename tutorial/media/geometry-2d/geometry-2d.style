@@ -5,6 +5,10 @@ canvas {
    height = 150
 }
 
+--------------------------------------------------
+-- Global constants ------------------------------
+--------------------------------------------------
+
 colors {
    color black = rgba(0,0,0,1)
    color white = rgba(1,1,1,1)
@@ -12,7 +16,6 @@ colors {
    color darkBlue = #1b1f8a
 }
 
--- default styles
 global {
    -- dot style
    color dotColor = colors.black
@@ -34,7 +37,9 @@ global {
    scalar padding = 2.0 -- amount of padding to prevent overlap
 }
 
--- Basic sets ------------------------------------
+--------------------------------------------------
+-- Points ----------------------------------------
+--------------------------------------------------
 
 forall Point p {
 
@@ -64,6 +69,10 @@ where p has label {
    encourage near( p.icon, p.labelText ) in labelStage
 }
 
+--------------------------------------------------
+-- Vectors ---------------------------------------
+--------------------------------------------------
+
 forall Vector v {
 
    -- vector origin
@@ -91,6 +100,10 @@ where RootedAt(p,v) {
    override v.x = p.x
    layer p.icon above v.icon
 }
+
+--------------------------------------------------
+-- Segments --------------------------------------
+--------------------------------------------------
 
 forall Segment s {
 
@@ -139,24 +152,9 @@ where s has label {
    ensure disjoint( s.labelText, s.icon, global.padding ) in labelStage
 }
 
-forall Segment t; Segment s; Point p
-where t := ClosestSegment( s, p ) {
-   override t.a = p.x
-   override t.b = closestPoint( s.icon, p.x )
-   override t.icon.strokeColor = colors.lightGray
-   override t.icon.ensureOnCanvas = false
-   override t.icon.strokeStyle = "dashed"
-   override t.icon.strokeDasharray = "4,3"
-}
-
-forall Point q; Segment s; Point p
-where q := ClosestPoint( s, p ) {
-   override q.x = closestPoint( s.icon, p.x )
-   override q.icon.fillColor = colors.white
-   override q.icon.strokeColor = colors.black
-   override q.icon.strokeWidth = global.dotStroke
-   override q.icon.ensureOnCanvas = false
-}
+--------------------------------------------------
+-- Length markers --------------------------------
+--------------------------------------------------
 
 -- draw length markers as segments with perpendicular markers at the ends
 forall Length l {
@@ -241,51 +239,9 @@ where l has label {
    encourage d == global.labelDistance in labelStage
 }
 
-forall Ray r {
-   r.icon = Line {
-      strokeColor: colors.lightGray
-      style: "dashed"
-      strokeDasharray: "4,4"
-      ensureOnCanvas: false
-   }
-}
-
-forall Ray r; Point p; Vector v
-where r := RayFrom(p,v) {
-   -- draw the ray as a line whose length
-   -- is equal to the diameter of the canvas,
-   -- so that it always goes "off screen" (but
-   -- isn't so crazy long that it causes problems
-   -- for display, editing, etc.)
-   vec2 d = (canvas.width,canvas.height)
-   scalar L = norm(d)
-   vec2 u = unit(v.v)
-   r.icon.start = p.x
-   r.icon.end = p.x + L*u
-}
-
-forall Point q; Ray r; Point p; Vector v; Segment s; Point a; Point b
-where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b) {
-
-   -- put the intersection point at some random point in the segment
-   scalar u = random(.2,.8)
-   override q.x = (1-u)*a.x + u*b.x
-
-   -- make the ray point toward the intersection point
-   override v.v = unit(q.x - p.x)
-
-   -- make the ray origin reasonably far from the intersection point
-   ensure norm(p.x-q.x) > 1.5*global.arrowLength in shapeStage
-
-   -- make sure the angle of intersection is not too shallow
-   vec2 w = unit(b.x-a.x)
-   ensure sqr(dot(v.v,w)) < .25 in shapeStage
-
-   -- draw the intersection point as a white dot
-   override q.icon.fillColor = colors.white
-   override q.icon.strokeColor = colors.black
-   override q.icon.strokeWidth = global.dotStroke
-}
+--------------------------------------------------
+-- Triangles -------------------------------------
+--------------------------------------------------
 
 forall Triangle t; Point p1; Point p2; Point p3
 where t := Tri(p1, p2, p3)
@@ -300,6 +256,28 @@ forall Point p; Triangle t; Point q0; Point q1; Point q2
 where InTri( p, t ); t := Tri(q0, q1, q2) {
    override p.x = triangleRandom(q0.x, q1.x, q2.x)
 }
+
+
+--------------------------------------------------
+-- Polylines -------------------------------------
+--------------------------------------------------
+
+forall Polyline M {
+
+   vec2 M.p0 = (? in shapeStage, ? in shapeStage)
+   vec2 M.p1 = (? in shapeStage, ? in shapeStage)
+   vec2 M.p2 = (? in shapeStage, ? in shapeStage)
+   vec2 M.p3 = (? in shapeStage, ? in shapeStage)
+   vec2 M.p4 = (? in shapeStage, ? in shapeStage)
+
+   shape M.icon = Polyline {
+      points: [ M.p0, M.p1, M.p2, M.p3, M.p4 ]
+   }
+}
+
+--------------------------------------------------
+-- Circles ---------------------------------------
+--------------------------------------------------
 
 forall Circle c {
    -- center
@@ -324,6 +302,10 @@ where OnCircle( p, c ) {
    override p.x = c.icon.r*circleRandom() + c.icon.center
 }
 
+--------------------------------------------------
+-- Disks -----------------------------------------
+--------------------------------------------------
+
 forall Disk d {
    -- center
    scalar x0 = ? in shapeStage
@@ -344,6 +326,10 @@ where InDisk( p, d ) {
    override p.x = d.icon.r*diskRandom() + d.icon.center
 }
 
+--------------------------------------------------
+-- Chords ----------------------------------------
+--------------------------------------------------
+
 forall Chord c {
    shape c.icon = Line {
       strokeWidth: .25*global.lineWidth
@@ -359,7 +345,86 @@ where OfDisk(c,d) {
    c.icon.end = d.icon.r*(cos(t1),sin(t1)) + d.icon.center
 }
 
+--------------------------------------------------
+-- Rays ------------------------------------------
+--------------------------------------------------
+
+forall Ray r {
+   r.icon = Line {
+      strokeColor: colors.lightGray
+      style: "dashed"
+      strokeDasharray: "4,4"
+      ensureOnCanvas: false
+   }
+}
+
+forall Ray r; Point p; Vector v
+where r := RayFrom(p,v) {
+   -- draw the ray as a line whose length
+   -- is equal to the diameter of the canvas,
+   -- so that it always goes "off screen" (but
+   -- isn't so crazy long that it causes problems
+   -- for display, editing, etc.)
+   vec2 d = (canvas.width,canvas.height)
+   scalar L = norm(d)
+   vec2 u = unit(v.v)
+   r.icon.start = p.x
+   r.icon.end = p.x + L*u
+}
+
+--------------------------------------------------
+-- Ray intersections -----------------------------
+--------------------------------------------------
+
+forall Point q; Ray r; Point p; Vector v; Segment s; Point a; Point b
+where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b) {
+
+   -- put the intersection point at some random point in the segment
+   scalar u = random(.2,.8)
+   override q.x = (1-u)*a.x + u*b.x
+
+   -- make the ray point toward the intersection point
+   override v.v = unit(q.x - p.x)
+
+   -- make the ray origin reasonably far from the intersection point
+   ensure norm(p.x-q.x) > 1.5*global.arrowLength in shapeStage
+
+   -- make sure the angle of intersection is not too shallow
+   vec2 w = unit(b.x-a.x)
+   ensure sqr(dot(v.v,w)) < .25 in shapeStage
+
+   -- draw the intersection point as a white dot
+   override q.icon.fillColor = colors.white
+   override q.icon.strokeColor = colors.black
+   override q.icon.strokeWidth = global.dotStroke
+}
+
+--------------------------------------------------
+-- Closest points --------------------------------
+--------------------------------------------------
+
+forall Point q; Set s; Point p
+where q := ClosestPoint( s, p ) {
+   override q.x = closestPoint( s.icon, p.x )
+   override q.icon.fillColor = colors.white
+   override q.icon.strokeColor = colors.black
+   override q.icon.strokeWidth = global.dotStroke
+   override q.icon.ensureOnCanvas = false
+}
+
+forall Segment t; Set s; Point p
+where t := ClosestSegment( s, p ) {
+   override t.a = p.x
+   override t.b = closestPoint( s.icon, p.x )
+   override t.icon.strokeColor = colors.lightGray
+   override t.icon.ensureOnCanvas = false
+   override t.icon.strokeStyle = "dashed"
+   override t.icon.strokeDasharray = "4,3"
+}
+
+--------------------------------------------------
 -- Overlap constraints ---------------------------
+--------------------------------------------------
 
 forall Set X
 where X has label {
@@ -376,7 +441,9 @@ where X has label; Y has label {
    ensure disjoint( X.labelText, Y.labelText, global.padding ) in labelStage
 }
 
+--------------------------------------------------
 -- Layering --------------------------------------
+--------------------------------------------------
 
 forall Point p; Segment s {
    layer p.icon above s.icon
