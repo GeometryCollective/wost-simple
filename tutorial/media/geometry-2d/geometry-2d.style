@@ -12,12 +12,16 @@ colors {
 
 global {
    scalar dotRadius = 2.0
-   string labelSize = "12px"
    scalar lineWidth = 1.5
    scalar dotStroke = 1.0
    scalar padding = 1.0 -- amount of padding to prevent overlap
    scalar vectorLength = 25.0
    scalar minLength = .5 * canvas.width
+
+   string labelStyle = "italic"
+   string labelFamily = "Linux Libertine"
+   color labelColor = #000
+   string labelSize = "10px"
 }
 
 -- Basic sets ------------------------------------------------------------------
@@ -35,9 +39,12 @@ forall Point p {
 
 forall Point p
 where p has label {
-   p.labelText = Equation {
+   p.labelText = Text {
       string: p.label
       fontSize: global.labelSize
+      fontStyle: global.labelStyle
+      fontFamily: global.labelFamily
+      fillColor: global.labelColor
    }
 
    encourage near( p.icon, p.labelText )
@@ -92,8 +99,12 @@ where s := LineSegment(p,q) {
 
 forall Segment s
 where s has label {
-   s.labelText = Equation {
+   s.labelText = Text {
       string: s.label
+      fontSize: global.labelSize
+      fontStyle: global.labelStyle
+      fontFamily: global.labelFamily
+      fillColor: global.labelColor
    }
    vec2 m = (s.x0 + s.x1)/2.
    scalar d = norm( m - s.labelText.center )

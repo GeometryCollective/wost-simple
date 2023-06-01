@@ -22,10 +22,10 @@ Point x4 := sampleBoundary( St3 )
 -- Label x3 "…"
 -- Label x4 "xₖ"
 
-Label U "$\Omega$"
-Label x0 "$x_0$"
-Label x1 "$x_1$"
-Label x2 "$x_2$"
-Label x3 "$\ldots$"
-Label x4 "$x_k$"
+Label U "\contour{white}{$\Omega$}"
+Label x0 "\contour{white}{$x_0$}"
+Label x1 "\contour{white}{$x_1$}"
+Label x2 "\contour{white}{$x_2$}"
+Label x3 "\contour{white}{$\ldots$}"
+Label x4 "\contour{white}{$x_k$}"
 

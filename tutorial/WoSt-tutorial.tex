@@ -4,10 +4,14 @@
 \usepackage[libertine]{newtxmath}
 %\renewcommand{\ttdefault}{txtt}
 \usepackage{DejaVuSansMono}
-\usepackage[fontsize=9pt]{scrextend} % match document font size to label font used int Style program
+\usepackage[fontsize=10pt]{scrextend} % match document font size to label font used int Style program
 \usepackage[inkscapearea=page]{svg} % import SVGs with same document size as specified in SVG
 \usepackage[outline]{contour}
 \contourlength{.1em}
+
+\usepackage[format=plain,
+            labelfont={bf},
+            textfont=it]{caption}
 
 \usepackage{natbib}
 \usepackage{xcolor}
@@ -43,7 +47,8 @@
 
 \newcommand{\St}{\text{St}}
 
-\renewcommand{\vec}[1]{\textbf{#1}}
+% \renewcommand{\vec}[1]{\textbf{#1}}
+\renewcommand{\vec}[1]{#1}
 
 
 \title{Walk on Stars --- Implementation Guide}
@@ -54,9 +59,15 @@
 \maketitle
 
 \begin{figure}[h!]
-   \todo{Figure showing a polygonal domain $\Omega$, with the two boundary components drawn in different styles}
-   \caption{The domain for our problem.\label{fig:ProblemDomain}}
+   \centering
+   \includesvg{images/WalkOnStars.svg}
+   \caption{A path taken by the walk on stars algorithm.\label{fig:WalkOnStars}}
 \end{figure}
+
+% \begin{figure}[h!]
+%    \todo{Figure showing a polygonal domain $\Omega$, with the two boundary components drawn in different styles}
+%    \caption{The domain for our problem.\label{fig:ProblemDomain}}
+% \end{figure}
 
 This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work (as detailed in the paper), the final algorithm itself is quite easy to implement---a full implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.
 
@@ -147,7 +158,9 @@ We'll break each query down into an ``atomic'' query for a single line segment, 
 A \emph{closest point query} seeks the point closest to the geometry relative to a given query point \(\vec{x}\).  Although closest point queries sometimes come up in the context of signed distance fields, we won't need to worry about sign or orientation here: we simply want to find the closest point, full stop.
 
 \begin{figure}[h!]
-   \todo{A line segment and the closest points for a bunch of example query points.}
+   \centering
+   \includesvg{images/AtomicClosestPoint.svg}
+   % \todo{A line segment and the closest points for a bunch of example query points.}
    \caption{Given a query point \(\vec{x}\), the closest point on a line segment between \(\vec{a}\) and \(\vec{b}\) can be at either an interior point or one of the endpoints.\label{fig:ClosestPointExamples}}
 \end{figure}
 
@@ -187,8 +200,11 @@ Note that if all evaluation points \(x_0\) are inside the domain, an easy accele
 \label{sec:ClosestRayIntersection}
 
 \begin{figure}[h!]
-   \todo{Diagram showing a hit and a miss for a ray-segment intersection, with the times $s$ and $t$ annotated.}
+   \centering
+   \includesvg{images/AtomicClosestRay.svg}
+   %\todo{Diagram showing a hit and a miss for a ray-segment intersection, with the times $s$ and $t$ annotated.}
    \label{fig:RayIntersectionExample}
+   \caption{\emph{Left:} a ray-segment intersection computes the time \(t\) at which the ray intersects the segment, and the parameter \(s\) describing the location of the hit point along the line containing the segment. \emph{Right:} to sample the boundary of a star-shaped region, WoSt computes the first hit along the ray direction, which may be on a segment or on the boundary of a ball.}
 \end{figure}
 
 Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest ray intersection query} seeks the ``time'' \(t\) at which the ray \(\vec{x} + t\vec{v}\) first hits a given set.  In our case the set we want to consider is the boundary of the star-shaped domain \(\St(\vec{x},r)\).  Equivalently, we want to find the first \(t\) such that the ray hits either (i) the sphere \(S_r(\vec{x})\) of radius \(r\) around \(\vec{x}\), or (ii) the Neumann boundary \(\partial\Omega_N\) of the domain.  Our atomic query is still just an ordinary ray-segment intersection; logic in the global query then takes care of the ball radius.

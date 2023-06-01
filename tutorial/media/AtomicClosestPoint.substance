@@ -1,8 +1,8 @@
 -- Draw a bunch of examples of point-segment closest point queries
 Point a, b, x1, x2, x3, x4
-Label a $a$
-Label b $b$
-Label x1 $x$
+Label a "$\vec{a}$"
+Label b "$\vec{b}$"
+Label x1 "$\vec{x}$"
 
 Segment ab := LineSegment(a,b)
 
