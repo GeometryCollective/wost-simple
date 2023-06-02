@@ -8,6 +8,7 @@ all:
 
 im:
 	roger trio media/WalkOnStars.trio.json -o images/WalkOnStars.svg
+	roger trio media/ClosestPoint.trio.json -o images/ClosestPoint.svg
 	roger trio media/AtomicClosestPoint.trio.json -o images/AtomicClosestPoint.svg
 	roger trio media/AtomicClosestRay.trio.json -o images/AtomicClosestRay.svg
 

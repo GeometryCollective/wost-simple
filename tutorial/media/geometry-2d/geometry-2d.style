@@ -1,8 +1,17 @@
 layout = [ shapeStage, labelStage ]
 
 canvas {
-   width = 150
+   width = 230
    height = 150
+
+   -- shape canvasBounds = Rectangle {
+   --    center: (0,0)
+   --    width: canvas.width
+   --    height: canvas.height
+   --    fillColor: none()
+   --    strokeColor: #999
+   --    strokeWidth: 2
+   -- }
 }
 
 --------------------------------------------------
@@ -269,7 +278,7 @@ forall Polyline M {
    scalar theta1 = theta0 + random(.5,1)*MathPI()/3
    scalar theta2 = theta1 + random(.5,1)*MathPI()/3
    scalar theta3 = theta2 - random(.5,1)*MathPI()/3
-   scalar L = canvas.width/5
+   scalar L = canvas.width/4
    vec2 M.p1 = M.p0 + L*(cos(theta0),sin(theta0))
    vec2 M.p2 = M.p1 + L*(cos(theta1),sin(theta1))
    vec2 M.p3 = M.p2 + L*(cos(theta2),sin(theta2))
