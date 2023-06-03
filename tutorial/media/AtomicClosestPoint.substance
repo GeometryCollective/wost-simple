@@ -8,8 +8,8 @@ Segment s := ClosestSegment(ab,x)
 
 Length l := LengthBetween(a,y)
 
-Label a "a"
-Label b "b"
-Label x "x"
-Label y "y"
-Label l "t"
+Label a $a$
+Label b $b$
+Label x $x$
+Label y $y$
+Label l $t$

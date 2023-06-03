@@ -66,11 +66,11 @@ forall Point p {
 
 forall Point p
 where p has label {
-   p.labelText = Text {
+   p.labelText = Equation {
       string: p.label
       fontSize: global.labelSize
-      fontStyle: global.labelStyle
-      fontFamily: global.labelFamily
+      --fontStyle: global.labelStyle
+      --fontFamily: global.labelFamily
       fillColor: global.labelColor
    }
    layer p.labelText above p.icon
@@ -144,11 +144,11 @@ where s := LineSegment(p,q) {
 
 forall Segment s
 where s has label {
-   s.labelText = Text {
+   s.labelText = Equation {
       string: s.label
       fontSize: global.labelSize
-      fontStyle: global.labelStyle
-      fontFamily: global.labelFamily
+      --fontStyle: global.labelStyle
+      --fontFamily: global.labelFamily
       fillColor: global.labelColor
       ensureOnCanvas: false
    }
@@ -238,12 +238,12 @@ where l has label {
    vec2 m = (l.x + l.y)/2.
    vec2 c = m + l.h*l.n/1.5
 
-   l.labelText = Text {
+   l.labelText = Equation {
       center: c
       string: l.label
       fontSize: global.labelSize
-      fontStyle: global.labelStyle
-      fontFamily: global.labelFamily
+      -- fontStyle: global.labelStyle
+      -- fontFamily: global.labelFamily
       fillColor: l.icon.strokeColor
       ensureOnCanvas: false
    }
@@ -476,16 +476,16 @@ where p has label {
 
 -- AtomicClosestPoint.style ----------------------
 
--- forall Segment `ab` {
---    ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
--- }
--- forall Segment `s` {
---    ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
--- }
--- forall Length `l` {
---    ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
---    ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
--- }
+forall Segment `ab` {
+   ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
+}
+forall Segment `s` {
+   ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
+}
+forall Length `l` {
+   ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
+   ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
+}
 
 -- ClosestPoint.style ----------------------------
 

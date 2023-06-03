@@ -7,10 +7,10 @@ all:
 	open $(FILE).pdf
 
 im:
-	roger trio media/WalkOnStars.trio.json -o images/WalkOnStars.svg
-	roger trio media/ClosestPoint.trio.json -o images/ClosestPoint.svg
-	roger trio media/AtomicClosestPoint.trio.json -o images/AtomicClosestPoint.svg
-	roger trio media/AtomicClosestRay.trio.json -o images/AtomicClosestRay.svg
+	roger trio media/WalkOnStars.trio.json --tex-labels -o images/WalkOnStars.svg
+	roger trio media/ClosestPoint.trio.json --tex-labels -o images/ClosestPoint.svg
+	roger trio media/AtomicClosestPoint.trio.json --tex-labels -o images/AtomicClosestPoint.svg
+	roger trio media/AtomicClosestRay.trio.json --tex-labels -o images/AtomicClosestRay.svg
 
 clean:
 	rm -f $(FILE).pdf
