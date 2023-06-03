@@ -46,7 +46,7 @@ where D has label {
 
    scalar x = ? in labelStage
    scalar y = ? in labelStage
-   shape D.labelText = Text {
+   shape D.labelText = Equation {
       string: D.label
       center: (x,y)
       fontSize: Global.labelSize
@@ -231,16 +231,16 @@ where B := ballAround(p); isOffCenter(B) {
 -- If a point has a label, draw a label string near the dot.
 forall Point p
 where p has label {
-   shape p.labelText = Text {
+   shape p.labelText = Equation {
       string: p.label
       fontSize: Global.labelSize
       fontFamily: Global.labelFont
       fontStyle: "italic"
       fillColor: Global.labelColor
-      strokeColor: Global.labelStrokeColor
-      strokeWidth: Global.labelStrokeWidth
-      strokeLinejoin: "round"
-      paintOrder: "stroke"
+      --strokeColor: Global.labelStrokeColor
+      --strokeWidth: Global.labelStrokeWidth
+      --strokeLinejoin: "round"
+      --paintOrder: "stroke"
       ensureOnCanvas: false
    }
 
@@ -525,6 +525,16 @@ where St := starAround(p) {
    layer St.ball above D.geometry
 
    -- TODO clip balls against domain
+
+   shape domainGeometry = Polygon {
+      points: D.geometry.points
+      fillColor: none()
+      ensureOnCanvas: false
+   }
+   shape G = Group {
+      shapes: [St.ball]
+      clipPath: clip(domainGeometry)
+   }
 }
 
 forall Point p; Star St {
