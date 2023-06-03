@@ -1,0 +1,10 @@
+forall Segment `ab` {
+   ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
+}
+forall Segment `s` {
+   ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
+}
+forall Length `l` {
+   ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
+   ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
+}

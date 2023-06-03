@@ -186,14 +186,14 @@ forall Length l {
    vec2 l.n = rot90( l.t ) -- normal
 
    -- offset length marker by +/- offset size
-   -- scalar offsetSize = 8.0
-   -- scalar h = ? in shapeStage
-   -- ensure h*h == sqr(offsetSize) in shapeStage
-   scalar h = 8
+   scalar offsetSize = 8.0
+   scalar l.h = ? in shapeStage
+   ensure l.h*l.h == sqr(offsetSize) in shapeStage
+   -- scalar l.h = 8
 
    -- endpoints of length marker
-   scalar l.x = l.a - l.shortening*l.t + h*l.n
-   scalar l.y = l.b + l.shortening*l.t + h*l.n
+   scalar l.x = l.a - l.shortening*l.t + l.h*l.n
+   scalar l.y = l.b + l.shortening*l.t + l.h*l.n
 
    l.icon = Line {
       start: l.x
@@ -233,7 +233,13 @@ where l := LengthOf(s) {
 
 forall Length l
 where l has label {
+
+   -- offset label in same direction as length marker
+   vec2 m = (l.x + l.y)/2.
+   vec2 c = m + l.h*l.n/1.5
+
    l.labelText = Text {
+      center: c
       string: l.label
       fontSize: global.labelSize
       fontStyle: global.labelStyle
@@ -242,10 +248,6 @@ where l has label {
       ensureOnCanvas: false
    }
    layer l.labelText above l.icon
-
-   vec2 m = (l.x + l.y)/2.
-   scalar d = norm( m - l.labelText.center )
-   encourage d == global.labelDistance in labelStage
 }
 
 --------------------------------------------------
@@ -442,7 +444,11 @@ where t := ClosestSegment( s, p ) {
 
 forall Set X
 where X has label {
-   ensure disjoint( X.icon, X.labelText, global.padding ) in labelStage
+   constraint X.labelDisjoint = ensure disjoint( X.icon, X.labelText, global.padding ) in labelStage
+}
+
+forall Length l {
+   delete l.labelDisjoint
 }
 
 forall Set X; Set Y
@@ -468,8 +474,8 @@ where p has label {
    layer p.labelText above X.icon
 }
 
--- AtomicClosestPoint.substance ------------------
--- 
+-- AtomicClosestPoint.style ----------------------
+
 -- forall Segment `ab` {
 --    ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
 -- }
@@ -481,7 +487,7 @@ where p has label {
 --    ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
 -- }
 
--- ClosestPoint.substance ------------------
+-- ClosestPoint.style ----------------------------
 
 -- forall Point xi; Point xj; Point yi; Point yj; Polyline M
 -- where yi := ClosestPoint(M,xi); yj := ClosestPoint(M,xj) {
