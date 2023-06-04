@@ -14,6 +14,7 @@ constructor LineSegment( Point p, Point q ) -> Segment
 constructor ClosestPoint( Set s, Point p ) -> Point
 constructor ClosestSegment( Set s, Point p ) -> Segment
 constructor RayFrom( Point p, Vector v ) -> Ray
+constructor RayIntersection( Ray r, Set s ) -> Point
 constructor RaySegmentIntersection( Ray r, Segment s ) -> Point
 constructor Tri( Point p1, Point p2, Point p3 ) -> Triangle
 constructor LengthBetween( Point x, Point y ) -> Length

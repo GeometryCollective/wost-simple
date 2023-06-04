@@ -3,16 +3,15 @@
 -- and Neumann boundary conditions, via WoSt.
 
 Domain U
-hasMixedBoundaryConditions( U )
 
 Point x0
-Star St0 := starAround( x0 )
+Ball St0 := ballAround( x0 )
 Point x1 := sampleBoundary( St0 )
-Star St1 := starAround( x1 )
+Ball St1 := ballAround( x1 )
 Point x2 := sampleBoundary( St1 )
-Star St2 := starAround( x2 )
+Ball St2 := ballAround( x2 )
 Point x3 := sampleBoundary( St2 )
-Star St3 := starAround( x3 )
+Ball St3 := ballAround( x3 )
 Point x4 := sampleBoundary( St3 )
 
 Label U $\Omega$

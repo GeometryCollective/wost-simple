@@ -1,0 +1,17 @@
+forall Point p {
+   override p.x0 = -canvas.width/2 + 10
+}
+
+forall Point p; Polyline M {
+
+   scalar y0 = min( M.p0[1], min( M.p1[1], min( M.p2[1], min( M.p3[1], M.p4[1] ))))
+   scalar y1 = max( M.p0[1], max( M.p1[1], max( M.p2[1], max( M.p3[1], M.p4[1] ))))
+
+   scalar t = random(0,1)
+   override p.x1 = (1-t)*y0 + t*y1
+}
+
+forall Vector v {
+   override v.v0 = 1000
+}
+

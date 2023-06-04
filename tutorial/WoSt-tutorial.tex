@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=.75in]{geometry}
 \usepackage{libertine}
 \usepackage[libertine]{newtxmath}
 %\renewcommand{\ttdefault}{txtt}
@@ -8,6 +8,8 @@
 \usepackage[inkscapearea=page]{svg} % import SVGs with same document size as specified in SVG
 \usepackage[outline]{contour}
 \contourlength{.1em}
+\usepackage{mdframed}
+\usepackage{xcolor}
 
 \usepackage[format=plain,
             labelfont={bf},
@@ -51,8 +53,9 @@
 \renewcommand{\vec}[1]{#1}
 
 
-\title{Walk on Stars --- Implementation Guide}
-\author{posted by Keenan}
+\title{\textsc{Walk on Stars} \\ \Large{(Implementation Guide)}}
+\author{Rohan Sawhney, Bailey Miller, Ioannis Gkioulekas, Keenan Crane}
+\date{}
 
 \begin{document}
 
@@ -60,8 +63,9 @@
 
 \begin{figure}[h!]
    \centering
+   \includesvg{images/WalkOnSpheres.svg}
    \includesvg{images/WalkOnStars.svg}
-   \caption{A path taken by the walk on stars algorithm.\label{fig:WalkOnStars}}
+   \caption{Walks taken by the WoS algorithm \emph{(left)} and the WoSt algorithm \emph{(right)}.  The algorithms are virtually identical, except that WoSt replaces spheres with star-shaped regions.\label{fig:WalkOnStars}}
 \end{figure}
 
 % \begin{figure}[h!]
@@ -69,9 +73,19 @@
 %    \caption{The domain for our problem.\label{fig:ProblemDomain}}
 % \end{figure}
 
-This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work (as detailed in the paper), the final algorithm itself is quite easy to implement---a full implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.
+This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work, the final algorithm is about as simple as the original \emph{walk on spheres (WoS)} method of \citet{muller1956some}.  For a Laplace equation with Dirichlet boundary conditions, WoS basically says:
 
-To put focus on the ``core'' ideas of the WoSt algorithm, this tutorial describes a bare-bones 2D version of WoSt that solves the Laplace equation
+\begin{mdframed}[backgroundcolor=black!10,rightline=false,leftline=false]
+   \textsc{(Walk on Spheres)} \emph{Repeatedly jump to a random point on a \textbf{sphere} around the current point until you reach the boundary.  The average boundary value over many such walks yields the solution.}
+\end{mdframed}
+
+For a Laplace equation with Dirichlet and zero-Neumann boundary conditions, WoSt is nearly identical:
+
+\begin{mdframed}[backgroundcolor=black!10,rightline=false,leftline=false]
+   \textsc{(Walk on Stars)} \emph{Repeatedly jump to a random point on a \textbf{star-shaped region} around the current point until you reach the \textbf{Dirichlet} boundary.  The average boundary value over many such walks yields the solution.}
+\end{mdframed}
+
+A complete implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.  To emphasize the ``core'' ideas of the WoSt algorithm, the code (and this tutorial) focuses on a bare-bones 2D version of WoSt that solves the Laplace equation
 \[
    \begin{array}{rcll}
       \Delta u &=& 0 & \text{on}\ \Omega, \\
@@ -202,6 +216,7 @@ Note that if all evaluation points \(x_0\) are inside the domain, an easy accele
 \begin{figure}[h!]
    \centering
    \includesvg{images/AtomicClosestRay.svg}
+   \includesvg{images/FirstRay.svg}
    %\todo{Diagram showing a hit and a miss for a ray-segment intersection, with the times $s$ and $t$ annotated.}
    \label{fig:RayIntersectionExample}
    \caption{\emph{Left:} a ray-segment intersection computes the time \(t\) at which the ray intersects the segment, and the parameter \(s\) describing the location of the hit point along the line containing the segment. \emph{Right:} to sample the boundary of a star-shaped region, WoSt computes the first hit along the ray direction, which may be on a segment or on the boundary of a ball.}
@@ -252,6 +267,8 @@ Recall that the routine \code{intersectPolylines} will also update the flag \cod
 \inputminted[fontsize=\small,linenos,firstline=150,lastline=157,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 After all walks are finished we return the average boundary value, which gives our solution estimate.  Again, if you're curious about \emph{why} this algorithm works, you'll have to take a look at the paper!
+
+\section*{Acknowledgements} All diagrams in this document were made using \textsc{Penrose}~\citep{Ye:2020:PFM}.  Special thanks to Wode Ni, Sam Estep, Yiliang Liang, and the rest of the Penrose team for development support during production of this document.
 
 \bibliographystyle{plainnat}
 \bibliography{WoSt-tutorial}

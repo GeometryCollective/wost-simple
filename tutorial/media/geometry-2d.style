@@ -39,7 +39,7 @@ global {
    string labelStyle = "italic"
    string labelFamily = "Linux Libertine"
    color labelColor = #000
-   string labelSize = "10px"
+   string labelSize = "13.3333px" -- equivalent to 10pt (multiply by 96/72)
    scalar labelDistance = 8.0
 
    -- layout parameters
@@ -53,9 +53,9 @@ global {
 forall Point p {
 
    -- location
-   scalar x0 = ? in shapeStage
-   scalar x1 = ? in shapeStage
-   p.x = (x0,x1)
+   scalar p.x0 = ? in shapeStage
+   scalar p.x1 = ? in shapeStage
+   p.x = (p.x0,p.x1)
 
    shape p.icon = Circle {
       fillColor: global.dotColor
@@ -85,14 +85,14 @@ where p has label {
 forall Vector v {
 
    -- vector origin
-   scalar x0 = ? in shapeStage
-   scalar x1 = ? in shapeStage
-   v.x = (x0,x1)
+   scalar v.x0 = ? in shapeStage
+   scalar v.x1 = ? in shapeStage
+   v.x = (v.x0,v.x1)
 
    -- vector direction
-   scalar v0 = ? in shapeStage
-   scalar v1 = ? in shapeStage
-   v.v = (v0,v1)
+   scalar v.v0 = ? in shapeStage
+   scalar v.v1 = ? in shapeStage
+   v.v = (v.v0,v.v1)
 
    shape v.icon = Line {
       start: v.x
@@ -277,9 +277,9 @@ forall Polyline M {
 
    vec2 M.p0 = (? in shapeStage, ? in shapeStage)
    scalar theta0 = random(0,1)*2.*MathPI()
-   scalar theta1 = theta0 + random(.5,1)*MathPI()/3
-   scalar theta2 = theta1 + random(.5,1)*MathPI()/3
-   scalar theta3 = theta2 - random(.5,1)*MathPI()/3
+   scalar theta1 = theta0 + random(.5,1)*MathPI()/2
+   scalar theta2 = theta1 + random(.5,1)*MathPI()/2
+   scalar theta3 = theta2 - random(.5,1)*MathPI()/2
    scalar L = canvas.width/4
    vec2 M.p1 = M.p0 + L*(cos(theta0),sin(theta0))
    vec2 M.p2 = M.p1 + L*(cos(theta1),sin(theta1))
@@ -376,6 +376,10 @@ forall Ray r {
 
 forall Ray r; Point p; Vector v
 where r := RayFrom(p,v) {
+
+   override v.x = p.x
+   override v.icon.ensureOnCanvas = false
+
    -- draw the ray as a line whose length
    -- is equal to the diameter of the canvas,
    -- so that it always goes "off screen" (but
@@ -383,9 +387,12 @@ where r := RayFrom(p,v) {
    -- for display, editing, etc.)
    vec2 d = (canvas.width,canvas.height)
    scalar L = norm(d)
-   vec2 u = unit(v.v)
-   r.icon.start = p.x
-   r.icon.end = p.x + L*u
+   vec2 r.x = p.x
+   vec2 r.v = unit(v.v)
+   r.icon.start = r.x
+   r.icon.end = r.x + L*r.v
+
+   layer r.icon below v.icon
 }
 
 --------------------------------------------------
@@ -414,6 +421,23 @@ where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b)
    override q.icon.strokeColor = colors.black
    override q.icon.strokeWidth = global.dotStroke
 }
+
+forall Point q; Ray r; Set s
+where q := RayIntersection(r,s) {
+
+   override q.x = rayIntersect( s.icon, r.x, r.v )
+
+   -- since the intersection point could be off the
+   -- canvas, we shouldn't try to enforce a constraint
+   -- keeping it on the canvas
+   override q.icon.ensureOnCanvas = false
+
+   -- draw the intersection point as a white dot
+   override q.icon.fillColor = colors.white
+   override q.icon.strokeColor = colors.black
+   override q.icon.strokeWidth = global.dotStroke
+}
+
 
 --------------------------------------------------
 -- Closest points --------------------------------
@@ -476,21 +500,40 @@ where p has label {
 
 -- AtomicClosestPoint.style ----------------------
 
-forall Segment `ab` {
-   ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
-}
-forall Segment `s` {
-   ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
-}
-forall Length `l` {
-   ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
-   ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
-}
+-- forall Segment `ab` {
+--    ensure norm( `ab`.a - `ab`.b ) == canvas.width in shapeStage
+-- }
+-- forall Segment `s` {
+--    ensure norm( `s`.a - `s`.b ) == canvas.width * .5 in shapeStage
+-- }
+-- forall Length `l` {
+--    ensure norm( `l`.a - `l`.b ) > canvas.width * .2 in shapeStage
+--    ensure norm( `l`.a - `l`.b ) < canvas.width * .8 in shapeStage
+-- }
 
 -- ClosestPoint.style ----------------------------
 
 -- forall Point xi; Point xj; Point yi; Point yj; Polyline M
 -- where yi := ClosestPoint(M,xi); yj := ClosestPoint(M,xj) {
 --    encourage 100/norm(xi.x-xj.x) == 0
+-- }
+
+-- FirstRay.style ----------------------------
+
+-- forall Point p {
+--    override p.x0 = -canvas.width/2 + 10
+-- }
+-- 
+-- forall Point p; Polyline M {
+-- 
+--    scalar y0 = min( M.p0[1], min( M.p1[1], min( M.p2[1], min( M.p3[1], M.p4[1] ))))
+--    scalar y1 = max( M.p0[1], max( M.p1[1], max( M.p2[1], max( M.p3[1], M.p4[1] ))))
+-- 
+--    scalar t = random(0,1)
+--    override p.x1 = (1-t)*y0 + t*y1
+-- }
+-- 
+-- forall Vector v {
+--    override v.v0 = 1000
 -- }
 

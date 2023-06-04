@@ -1,0 +1,17 @@
+-- Draw a bunch of examples of point-segment closest point queries
+Polyline M
+
+Point x1, x2, x3, x4, x5
+Vector v1, v2, v3, v4, v5
+
+Ray r1 := RayFrom(x1,v1)
+Ray r2 := RayFrom(x2,v2)
+Ray r3 := RayFrom(x3,v3)
+Ray r4 := RayFrom(x4,v4)
+Ray r5 := RayFrom(x5,v5)
+
+Point y1 := RayIntersection(r1,M)
+Point y2 := RayIntersection(r2,M)
+Point y3 := RayIntersection(r3,M)
+Point y4 := RayIntersection(r4,M)
+Point y5 := RayIntersection(r5,M)
