@@ -4,6 +4,7 @@
 
 Domain U
 hasMixedBoundaryConditions( U )
+hasLegend( U )
 
 Point x0
 Star St0 := starAround( x0 )

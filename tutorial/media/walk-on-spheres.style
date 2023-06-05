@@ -2,7 +2,7 @@ layout = [ walkStage, nestStage, labelStage ]
 
 -- diagram dimensions (in px)
 canvas {
-   width = 180
+   width = 250
    height = 150
 }
 
@@ -644,4 +644,37 @@ where D has label {
 }
 
 
+-- Legend ---------------------------------------
+
+forall Domain D
+where hasLegend(D) {
+   shape D.legendBox = Rectangle {
+      fillColor: #fff
+      strokeColor: #000
+      strokeWidth: 1
+   }
+}
+
+forall Domain D
+where hasLegend(D); hasMixedBoundaryConditions(D) {
+   shape D.dirichletLegend = Text {
+      string: "Dirichlet"
+      fontFamily: Global.labelFont
+      fontSize: Global.labelSize
+      fillColor: Global.labelColor
+      ensureOnCanvas: false
+   }
+
+   shape D.neumannLegend = Text {
+      string: "Neumann"
+      fontFamily: Global.labelFont
+      fontSize: Global.labelSize
+      fillColor: Global.labelColor
+      ensureOnCanvas: false
+   }
+
+
+   ensure contains( D.legendBox, D.dirichletLegend )
+   ensure contains( D.legendBox, D.neumannLegend )
+}
 
