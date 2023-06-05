@@ -82,7 +82,7 @@ forall Domain D {
       ensureOnCanvas: false
    }
 
-   -- ensure lessThan( signedDistance( D.geometry, D.labelText.center ), -9. ) in labelStage
+   ensure lessThan( signedDistance( D.geometry, D.labelText.center ), -9. ) in labelStage
 }
 
 -- label the domain if it was assigned a label in the Substance program
@@ -480,9 +480,10 @@ where hasMixedBoundaryConditions( D ) {
 forall Star St; Point p; Domain D
 where St := starAround(p) {
    scalar yDirichlet = closestPoint( D.dirichletBoundary, p.location )
-   scalar yNeumann = closestSilhouettePoint( D.neumannBoundary, p.location )
+   -- scalar yNeumann = closestSilhouettePoint( D.neumannBoundary, p.location )
    scalar dDirichlet = norm( yDirichlet - p.location )
-   scalar dNeumann = norm( yNeumann - p.location )
+   -- scalar dNeumann = norm( yNeumann - p.location )
+   scalar dNeumann = closestSilhouetteDistance( D.neumannBoundary, p.location )
    scalar rMin = 1
    scalar R = max( rMin, min( dDirichlet, dNeumann ))
 
