@@ -479,8 +479,8 @@ where hasMixedBoundaryConditions( D ) {
 
 forall Star St; Point p; Domain D
 where St := starAround(p) {
-   scalar yDirichlet = closestPoint( D.dirichletBoundary, p.location )
-   -- scalar yNeumann = closestSilhouettePoint( D.neumannBoundary, p.location )
+   vec2 yDirichlet = closestPoint( D.dirichletBoundary, p.location )
+   -- vec2 yNeumann = closestSilhouettePoint( D.neumannBoundary, p.location )
    scalar dDirichlet = norm( yDirichlet - p.location )
    -- scalar dNeumann = norm( yNeumann - p.location )
    scalar dNeumann = closestSilhouetteDistance( D.neumannBoundary, p.location )
@@ -508,7 +508,8 @@ where St := starAround(p) {
 
    -- color the boundary of the ball according to whether it's defined
    -- by the closest Dirichlet point or closest Neumann silhouette point
-   scalar t = (dDirichlet - R)/(dDirichlet - dNeumann)
+   scalar upsilon = 1e-7 -- to fudge the case where dDirichlet==dNeumann
+   scalar t = (dDirichlet - R)/(dDirichlet - dNeumann + upsilon)
    -- vec3 c0 = (.4,.6,.4)
    -- vec3 c1 = (.4,.4,.7)
    vec3 f0 = (154,160,204)/255.
@@ -616,7 +617,7 @@ where p has label; q has label {
    vec2 qx = q.location
    vec2 pc = p.labelText.center
    vec2 qc = q.labelText.center
-   encourage 1000./norm(pc - qc) == 0. in labelStage
+   encourage 10000./norm(pc - qc) == 0. in labelStage
 }
 
 forall Point p; Point q
@@ -635,4 +636,12 @@ forall Point p; Domain D
 where p has label; hasMixedBoundaryConditions(D) {
    layer p.labelText above D.dirichletBoundary
 }
+
+-- Make sure domain label doesn't overlap stars
+forall Star St; Domain D
+where D has label {
+   ensure disjoint( D.labelText, St.ball ) in labelStage
+}
+
+
 
