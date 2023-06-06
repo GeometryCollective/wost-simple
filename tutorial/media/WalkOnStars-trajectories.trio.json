@@ -1,0 +1,6 @@
+{
+  "substance": "./WalkOnStars-trajectories.substance",
+  "style": ["./walk-on-spheres.style", "./no-subdomains.style"],
+  "domain": "./walk-on-spheres.domain",
+  "variation": "EquilibriumViper6657"
+}

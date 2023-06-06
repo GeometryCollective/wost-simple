@@ -1,0 +1,7 @@
+-- Offset the domain so that it's not covered up
+-- too much by the legend
+forall Domain D
+where hasLegend(D)
+{
+   override D.offset = (-50,0)
+}

@@ -61,13 +61,11 @@
 
 \maketitle
 
-\the\textwidth
-
 \begin{figure}[h!]
    \centering
    \includesvg{images/WalkOnSpheres.svg}
    \includesvg{images/WalkOnStars.svg}
-   \caption{Walks taken by the WoS algorithm \emph{(left)} and the WoSt algorithm \emph{(right)}.  The algorithms are virtually identical, except that WoSt replaces spheres with star-shaped regions.\label{fig:WalkOnStars}}
+   \caption{Walks taken by the WoS algorithm \emph{(left)} and the WoSt algorithm \emph{(right)}.  The algorithms are virtually identical, except that WoSt replaces spheres with star-shaped regions, enabling walks to reflect off Neumann boundaries.\label{fig:WalkOnStars}}
 \end{figure}
 
 % \begin{figure}[h!]
@@ -75,7 +73,7 @@
 %    \caption{The domain for our problem.\label{fig:ProblemDomain}}
 % \end{figure}
 
-This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work, the final algorithm is about as simple as the original \emph{walk on spheres (WoS)} method of \citet{muller1956some}.  For a Laplace equation with Dirichlet boundary conditions, WoS basically says:
+This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work, the final algorithm is about as simple as the original \emph{walk on spheres (WoS)} method of \citet{muller1956some}.  For a Laplace equation with Dirichlet boundary conditions, WoS essentially says:
 
 \begin{mdframed}[backgroundcolor=black!10,rightline=false,leftline=false]
    \textsc{(Walk on Spheres)} \emph{Repeatedly jump to a random point on a \textbf{sphere} around the current point until you reach the boundary.  The average boundary value over many such walks yields the solution.}
@@ -121,6 +119,8 @@ A good place to start understanding WoSt is the simpler \emph{walk on spheres (W
 \end{itemize}
 
 \begin{figure}[h!]
+   \centering
+   \includesvg{images/WalkOnStars-trajectories.svg}
    \todo{A diagram showing a single walk with all the spheres on the left, another diagram in the center just showing the trajectories for a few walks, and a pseudocolor plot of the PDE solution (and boundary conditions) on the right.}
    \caption{\emph{Left:} an example walk taken by the WoS algorithm. \emph{Center:} the paths taken by a collection of walks. \emph{Right:} The final solution estimated by WoS.\label{fig:WoSExample}}
 \end{figure}

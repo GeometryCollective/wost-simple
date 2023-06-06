@@ -5,14 +5,14 @@
 Domain U
 
 Point x0
-Ball St0 := ballAround( x0 )
-Point x1 := sampleBoundary( St0 )
-Ball St1 := ballAround( x1 )
-Point x2 := sampleBoundary( St1 )
-Ball St2 := ballAround( x2 )
-Point x3 := sampleBoundary( St2 )
-Ball St3 := ballAround( x3 )
-Point x4 := sampleBoundary( St3 )
+Ball B0 := ballAround( x0 )
+Point x1 := sampleBoundary( B0 )
+Ball B1 := ballAround( x1 )
+Point x2 := sampleBoundary( B1 )
+Ball B2 := ballAround( x2 )
+Point x3 := sampleBoundary( B2 )
+Ball B3 := ballAround( x3 )
+Point x4 := sampleBoundary( B3 )
 
 Label U $\Omega$
 Label x0 $x_0$

@@ -4,6 +4,7 @@ predicate hasLegend( Domain D )
 
 type Point
 predicate isSourceSample( Point p )
+constructor closestBoundaryPoint( Domain D, Point p ) -> Point q
 
 type Subdomain
 type Ball <: Subdomain
@@ -13,7 +14,6 @@ constructor sampleInterior( Subdomain S ) -> Point p
 
 constructor ballAround( Point p ) -> Ball
 constructor starAround( Point p ) -> Star
--- TODO can we replace both with subdomainAround( Point p ) -> Subdomain ?
 predicate isOffCenter( Ball B ) -- is not centered around p
 
 type NestedPoint

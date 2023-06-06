@@ -1,0 +1,82 @@
+-- Several walks used to estimate the solution to
+-- a Laplace equation Δu = 0 with both Dirichlet
+-- and Neumann boundary conditions, via WoSt.
+
+Domain U
+hasMixedBoundaryConditions( U )
+
+Point x0
+
+Star St00 := starAround( x0 )
+Point x01 := sampleBoundary( St00 )
+Star St01 := starAround( x01 )
+Point x02 := sampleBoundary( St01 )
+Star St02 := starAround( x02 )
+Point x03 := sampleBoundary( St02 )
+Star St03 := starAround( x03 )
+Point x04 := sampleBoundary( St03 )
+Star St04 := starAround( x04 )
+Point x05 := sampleBoundary( St04 )
+Star St05 := starAround( x05 )
+Point x06 := sampleBoundary( St05 )
+Point x07 := closestBoundaryPoint( U, x06 )
+
+Star St10 := starAround( x0 )
+Point x11 := sampleBoundary( St10 )
+Star St11 := starAround( x11 )
+Point x12 := sampleBoundary( St11 )
+Star St12 := starAround( x12 )
+Point x13 := sampleBoundary( St12 )
+Star St13 := starAround( x13 )
+Point x14 := sampleBoundary( St13 )
+Star St14 := starAround( x14 )
+Point x15 := sampleBoundary( St14 )
+Star St15 := starAround( x15 )
+Point x16 := sampleBoundary( St15 )
+Point x17 := closestBoundaryPoint( U, x16 )
+
+Star St20 := starAround( x0 )
+Point x21 := sampleBoundary( St20 )
+Star St21 := starAround( x21 )
+Point x22 := sampleBoundary( St21 )
+Star St22 := starAround( x22 )
+Point x23 := sampleBoundary( St22 )
+Star St23 := starAround( x23 )
+Point x24 := sampleBoundary( St23 )
+Star St24 := starAround( x24 )
+Point x25 := sampleBoundary( St24 )
+Star St25 := starAround( x25 )
+Point x26 := sampleBoundary( St25 )
+Point x27 := closestBoundaryPoint( U, x26 )
+
+Star St30 := starAround( x0 )
+Point x31 := sampleBoundary( St30 )
+Star St31 := starAround( x31 )
+Point x32 := sampleBoundary( St31 )
+Star St32 := starAround( x32 )
+Point x33 := sampleBoundary( St32 )
+Star St33 := starAround( x33 )
+Point x34 := sampleBoundary( St33 )
+Star St34 := starAround( x34 )
+Point x35 := sampleBoundary( St34 )
+Star St35 := starAround( x35 )
+Point x36 := sampleBoundary( St35 )
+Point x37 := closestBoundaryPoint( U, x36 )
+
+Star St40 := starAround( x0 )
+Point x41 := sampleBoundary( St40 )
+Star St41 := starAround( x41 )
+Point x42 := sampleBoundary( St41 )
+Star St42 := starAround( x42 )
+Point x43 := sampleBoundary( St42 )
+Star St43 := starAround( x43 )
+Point x44 := sampleBoundary( St43 )
+Star St44 := starAround( x44 )
+Point x45 := sampleBoundary( St44 )
+Star St45 := starAround( x45 )
+Point x46 := sampleBoundary( St45 )
+Point x47 := closestBoundaryPoint( U, x46 )
+
+Label U $\Omega$
+Label x0 $x_0$
+

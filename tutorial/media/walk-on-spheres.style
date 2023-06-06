@@ -28,11 +28,15 @@ Global {
    scalar dotSize = 1.5
 
    -- style of domains/subdomains
+   color domainColor = Colors.lightGray
    color ballColor = rgba(154/255.,160/255.,204/255.,1)
    color sphereColor = rgba(27/255.,31/255.,138/255.,1)
    scalar subdomainOpacity = .35
    scalar sphereStrokeWidth = .5
-   scalar domainStrokeWidth = 0.65
+   scalar domainStrokeWidth = 1
+   scalar dirichletStrokeWidth = domainStrokeWidth
+   scalar neumannStrokeWidth = .65*domainStrokeWidth
+   string neumannDash = "2,2"
 
    -- style of lines along a walk
    -- (set color to none() to disable)
@@ -79,13 +83,11 @@ forall Domain D {
    vec2 D.p7 = ((0.0,0.6)-(.5,.5)) * D.scale + D.offset
    shape D.geometry = Polygon {
       points: ( D.p0, D.p1, D.p2, D.p3, D.p4, D.p5, D.p6, D.p7 )
-      fillColor: Colors.lightGray
+      fillColor: Global.domainColor
       strokeColor: Colors.black
       strokeWidth: Global.domainStrokeWidth
       ensureOnCanvas: false
    }
-
-   ensure lessThan( signedDistance( D.geometry, D.labelText.center ), -9. ) in labelStage
 }
 
 -- label the domain if it was assigned a label in the Substance program
@@ -103,6 +105,7 @@ where D has label {
       ensureOnCanvas: false
    }
 
+   ensure lessThan( signedDistance( D.geometry, D.labelText.center ), -9. ) in labelStage
    layer D.labelText above D.geometry -- make sure the label doesn't get covered by the domain shape
 }
 
@@ -113,30 +116,32 @@ where hasMixedBoundaryConditions( D ) {
    shape D.poly0 = Polyline {
       points: ( D.p0, D.p1, D.p2 )
       strokeColor: Colors.black
-      strokeWidth: Global.domainStrokeWidth
+      strokeWidth: Global.dirichletStrokeWidth
+      strokeLinecap: "round"
       ensureOnCanvas: false
    }
    shape D.poly1 = Polyline {
       points: ( D.p2, D.p3, D.p4 )
       strokeColor: Colors.black
-      strokeWidth: Global.domainStrokeWidth
+      strokeWidth: Global.neumannStrokeWidth
       ensureOnCanvas: false
       style: "dashed"
-      strokeDasharray: "2,2"
+      strokeDasharray: Global.neumannDash
    }
    shape D.poly2 = Polyline {
       points: ( D.p4, D.p5, D.p6 )
       strokeColor: Colors.black
-      strokeWidth: Global.domainStrokeWidth
+      strokeWidth: Global.dirichletStrokeWidth
+      strokeLinecap: "round"
       ensureOnCanvas: false
    }
    shape D.poly3 = Polyline {
       points: ( D.p6, D.p7, D.p0 )
       strokeColor: Colors.black
-      strokeWidth: Global.domainStrokeWidth
+      strokeWidth: Global.neumannStrokeWidth
       ensureOnCanvas: false
       style: "dashed"
-      strokeDasharray: "2,2"
+      strokeDasharray: Global.neumannDash
    }
 
    shape D.dirichletBoundary = Group {
@@ -217,10 +222,10 @@ forall Ball B; Domain D {
 }
 
 -- Make sure the domain's label isn't covered up by a ball.
-forall Ball B; Domain U
-where U has label {
+forall Ball B; Domain D
+where D has label {
    scalar padding = 10.
-   ensure disjoint( U.labelText, B.ball, padding ) in labelStage
+   ensure disjoint( D.labelText, B.ball, padding ) in labelStage
 }
 
 -- If a ball is constructed around a point, center it around that point
@@ -336,15 +341,15 @@ where x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 )
    layer x0.walkLine below B1.ball
 }
 
--- If points have labels, make sure they don't overlap the walk line
-forall Point x0; Point x1; Ball B0; Ball B1
-where x0 has label; x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
-   ensure disjoint ( x0.walkLine, x0.labelText, 3. ) in labelStage
-}
-forall Point x0; Point x1; Ball B0; Ball B1
-where x1 has label; x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
-   ensure disjoint ( x0.walkLine, x1.labelText, 3. ) in labelStage
-}
+-- -- If points have labels, make sure they don't overlap the walk line
+-- forall Point x0; Point x1; Ball B0; Ball B1
+-- where x0 has label; x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
+--    ensure disjoint ( x0.walkLine, x0.labelText, 3. ) in labelStage
+-- }
+-- forall Point x0; Point x1; Ball B0; Ball B1
+-- where x1 has label; x1 := sampleBoundary( B0 ); B0 := ballAround( x0 ); B1 := ballAround( x1 ) {
+--    ensure disjoint ( x0.walkLine, x1.labelText, 3. ) in labelStage
+-- }
 
 -- Draw sample points that are used to estimate the source term
 -- as just dots contained in the ball of interest.  These sample
@@ -455,7 +460,7 @@ where B := nestedBallAround(p); B0 := ballAround(p0)
 forall Domain D; Point p
 where hasMixedBoundaryConditions( D ) {
 
-   override p.location = triangleRandom( D.p3, D.p7, D.p0 )
+   override p.location = triangleRandom( D.p0, D.p2, D.p3 )
 
    vec2 p.normal = (0,0)
 
@@ -465,19 +470,19 @@ where hasMixedBoundaryConditions( D ) {
 
    layer p.dot above D.neumannBoundary
 
-   -- draw an arrow for the normal at p (transparent if the normal is zero)
-   scalar eps = 1e-7 -- prevents NaNs for zero-length normals
-   shape p.normalArrow = Line {
-      start: p.location
-      end: p.location + 20*p.normal + eps*(1,1)
-      fill: "none"
-      strokeWidth: 1
-      strokeColor: rgba(1,1,1,.5*norm(p.normal))
-      ensureOnCanvas: false
-      endArrowhead: "straight"
-      endArrowheadSize: .5
-   }
-   layer p.normalArrow below p.dot
+   -- -- draw an arrow for the normal at p (transparent if the normal is zero)
+   -- scalar eps = 1e-7 -- prevents NaNs for zero-length normals
+   -- shape p.normalArrow = Line {
+   --    start: p.location
+   --    end: p.location + 20*p.normal + eps*(1,1)
+   --    fill: "none"
+   --    strokeWidth: 1
+   --    strokeColor: rgba(1,1,1,.5*norm(p.normal))
+   --    ensureOnCanvas: false
+   --    endArrowhead: "straight"
+   --    endArrowheadSize: .5
+   -- }
+   -- layer p.normalArrow below p.dot
 }
 
 forall Star St; Point p; Domain D
@@ -534,17 +539,17 @@ where St := starAround(p) {
 
    layer St.ball above D.geometry
 
-   shape domainGeometry = Polygon {
+   shape St.domainGeometry = Polygon {
       points: D.geometry.points
       fillColor: none()
       ensureOnCanvas: false
    }
-   shape G = Group {
+   shape St.G = Group {
       shapes: [St.ball]
-      clipPath: clip(domainGeometry)
+      clipPath: clip(St.domainGeometry)
    }
-   layer G above D.geometry
-   layer G below D.neumannBoundary
+   layer St.G above D.geometry
+   layer St.G below D.neumannBoundary
 }
 
 forall Point p; Star St {
@@ -582,24 +587,50 @@ where p1 := sampleBoundary(St); St := starAround(p0) {
    override p1.dot.strokeColor = rgba(0,0,0,1)
 
    -- draw the ray
-   shape p0.rayArrow = Line {
+   shape p1.walkLine = Line {
       start: p0.location
-      end: p1.location - Global.dotSize*v
+      end: p1.location -- - Global.dotSize*v
       fill: "none"
       strokeColor: Global.walkColor
       strokeWidth: 1
       --endArrowhead: "straight"
       --endArrowheadSize: .5
       ensureOnCanvas: false
+      strokeLinecap: "round"
    }
 
-   layer p0.dot above p0.rayArrow
+   layer p0.dot above p1.walkLine
+   layer D.dirichletBoundary above p1.walkLine
 }
 
 forall Point p0; Point p1; Star St; Domain D; Star St2
 where p1 := sampleBoundary(St); St := starAround(p0) {
-   layer p0.rayArrow above St2.ball
+   layer p1.walkLine above St2.ball
 }
+
+-- connect the walk to the closest point on the
+-- Dirichlet boundary, and draw the boundary point
+-- in a different style
+forall Point q; Point p; Domain D
+where q := closestBoundaryPoint( D, p ); hasMixedBoundaryConditions( D )
+{
+   override q.dot.center = closestPoint( D.dirichletBoundary, p.location )
+   override q.dot.fillColor = Colors.white
+   override q.dot.strokeColor = Colors.black
+   override q.dot.strokeWidth = 0.5
+
+   shape q.walkLine = Line {
+      start: p.dot.center
+      end: q.dot.center
+      strokeColor: Global.walkColor
+      strokeWidth: Global.walkStrokeWidth
+      ensureOnCanvas: false
+   }
+
+   layer q.walkLine above D.geometry
+   layer q.dot above q.walkLine
+}
+
 
 -- Labeling ------------------------------------------------
 
@@ -677,7 +708,7 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
    shape dirichletLine = Line {
       start: x0
       end: x0 + (segmentWidth,0)
-      strokeWidth: Global.domainStrokeWidth
+      strokeWidth: Global.dirichletStrokeWidth
       strokeColor: #000
       style: "dashed"
       ensureOnCanvas: false
@@ -686,7 +717,7 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
    shape neumannLine = Line {
       start: x0 + (0,-itemSpacing)
       end: x0 + (segmentWidth,-itemSpacing)
-      strokeWidth: Global.domainStrokeWidth
+      strokeWidth: Global.neumannStrokeWidth
       strokeColor: #000
       style: "dashed"
       strokeDasharray: "2,2"
@@ -724,8 +755,38 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 
 -- WalkOnStars.style
 
-forall Domain D
-where hasLegend(D)
-{
-   override D.offset = (-50,0)
-}
+-- -- Offset the domain so that it's not covered up
+-- -- too much by the legend
+-- forall Domain D
+-- where hasLegend(D)
+-- {
+--    override D.offset = (-50,0)
+-- }
+
+-- walk-on-spheres-no-subdomains.style -----------
+
+-- -- hide subdomains
+-- forall Ball B; Point p
+-- where B := ballAround(p) {
+--    override B.ball.visibility = "hidden"
+-- }
+-- forall Star St; Point p
+-- where St := starAround(p) {
+--    override St.ball.visibility = "hidden"
+-- }
+-- 
+-- -- hide points sampled from subdomains
+-- forall Point p; Ball B
+-- where p := sampleBoundary( B ) {
+--    override p.dot.visibility = "hidden"
+-- }
+-- forall Point p; Star St
+-- where p := sampleBoundary( St ) {
+--    override p.dot.visibility = "hidden"
+-- }
+-- 
+-- -- make trajectories more transparent
+-- noSubdomains {
+--    override Global.walkColor = #1b1f8a30
+-- }
+
