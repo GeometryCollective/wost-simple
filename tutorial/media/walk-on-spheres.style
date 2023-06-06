@@ -1,4 +1,4 @@
-layout = [ walkStage, nestStage, labelStage ]
+layout = [ walkStage, nestStage, labelStage, legendStage ]
 
 -- diagram dimensions (in px)
 canvas {
@@ -19,6 +19,7 @@ Global {
    -- default appearance for label text
    string labelFont = "Linux Libertine"
    string labelSize = "13.333px" -- equivalent to 10pt (multiply by 96/72)
+   scalar labelHeight = 13.333
    color labelColor = Colors.black
    color labelStrokeColor = Colors.white
    scalar labelStrokeWidth = 1.5
@@ -66,14 +67,16 @@ forall Domain D {
    -- }
 
    -- draw the domain as a polygon with the same geometry used in the sample code
-   vec2 D.p0 = ((0.2,0.2)-(.5,.5)) * ( canvas.height - 5. )
-   vec2 D.p1 = ((0.6,0.0)-(.5,.5)) * ( canvas.height - 5. )
-   vec2 D.p2 = ((1.0,0.2)-(.5,.5)) * ( canvas.height - 5. )
-   vec2 D.p3 = ((0.8,0.6)-(.5,.5)) * ( canvas.height - 5. )
-   vec2 D.p4 = ((1.0,1.0)-(.5,.5)) * ( canvas.height - 5. )
-   vec2 D.p5 = ((0.6,0.8)-(.5,.5)) * ( canvas.height - 5. )
-   vec2 D.p6 = ((0.2,1.0)-(.5,.5)) * ( canvas.height - 5. )
-   vec2 D.p7 = ((0.0,0.6)-(.5,.5)) * ( canvas.height - 5. )
+   scalar D.scale = canvas.height - 5.
+   vec2 D.offset = (0,0)
+   vec2 D.p0 = ((0.2,0.2)-(.5,.5)) * D.scale + D.offset
+   vec2 D.p1 = ((0.6,0.0)-(.5,.5)) * D.scale + D.offset
+   vec2 D.p2 = ((1.0,0.2)-(.5,.5)) * D.scale + D.offset
+   vec2 D.p3 = ((0.8,0.6)-(.5,.5)) * D.scale + D.offset
+   vec2 D.p4 = ((1.0,1.0)-(.5,.5)) * D.scale + D.offset
+   vec2 D.p5 = ((0.6,0.8)-(.5,.5)) * D.scale + D.offset
+   vec2 D.p6 = ((0.2,1.0)-(.5,.5)) * D.scale + D.offset
+   vec2 D.p7 = ((0.0,0.6)-(.5,.5)) * D.scale + D.offset
    shape D.geometry = Polygon {
       points: ( D.p0, D.p1, D.p2, D.p3, D.p4, D.p5, D.p6, D.p7 )
       fillColor: Colors.lightGray
@@ -452,7 +455,7 @@ where B := nestedBallAround(p); B0 := ballAround(p0)
 forall Domain D; Point p
 where hasMixedBoundaryConditions( D ) {
 
-   override p.location = triangleRandom( D.p0, D.p2, D.p3 )
+   override p.location = triangleRandom( D.p3, D.p7, D.p0 )
 
    vec2 p.normal = (0,0)
 
@@ -462,19 +465,19 @@ where hasMixedBoundaryConditions( D ) {
 
    layer p.dot above D.neumannBoundary
 
-   -- -- draw an arrow for the normal at p (transparent if the normal is zero)
-   -- scalar eps = 1e-7 -- prevents NaNs for zero-length normals
-   -- shape p.normalArrow = Line {
-   --    start: p.location
-   --    end: p.location + 20*p.normal + eps*(1,1)
-   --    fill: "none"
-   --    strokeWidth: 1
-   --    strokeColor: rgba(1,1,1,.5*norm(p.normal))
-   --    ensureOnCanvas: false
-   --    endArrowhead: "straight"
-   --    endArrowheadSize: .5
-   -- }
-   -- layer p.normalArrow below p.dot
+   -- draw an arrow for the normal at p (transparent if the normal is zero)
+   scalar eps = 1e-7 -- prevents NaNs for zero-length normals
+   shape p.normalArrow = Line {
+      start: p.location
+      end: p.location + 20*p.normal + eps*(1,1)
+      fill: "none"
+      strokeWidth: 1
+      strokeColor: rgba(1,1,1,.5*norm(p.normal))
+      ensureOnCanvas: false
+      endArrowhead: "straight"
+      endArrowheadSize: .5
+   }
+   layer p.normalArrow below p.dot
 }
 
 forall Star St; Point p; Domain D
@@ -554,7 +557,7 @@ where p1 := sampleBoundary(St); St := starAround(p0) {
    -- sample a random ray from p0
    scalar theta = p0.baseAngle + p0.angleRange * random(-1,1)
    scalar eps = 1e-1 -- offset ray origin to avoid intersecting at x again
-   vec2 v = -( cos(theta), sin(theta) )
+   vec2 v = ( cos(theta), sin(theta) )
    vec2 x = p0.location + eps*v
 
    -- intersect the star boundary
@@ -571,7 +574,7 @@ where p1 := sampleBoundary(St); St := starAround(p0) {
    override p1.normal = s * n -- scales n to zero if t == tBall
    override p1.angleRange = (1-s/2)*MathPI() -- s=0 -> MathPI(); s=1 -> MathPI()/2
    scalar delta = 1e-7 -- to get valid angle if normal is zero
-   override p1.baseAngle = atan2( p1.normal[1], p1.normal[0] + delta )
+   override p1.baseAngle = atan2( p1.normal[0], p1.normal[1] + delta )
 
    -- draw the point in white if it's on the Neumann boundary
    override p1.dot.fillColor = rgba(s,s,s,1)
@@ -649,15 +652,49 @@ where D has label {
 forall Domain D
 where hasLegend(D) {
    shape D.legendBox = Rectangle {
+      center: ( ? in legendStage, ? in legendStage )
+      width: ? in legendStage
+      height: ? in legendStage
       fillColor: #fff
       strokeColor: #000
       strokeWidth: 1
    }
+   encourage D.legendBox.width == 0 in legendStage
+   encourage D.legendBox.height == 0 in legendStage
 }
 
 forall Domain D
 where hasLegend(D); hasMixedBoundaryConditions(D) {
-   shape D.dirichletLegend = Text {
+
+   scalar itemSpacing = 1.5 * Global.labelHeight
+   scalar segmentWidth = 1 * itemSpacing
+   scalar textSpacing = 2.5*Global.labelHeight
+   scalar padding = 8
+
+   vec2 x0 = ( ? in legendStage, ? in legendStage )
+   encourage norm(x0-(canvas.width,-canvas.height)) == 0 in legendStage
+
+   shape dirichletLine = Line {
+      start: x0
+      end: x0 + (segmentWidth,0)
+      strokeWidth: Global.domainStrokeWidth
+      strokeColor: #000
+      style: "dashed"
+      ensureOnCanvas: false
+   }
+
+   shape neumannLine = Line {
+      start: x0 + (0,-itemSpacing)
+      end: x0 + (segmentWidth,-itemSpacing)
+      strokeWidth: Global.domainStrokeWidth
+      strokeColor: #000
+      style: "dashed"
+      strokeDasharray: "2,2"
+      ensureOnCanvas: false
+   }
+
+   shape dirichletLegend = Text {
+      center: dirichletLine.end + (textSpacing,0)
       string: "Dirichlet"
       fontFamily: Global.labelFont
       fontSize: Global.labelSize
@@ -665,7 +702,8 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
       ensureOnCanvas: false
    }
 
-   shape D.neumannLegend = Text {
+   shape neumannLegend = Text {
+      center: neumannLine.end + (textSpacing,0)
       string: "Neumann"
       fontFamily: Global.labelFont
       fontSize: Global.labelSize
@@ -673,8 +711,21 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
       ensureOnCanvas: false
    }
 
+   ensure contains( D.legendBox, dirichletLegend, padding ) in legendStage
+   ensure contains( D.legendBox, dirichletLine, padding ) in legendStage
+   ensure contains( D.legendBox, neumannLegend, padding ) in legendStage
+   ensure contains( D.legendBox, neumannLine, padding ) in legendStage
 
-   ensure contains( D.legendBox, D.dirichletLegend )
-   ensure contains( D.legendBox, D.neumannLegend )
+   layer D.legendBox below dirichletLegend
+   layer D.legendBox below dirichletLine 
+   layer D.legendBox below neumannLegend
+   layer D.legendBox below neumannLine
 }
 
+-- WalkOnStars.style
+
+forall Domain D
+where hasLegend(D)
+{
+   override D.offset = (-50,0)
+}
