@@ -11,9 +11,12 @@
 \usepackage{mdframed}
 \usepackage{xcolor}
 
+% figure captions and labels
 \usepackage[format=plain,
             labelfont={bf},
-            textfont=it]{caption}
+            textfont=sf]{caption}
+\newcommand{\figlabel}[1]{\textsf{#1}}
+\newcommand{\figloc}[1]{\textit{#1}}
 
 \usepackage{natbib}
 \usepackage{xcolor}
@@ -22,6 +25,7 @@
 \usemintedstyle{manni}
 \definecolor{bg}{rgb}{0.95,0.95,0.95}
 \newcommand{\code}[1]{\texttt{#1}}
+
 
 \usepackage{soul}
 \sethlcolor{yellow}
@@ -120,9 +124,35 @@ A good place to start understanding WoSt is the simpler \emph{walk on spheres (W
 
 \begin{figure}[h!]
    \centering
-   \includesvg{images/WalkOnStarsTrajectories.svg}
-   \todo{A diagram showing a single walk with all the spheres on the left, another diagram in the center just showing the trajectories for a few walks, and a pseudocolor plot of the PDE solution (and boundary conditions) on the right.}
-   \caption{\emph{Left:} an example walk taken by the WoS algorithm. \emph{Center:} the paths taken by a collection of walks. \emph{Right:} The final solution estimated by WoS.\label{fig:WoSExample}}
+   \begin{minipage}{150pt}
+      \centering
+      \includesvg{images/WalkOnStarsTrajectories.svg} \\
+      \figlabel{(test problem)}
+   \end{minipage}
+   \begin{minipage}{150pt}
+      \centering
+      \includegraphics[width=150pt]{images/WoSt-1wpp.png} \\
+      \figlabel{1 walk/point}
+   \end{minipage}
+   \begin{minipage}{150pt}
+      \centering
+      \includegraphics[width=150pt]{images/WoSt-4wpp.png} \\
+      \figlabel{4 walks/point}
+   \end{minipage}
+
+   \vspace{\baselineskip}
+
+   \begin{minipage}{150pt}
+      \centering
+      \includegraphics[width=150pt]{images/WoSt-128wpp.png} \\
+      \figlabel{128 walks/point}
+   \end{minipage}
+   \begin{minipage}{150pt}
+      \centering
+      \includegraphics[width=150pt]{images/WoSt-1024wpp.png} \\
+      \figlabel{1024 walks/point}
+   \end{minipage}
+   \caption{Example walks taken by the WoS algorithm are shown at \figloc{top, left}.  Averaging more and more boundary values (marked by white points) yields a smoother and smoother solution estimate.\label{fig:WoSExample}}
 \end{figure}
 
 Figure \ref{fig:WoSExample} shows an example.  To actually implement this algorithm, we really just need two kinds of subroutines:

@@ -1,9 +1,9 @@
 layout = [ walkStage, nestStage, labelStage, legendStage ]
 
--- diagram dimensions (in px)
+-- diagram dimensions (in px; multiply by 96/72 to convert to pt)
 canvas {
-   width = 250
-   height = 150
+   width = 200 -- ==150pt
+   height = 200 -- ==150pt
 }
 
 -- some colors re-used throughout

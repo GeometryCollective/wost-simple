@@ -1,17 +1,9 @@
 layout = [ shapeStage, labelStage ]
 
+-- diagram dimensions (in px; multiply by 96/72 to convert to pt)
 canvas {
-   width = 230
-   height = 150
-
-   -- shape canvasBounds = Rectangle {
-   --    center: (0,0)
-   --    width: canvas.width
-   --    height: canvas.height
-   --    fillColor: none()
-   --    strokeColor: #999
-   --    strokeWidth: 2
-   -- }
+   width = 306.66 -- ==230
+   height = 200.00 -- ==150
 }
 
 --------------------------------------------------
