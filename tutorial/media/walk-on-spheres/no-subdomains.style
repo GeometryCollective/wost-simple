@@ -23,3 +23,23 @@ noSubdomains {
    override Global.walkColor = #1b1f8a30
 }
 
+-- don't worry about domain label avoiding subdomains, since
+-- there will be many hidden subdomains; instead, make sure
+-- the label avoids the walk lines
+forall Subdomain S; Domain D
+where D has label {
+   delete S.avoidDomainLabel
+}
+forall Point p; Subdomain S; Domain D
+where p := sampleBoundary( S ) {
+   ensure disjoint( D.labelText, p.walkLine, Global.domainLabelPadding ) in labelStage
+}
+forall NestedPoint p; Subdomain S; Domain D
+where p := sampleBoundaryNested( S ) {
+   ensure disjoint( D.labelText, p.walkLine, Global.domainLabelPadding ) in labelStage
+}
+forall Point q; Point p; Domain D
+where q := closestBoundaryPoint( D, p ) {
+   ensure disjoint( D.labelText, q.walkLine, Global.domainLabelPadding ) in labelStage
+}
+
