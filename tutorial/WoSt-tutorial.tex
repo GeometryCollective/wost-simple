@@ -24,7 +24,7 @@
 \usepackage{minted}
 \usemintedstyle{manni}
 \definecolor{bg}{rgb}{0.95,0.95,0.95}
-\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\code}[1]{\texttt{\small{#1}}}
 
 
 \usepackage{soul}
@@ -264,16 +264,16 @@ Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest 
 
 \paragraph{Global.} To find the first hit, we can now iterate over all segments in the given polylines and keep the minimum time \(t\) at which any intersection occurs.  Since we also want to intersect with a sphere of given radius \(r\), we can use \(r\) as the initial value for \(t\)---if we never encounter a closer segment, then we've hit the sphere:
 
-\inputminted[fontsize=\small,linenos,firstline=90,lastline=109,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=90,lastline=113,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
-Notice that we also compute location and normal of the intersection point, which we'll need for the WoSt algorithm.
+Notice that we compute the location \code{x} and normal \code{n} of the intersection point, as well as a flag \code{onBoundary} indicating whether the hit occurred on the domain boundary (rather than the sphere), which we'll need for the WoSt algorithm.  As is common practice in ray tracing, we also offset the ray origin by a small distance \code{c} so that the intersection point we find is not just the ray origin \code{x}; a more numerically robust treatment of ray offsetting is described by \citet{wachter2019fast}.
 
 \section{Walk on Stars}
 \label{sec:WalkOnStars}
 
 With all of our geometric queries in place, the actual WoSt algorithm is quite short.  The input is a query point \(\vec{x}_0\), a collection of polylines specifying the Dirichlet and Neumann parts of the boundary, and a function \(g\) that evaluates the Dirichlet value at any point \(x\) near the Dirichlet boundary \(\partial\Omega_D\):
 
-\inputminted[fontsize=\small,linenos,firstline=118,lastline=127,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=119,lastline=126,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 Here we also specify several solver parameters, which provide trade offs between speed and accuracy:
 \begin{itemize}
@@ -286,19 +286,19 @@ The value \code{sum} will be used to accumulate all the values \(g\) we encounte
 
 At the beginning of each step, we assume that we're at an interior point (and hence the normal \(n\) is not well-defined):
 
-\inputminted[fontsize=\small,linenos,firstline=128,lastline=131,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=128,lastline=132,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 For each step, the first thing we do is compute the radius of the ball used to define a star shaped region \(\St(\vec{x},r)\).  This radius is the either the distance to the Dirichlet boundary, or the distance to the silhouette of the Neumann boundary---whichever one is closer.  We also limit the ball size to be at \emph{least} as big as the smallest step size parameter \(r_{\min}\):
 
-\inputminted[fontsize=\small,linenos,firstline=133,lastline=140,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=134,lastline=141,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 Next, we shoot a ray from the current point \(x\) in a random direction \(v\).  If \(x\) is on the domain interior, then we sample \(v\) from the full sphere (or in 2D: circle) around \(x\); if it's on the boundary, then we sample the hemisphere around the inward-pointing normal direction \(v\), so that the next point ends up inside the domain:
 
-\inputminted[fontsize=\small,linenos,firstline=142,lastline=148,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=143,lastline=149,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 Recall that the routine \code{intersectPolylines} will also update the flag \code{onBoundary}, and sets the normal \(\vec{n}\) if the new point is on the boundary.  This loop continues taking steps along the walk until we get within \(\varepsilon\) of the boundary, or until we've exceeded the maximum number of steps---at this point we stop walking, and add the boundary contribution at the final location of \(\vec{x}\):
 
-\inputminted[fontsize=\small,linenos,firstline=150,lastline=157,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=151,lastline=159,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 After all walks are finished we return the average boundary value, which gives our solution estimate.  Again, if you're curious about \emph{why} this algorithm works, you'll have to take a look at the paper!
 

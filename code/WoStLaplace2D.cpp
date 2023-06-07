@@ -99,7 +99,8 @@ Vec2D intersectPolylines( Vec2D x, Vec2D v, double r,
    onBoundary = false; // will be true only if the first hit is on a segment
    for( int i = 0; i < P.size(); i++ ) { // iterate over polylines
       for( int j = 0; j < P[i].size()-1; j++ ) { // iterate over segments
-         double t = rayIntersection( x + 1e-5*v, v, P[i][j], P[i][j+1] );
+         const double c = 1e-5; // ray offset (to avoid self-intersection)
+         double t = rayIntersection( x + c*v, v, P[i][j], P[i][j+1] );
          if( t < tMin ) { // closest hit so far
             tMin = t;
             n = rotate90( P[i][j+1] - P[i][j] ); // get normal
@@ -149,7 +150,8 @@ double solve( Vec2D x0, // evaluation point
 
          steps++;
       }
-      while(dDirichlet > eps && steps < maxSteps); //hit the Dirichlet boundary, or walk is too long
+      while(dDirichlet > eps && steps < maxSteps);
+      //stop if we hit the Dirichlet boundary, or the walk is too long
 
       sum += g(x); // accumulate contribution of the boundary value
    }
