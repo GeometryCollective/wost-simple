@@ -1,21 +1,21 @@
 -- hide subdomains
 forall Ball B; Point p
 where B := ballAround(p) {
-   override B.ball.visibility = "hidden"
+   override B.ball.opacity = 0
 }
 forall Star St; Point p
 where St := starAround(p) {
-   override St.ball.visibility = "hidden"
+   override St.ball.opacity = 0
 }
 
 -- hide points sampled from subdomains
 forall Point p; Ball B
 where p := sampleBoundary( B ) {
-   override p.dot.visibility = "hidden"
+   override p.dot.opacity = 0
 }
 forall Point p; Star St
 where p := sampleBoundary( St ) {
-   override p.dot.visibility = "hidden"
+   override p.dot.opacity = 0
 }
 
 -- make trajectories more transparent
