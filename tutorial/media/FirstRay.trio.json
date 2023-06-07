@@ -1,6 +1,6 @@
 {
   "substance": "./FirstRay.substance",
-  "style": ["./geometry-2d.style", "./FirstRay.style"],
-  "domain": "./geometry-2d.domain",
+  "style": ["./geometry-2d/geometry-2d.style", "./FirstRay.style"],
+  "domain": "./geometry-2d/geometry-2d.domain",
   "variation": "BoleHare398"
 }

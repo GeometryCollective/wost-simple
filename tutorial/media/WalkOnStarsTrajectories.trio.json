@@ -1,6 +1,6 @@
 {
   "substance": "./WalkOnStarsTrajectories.substance",
-  "style": ["./walk-on-spheres.style", "./no-subdomains.style"],
-  "domain": "./walk-on-spheres.domain",
+  "style": ["./walk-on-spheres/walk-on-spheres.style", "./walk-on-spheres/no-subdomains.style"],
+  "domain": "./walk-on-spheres/walk-on-spheres.domain",
   "variation": "HypnotismOctopus446"
 }
