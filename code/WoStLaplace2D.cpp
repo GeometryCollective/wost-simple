@@ -99,7 +99,7 @@ Vec2D intersectPolylines( Vec2D x, Vec2D v, double r,
    onBoundary = false; // will be true only if the first hit is on a segment
    for( int i = 0; i < P.size(); i++ ) { // iterate over polylines
       for( int j = 0; j < P[i].size()-1; j++ ) { // iterate over segments
-         double t = rayIntersection( x, v, P[i][j], P[i][j+1] );
+         double t = rayIntersection( x + 1e-5*v, v, P[i][j], P[i][j+1] );
          if( t < tMin ) { // closest hit so far
             tMin = t;
             n = rotate90( P[i][j+1] - P[i][j] ); // get normal
@@ -121,7 +121,7 @@ double solve( Vec2D x0, // evaluation point
               function<double(Vec2D)> g ) { // Dirichlet boundary values
    const double eps = 0.01; // stopping tolerance
    const double rMin = 0.01; // minimum step size
-   const int nWalks = 128; // number of Monte Carlo samples
+   const int nWalks = 16384; // number of Monte Carlo samples
    const int maxSteps = 100; // maximum walk length
 
    double sum = 0.0; // running sum of boundary contributions
@@ -130,13 +130,13 @@ double solve( Vec2D x0, // evaluation point
       Vec2D n{ 0.0, 0.0 }; // assume x0 is an interior point, and has no normal
       bool onBoundary = false; // flag whether x is on the interior or boundary
 
-      double r; // radius used to define star shaped region
+      double r, dDirichlet, dSilhouette; // radii used to define star shaped region
       int steps = 0;
       do { // loop until the walk hits the Dirichlet boundary
            
          // compute the radius of the largest star-shaped region
-         double dDirichlet = distancePolylines( x, boundaryDirichlet );
-         double dSilhouette = silhouetteDistancePolylines( x, boundaryNeumann );
+         dDirichlet = distancePolylines( x, boundaryDirichlet );
+         dSilhouette = silhouetteDistancePolylines( x, boundaryNeumann );
          r = max( rMin, min( dDirichlet, dSilhouette ));
 
          // intersect a ray with the star-shaped region boundary
@@ -149,7 +149,7 @@ double solve( Vec2D x0, // evaluation point
 
          steps++;
       }
-      while(r > eps && steps < maxSteps); //hit the boundary, or walk is too long
+      while(dDirichlet > eps && steps < maxSteps); //hit the Dirichlet boundary, or walk is too long
 
       sum += g(x); // accumulate contribution of the boundary value
    }
