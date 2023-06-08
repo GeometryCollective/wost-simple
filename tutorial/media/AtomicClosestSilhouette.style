@@ -1,0 +1,21 @@
+forall Point `a` {
+   scalar w = canvas.width
+   scalar h = canvas.height
+   override `a`.x = (-w/3,-h/4)
+}
+forall Point `b` {
+   scalar w = canvas.width
+   scalar h = canvas.height
+   override `b`.x = (0,h/5)
+}
+forall Point `c` {
+   scalar w = canvas.width
+   scalar h = canvas.height
+   override `c`.x = (w/3,-h/4)
+}
+forall Segment `ab` {
+   override `ab`.icon.strokeWidth = 1.5*global.lineWidth
+}
+forall Segment `bc` {
+   override `bc`.icon.strokeWidth = 1.5*global.lineWidth
+}

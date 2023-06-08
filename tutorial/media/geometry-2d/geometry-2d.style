@@ -14,6 +14,7 @@ colors {
    color black = rgba(0,0,0,1)
    color white = rgba(1,1,1,1)
    color lightGray = rgba(.8,.8,.8,1)
+   color clearGray = rgba(0,0,0,.2)
    color darkBlue = #1b1f8a
 }
 
@@ -58,7 +59,12 @@ forall Point p {
 
 forall Point p
 where p has label {
+
+   scalar theta = ? in labelStage
+   scalar r = global.labelDistance
+
    p.labelText = Equation {
+      center: p.x + r*(cos(theta),sin(theta))
       string: p.label
       fontSize: global.labelSize
       --fontStyle: global.labelStyle
@@ -66,8 +72,6 @@ where p has label {
       fillColor: global.labelColor
    }
    layer p.labelText above p.icon
-
-   encourage near( p.icon, p.labelText ) in labelStage
 }
 
 --------------------------------------------------
@@ -93,6 +97,27 @@ forall Vector v {
       strokeWidth: global.lineWidth
       endArrowhead: "straight"
       endArrowheadSize: .5
+      fill: "none"
+   }
+}
+
+forall Vector v
+where v has label {
+
+   scalar phi = ? in labelStage
+   scalar theta = (MathPI()/2.)*cos(phi)
+   vec2 w = unit(v.v)
+   vec2 u = rotateBy( w, theta )
+   scalar r = global.labelDistance
+
+   v.labelText = Equation {
+      string: v.label
+      center: v.x + global.arrowLength*w + r*u
+      fontSize: global.labelSize
+      fillColor: global.labelColor
+      --fontStyle: global.labelStyle
+      --fontFamily: global.labelFamily
+      ensureOnCanvas: false
    }
 }
 
@@ -100,6 +125,13 @@ forall Vector v; Point p
 where RootedAt(p,v) {
    override v.x = p.x
    layer p.icon above v.icon
+}
+
+-- draw segment normal as a vector at its midpoint
+forall Vector v; Segment s
+where v := Normal(s) {
+   override v.x = (s.a + s.b)/2
+   override v.v = global.arrowLength * rot90(unit(s.b - s.a))
 }
 
 --------------------------------------------------
@@ -123,6 +155,7 @@ forall Segment s {
       end: s.b
       strokeColor: colors.black
       strokeWidth: global.lineWidth
+      fill: "none"
    }
 }
 
@@ -151,6 +184,12 @@ where s has label {
    encourage d == global.labelDistance in labelStage
 
    ensure disjoint( s.labelText, s.icon, global.padding ) in labelStage
+}
+
+forall Segment s
+where isDashed( s ) {
+   override s.icon.style = "dashed"
+   override s.icon.strokeDasharray = "4,4"
 }
 
 --------------------------------------------------
@@ -249,9 +288,9 @@ where l has label {
 forall Triangle t; Point p1; Point p2; Point p3
 where t := Tri(p1, p2, p3)
 {
-
    shape t.icon = Polygon {
       points: [ p1.x, p2.x, p3.x ]
+      fillColor: colors.clearGray
    }
 }
 
@@ -342,6 +381,7 @@ forall Chord c {
    shape c.icon = Line {
       strokeWidth: .25*global.lineWidth
       strokeColor: colors.black
+      fill: "none"
    }
 }
 
@@ -363,6 +403,7 @@ forall Ray r {
       style: "dashed"
       strokeDasharray: "4,4"
       ensureOnCanvas: false
+      fill: "none"
    }
 }
 
@@ -529,5 +570,28 @@ where p has label {
 --    override v.v0 = 1000
 -- }
 
+-- AtomicClosestSilhouette.style
+
+forall Point `a` {
+   scalar w = canvas.width
+   scalar h = canvas.height
+   override `a`.x = (-w/3,-h/4)
+}
+forall Point `b` {
+   scalar w = canvas.width
+   scalar h = canvas.height
+   override `b`.x = (0,h/5)
+}
+forall Point `c` {
+   scalar w = canvas.width
+   scalar h = canvas.height
+   override `c`.x = (w/3,-h/4)
+}
+forall Segment `ab` {
+   override `ab`.icon.strokeWidth = 1.5*global.lineWidth
+}
+forall Segment `bc` {
+   override `bc`.icon.strokeWidth = 1.5*global.lineWidth
+}
 
 

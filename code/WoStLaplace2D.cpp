@@ -120,10 +120,10 @@ double solve( Vec2D x0, // evaluation point
               vector<Polyline> boundaryDirichlet, // absorbing part of the boundary
               vector<Polyline> boundaryNeumann, // reflecting part of the boundary
               function<double(Vec2D)> g ) { // Dirichlet boundary values
-   const double eps = 0.01; // stopping tolerance
-   const double rMin = 0.01; // minimum step size
-   const int nWalks = 16384; // number of Monte Carlo samples
-   const int maxSteps = 100; // maximum walk length
+   const double eps = 0.0001; // stopping tolerance
+   const double rMin = 0.0001; // minimum step size
+   const int nWalks = 65536; // number of Monte Carlo samples
+   const int maxSteps = 65536; // maximum walk length
 
    double sum = 0.0; // running sum of boundary contributions
    for( int i = 0; i < nWalks; i++ ) {
@@ -152,6 +152,8 @@ double solve( Vec2D x0, // evaluation point
       }
       while(dDirichlet > eps && steps < maxSteps);
       //stop if we hit the Dirichlet boundary, or the walk is too long
+
+      if( steps >= maxSteps ) cerr << "Hit max steps" << endl;
 
       sum += g(x); // accumulate contribution of the boundary value
    }

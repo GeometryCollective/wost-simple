@@ -1,4 +1,6 @@
--- Draw a bunch of examples of point-segment closest point queries
+-- Draw a point-segment closest point query,
+-- labeling the distance t between the first
+-- endpoint and the intersection point
 Point a, b
 Segment ab := LineSegment(a,b)
 

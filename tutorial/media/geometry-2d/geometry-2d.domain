@@ -19,10 +19,12 @@ constructor RaySegmentIntersection( Ray r, Segment s ) -> Point
 constructor Tri( Point p1, Point p2, Point p3 ) -> Triangle
 constructor LengthBetween( Point x, Point y ) -> Length
 constructor LengthOf( Segment s ) -> Length
+constructor Normal( Set s ) -> Vector
 
 predicate RootedAt( Point p, Vector v )
 predicate InTri( Point p, Triangle t )
 predicate OnCircle( Point p, Circle c )
 predicate InDisk( Point p, Disk d )
 predicate OfDisk( Chord c, Disk d )
+predicate isDashed( Set s )
 

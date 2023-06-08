@@ -149,8 +149,8 @@ A good place to start understanding WoSt is the simpler \emph{walk on spheres (W
    \end{minipage}
    \begin{minipage}{150pt}
       \centering
-      \includegraphics[width=150pt]{images/WoSt-1024wpp.png} \\
-      \figlabel{1024 walks/point}
+      \includegraphics[width=150pt]{images/WoSt-65536wpp.png} \\
+      \figlabel{reference}
    \end{minipage}
    \caption{Example walks taken by the WoS algorithm are shown at \figloc{top, left}.  Averaging more and more boundary values (marked by white points) yields a smoother and smoother solution estimate.\label{fig:WoSExample}}
 \end{figure}
@@ -225,6 +225,8 @@ The function \(\code{length}\) computes the length of the given vector, and the 
 \label{sec:ClosestSilhouettePointQuery}
 
 \begin{figure}[h!]
+   \includesvg{images/AtomicClosestSilhouette.svg} \\
+
    \todo{Diagram showing a pair of segments that are and are not a silhouette relative to the query point.}
    \caption{A point \(\vec{b}\) is a \emph{silhouette point} if the segments \(\vec{a}\vec{b}\) and \(\vec{b}\vec{c}\) are front- and back-facing relative to a point \(\vec{x}\), or vice-versa.}
 \end{figure}
@@ -266,7 +268,7 @@ Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest 
 
 \inputminted[fontsize=\small,linenos,firstline=90,lastline=113,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
-Notice that we compute the location \code{x} and normal \code{n} of the intersection point, as well as a flag \code{onBoundary} indicating whether the hit occurred on the domain boundary (rather than the sphere), which we'll need for the WoSt algorithm.  As is common practice in ray tracing, we also offset the ray origin by a small distance \code{c} so that the intersection point we find is not just the ray origin \code{x}; a more numerically robust treatment of ray offsetting is described by \citet{wachter2019fast}.
+Notice that we compute the location \(x\) and normal \(n\) of the intersection point, as well as a flag \code{onBoundary} indicating whether the hit occurred on the domain boundary (rather than the sphere), which we'll need for the WoSt algorithm.  As is common practice in ray tracing, we also offset the ray origin by a small distance \(c\) so that the intersection point we find is not just the ray origin \(x\); a more numerically robust treatment of ray offsetting is described by \citet{wachter2019fast}.
 
 \section{Walk on Stars}
 \label{sec:WalkOnStars}
@@ -296,7 +298,7 @@ Next, we shoot a ray from the current point \(x\) in a random direction \(v\).  
 
 \inputminted[fontsize=\small,linenos,firstline=143,lastline=149,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
-Recall that the routine \code{intersectPolylines} will also update the flag \code{onBoundary}, and sets the normal \(\vec{n}\) if the new point is on the boundary.  This loop continues taking steps along the walk until we get within \(\varepsilon\) of the boundary, or until we've exceeded the maximum number of steps---at this point we stop walking, and add the boundary contribution at the final location of \(\vec{x}\):
+Recall that the routine \code{intersectPolylines} will also update the flag \code{onBoundary}, and sets the normal \(n\) if the new point is on the boundary.  This loop continues taking steps along the walk until we get within a small distance \(\varepsilon\) of the Dirichlet boundary, or until we've exceeded the maximum number of steps---at this point we stop walking, and add the boundary contribution at the final location of \(\vec{x}\):
 
 \inputminted[fontsize=\small,linenos,firstline=151,lastline=159,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 

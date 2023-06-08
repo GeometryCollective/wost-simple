@@ -1,7 +1,6 @@
 -- A short walk used to estimate the solution to
 -- a Laplace equation Δu = 0 with both Dirichlet
 -- and Neumann boundary conditions, via WoSt.
-
 Domain U
 hasMixedBoundaryConditions( U )
 hasLegend( U )

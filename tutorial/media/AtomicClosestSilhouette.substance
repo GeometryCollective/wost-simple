@@ -1,0 +1,24 @@
+-- Draw a closest silhouette point query to a
+-- pair of segments including the normals and the
+-- triangles that correspond to the determinant calculation
+
+
+Point a, b, c -- segments
+Segment ab := LineSegment(a,b)
+Segment bc := LineSegment(b,c)
+
+Point x -- query point
+Segment xb := LineSegment(x,b)
+isDashed(xb)
+
+Triangle xab := Tri(x,a,b)
+Triangle xbc := Tri(x,b,c)
+Vector n1 := Normal(ab)
+Vector n2 := Normal(bc)
+
+Label x $x$
+Label a $a$
+Label b $b$
+Label c $c$
+Label n1 $n_1$
+Label n2 $n_2$
