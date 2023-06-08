@@ -1,0 +1,6 @@
+{
+  "substance": "./AtomicClosestSilhouette.substance",
+  "style": ["./geometry-2d/geometry-2d.style", "./AtomicClosestSilhouette.style", "./AtomicClosestSilhouetteExample1.style"],
+  "domain": "./geometry-2d/geometry-2d.domain",
+  "variation": "HypnotismOctopus446"
+}

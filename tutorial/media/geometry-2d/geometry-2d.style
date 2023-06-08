@@ -33,6 +33,7 @@ global {
    string labelFamily = "Linux Libertine"
    color labelColor = #000
    string labelSize = "13.3333px" -- equivalent to 10pt (multiply by 96/72)
+   scalar labelHeight = 10
    scalar labelDistance = 8.0
 
    -- layout parameters
@@ -114,7 +115,7 @@ where v has label {
       string: v.label
       center: v.x + global.arrowLength*w + r*u
       fontSize: global.labelSize
-      fillColor: global.labelColor
+      fillColor: v.icon.strokeColor
       --fontStyle: global.labelStyle
       --fontFamily: global.labelFamily
       ensureOnCanvas: false
@@ -285,13 +286,25 @@ where l has label {
 -- Triangles -------------------------------------
 --------------------------------------------------
 
+forall Triangle t
+{
+   -- vertices
+   vec2 t.a = (? in shapeStage, ? in shapeStage)
+   vec2 t.b = (? in shapeStage, ? in shapeStage)
+   vec2 t.c = (? in shapeStage, ? in shapeStage)
+
+   shape t.icon = Polygon {
+      points: [ t.a, t.b, t.c ]
+      fillColor: colors.clearGray
+   }
+}
+
 forall Triangle t; Point p1; Point p2; Point p3
 where t := Tri(p1, p2, p3)
 {
-   shape t.icon = Polygon {
-      points: [ p1.x, p2.x, p3.x ]
-      fillColor: colors.clearGray
-   }
+   override t.a = p1.x
+   override t.b = p2.x
+   override t.c = p3.x
 }
 
 forall Point p; Triangle t; Point q0; Point q1; Point q2
@@ -508,9 +521,17 @@ forall Length l {
    delete l.labelDisjoint
 }
 
-forall Set X; Set Y
+forall Set X; Point p
 where X has label {
-   ensure disjoint( X.labelText, Y.icon, global.padding ) in labelStage
+   ensure disjoint( X.labelText, p.icon, global.padding ) in labelStage
+}
+forall Set X; Segment s
+where X has label {
+   ensure disjoint( X.labelText, s.icon, global.padding ) in labelStage
+}
+forall Set X; Length l
+where X has label {
+   ensure disjoint( X.labelText, l.icon, global.padding ) in labelStage
 }
 
 forall Set X; Set Y
@@ -572,26 +593,84 @@ where p has label {
 
 -- AtomicClosestSilhouette.style
 
-forall Point `a` {
-   scalar w = canvas.width
-   scalar h = canvas.height
-   override `a`.x = (-w/3,-h/4)
-}
-forall Point `b` {
-   scalar w = canvas.width
-   scalar h = canvas.height
-   override `b`.x = (0,h/5)
-}
-forall Point `c` {
-   scalar w = canvas.width
-   scalar h = canvas.height
-   override `c`.x = (w/3,-h/4)
-}
-forall Segment `ab` {
-   override `ab`.icon.strokeWidth = 1.5*global.lineWidth
-}
-forall Segment `bc` {
-   override `bc`.icon.strokeWidth = 1.5*global.lineWidth
-}
+-- resizeCanvas
+-- {
+--    override canvas.width = 150
+-- }
+-- 
+-- forall Point `a` {
+--    scalar w = canvas.width
+--    scalar h = canvas.height
+--    override `a`.x = (-w/2 + 10,0)
+-- }
+-- forall Point `b` {
+--    scalar w = canvas.width
+--    scalar h = canvas.height
+--    override `b`.x = (0,h/6)
+-- }
+-- forall Point `c` {
+--    scalar w = canvas.width
+--    scalar h = canvas.height
+--    override `c`.x = (w/2 - 10,-h/6)
+-- }
+-- forall Segment `ab` {
+--    override `ab`.icon.strokeWidth = 1.5*global.lineWidth
+-- }
+-- forall Segment `bc` {
+--    override `bc`.icon.strokeWidth = 1.5*global.lineWidth
+-- }
+-- 
+-- -- Conditionally label diagram as "silhouette" or
+-- -- "not silhouette" depending on whether `b` is a silhouette
+-- -- point relative to `x`.
+-- forall Triangle t1; Triangle t2 {
+-- 
+--    -- compute the signed area of each triangle
+--    scalar A1 = cross2D( t1.b - t1.a, t1.c - t1.a )
+--    scalar A2 = cross2D( t2.b - t2.a, t2.c - t2.a )
+-- 
+--    -- compute the sign of the product, which will
+--    -- be positive if the triangles have the same
+--    -- orientation and negative otherwise
+--    scalar s = A1*A2
+-- 
+--    -- emulate the statement
+--    --    alpha = s < 0 ? 0 : 1
+--    -- using a steep sigmoid function to
+--    -- approximate a step function
+--    scalar alpha = 1/(1 + exp(-1000*s))
+-- 
+--    shape isSilhouette = Text {
+--       string: "silhouette"
+--       center: (0,-canvas.height/2 + 2*global.labelHeight)
+--       fontFamily: global.labelFamily
+--       fontSize: global.labelSize
+--       fillColor: global.labelColor
+--       opacity: 1-s
+--    }
+-- 
+--    shape notSilhouette = Text {
+--       string: "not silhouette"
+--       center: (0,-canvas.height/2 + 2*global.labelHeight)
+--       fontFamily: global.labelFamily
+--       fontSize: global.labelSize
+--       fillColor: global.labelColor
+--       opacity: s
+--    }
+-- }
 
+-- AtomicClosestSilhouetteExample1.style
+-- forall Point `x` {
+--    override `x`.x = (0,canvas.height/2 - 2*global.labelHeight)
+-- }
+
+-- -- AtomicClosestSilhouetteExample2.style
+-- forall Point `x` {
+--    override `x`.x = (-canvas.width/4,-canvas.height/2 + 4*global.labelHeight)
+-- }
+
+-- -- AtomicClosestSilhouetteExample3.style
+-- forall Point `x` {
+--    override `x`.x = (canvas.width/2 - global.labelHeight, global.labelHeight*2)
+-- }
 

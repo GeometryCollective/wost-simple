@@ -225,15 +225,16 @@ The function \(\code{length}\) computes the length of the given vector, and the 
 \label{sec:ClosestSilhouettePointQuery}
 
 \begin{figure}[h!]
-   \includesvg{images/AtomicClosestSilhouette.svg} \\
-
-   \todo{Diagram showing a pair of segments that are and are not a silhouette relative to the query point.}
+   \centering
+   \includesvg{images/AtomicClosestSilhouetteExample1.svg}
+   \includesvg{images/AtomicClosestSilhouetteExample3.svg}
+   \includesvg{images/AtomicClosestSilhouetteExample2.svg}
    \caption{A point \(\vec{b}\) is a \emph{silhouette point} if the segments \(\vec{a}\vec{b}\) and \(\vec{b}\vec{c}\) are front- and back-facing relative to a point \(\vec{x}\), or vice-versa.}
 \end{figure}
 
 Silhouette points are points where geometry changes from front-facing to back-facing, relative to a query point \(\vec{x}\).  A \emph{closest silhouette point query} seeks the closest such point along the entire silhouette.  In general, queries of the visibility silhouette are far less common than closest ray or closest point queries---a good reference is the work on \emph{spatialized normal cone hierarchies (SNCH)} by \citet{johnson2001spatialized}; \citet[Section 5.1]{Sawhney:2023:WoSt} explains how to accelerate closest silhouette point queries using an SNCH.  Here we'll again just perform brute-force evaluation, rather than use an acceleration scheme.
 
-\paragraph{Atomic.} Given a query point \(\vec{x}\), we want to determine whether the point \(\vec{b}\) on a connected pair of line segments \(\vec{a}\vec{b}\), \(\vec{b}\vec{c}\) is a silhouette point.  Equivalently, we want to know if \(\vec{x}\) is on opposite sides of these two segments (\eg{}, in front of \(\vec{a}\vec{b}\) and behind \(\vec{b}\vec{c}\)).  We can easily check which side of \(\vec{a}\vec{b}\) the point \(\vec{x}\) is on by just computing the determinant of the vectors \(\vec{u} := \vec{a}-\vec{x}\) and \(\vec{v} := \vec{b}-\vec{x}\).  Explicitly, \(\det(\vec{u},\vec{v}) = \vec{u}_1 \vec{v}_2 - \vec{u}_2 \vec{v}_1\).  Since this operation looks a lot like a cross product, we'll call it \code{cross} rather than \code{det} in our code (which also helps to distinguish it from \code{dot}!).  Our final routine is the quite simple:
+\paragraph{Atomic.} Given a query point \(\vec{x}\), we want to determine whether the point \(\vec{b}\) on a connected pair of line segments \(\vec{a}\vec{b}\), \(\vec{b}\vec{c}\) is a silhouette point.  Equivalently, we want to know if \(\vec{x}\) is on opposite sides of these two segments (\eg{}, in front of \(\vec{a}\vec{b}\) and behind \(\vec{b}\vec{c}\)).  We can easily check which side of \(\vec{a}\vec{b}\) the point \(\vec{x}\) is on by just computing the determinant of the vectors \(\vec{u} := \vec{a}-\vec{x}\) and \(\vec{v} := \vec{b}-\vec{x}\), which is equivalent to the signed area of triangle \(xab\).  Explicitly, \(\det(\vec{u},\vec{v}) = \vec{u}_1 \vec{v}_2 - \vec{u}_2 \vec{v}_1\).  Since this operation looks a lot like a cross product, we'll call it \code{cross} rather than \code{det} in our code (which also helps to distinguish it from \code{dot}!).  Our final routine is the quite simple:
 
 \inputminted[fontsize=\small,linenos,firstline=43,lastline=46,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
