@@ -167,8 +167,13 @@ In fact, this basic structure will be the same for any ``walk on X'' algorithm (
 \label{sec:WalkOnStarsOverview}
 
 \begin{figure}[h!]
-   \todo{figure showing a region that is / is not star shaped relative to a point $\vec{x}$, and a ray from $\vec{x}$ in some direction $\vec{v}$ hitting the boundary} 
-   \caption{A region \(R\) is \emph{star shaped} relative to a point \(\vec{x}\) if every point \(\vec{y} \in R\) is visible from \(\vec{x}\) along a straight line.  WoSt samples points on the boundary of a star shaped region by shooting a ray in a random direction \(\vec{v}\).\label{fig:StarShapedRegions}}
+   \todo{figure showing a region that is / is not star shaped relative to a point $\vec{x}$} 
+   \caption{A region \(R\) is \emph{star shaped} relative to a point \(\vec{x}\) if every point \(\vec{y} \in R\) is visible from \(\vec{x}\) along a straight line.\label{fig:StarShapedRegions}}
+\end{figure}
+
+\begin{figure}[h!]
+   \todo{figure showing a ray from $\vec{x}$ in some direction $\vec{v}$ hitting the boundary} 
+   \caption{WoSt identifies star shaped regions \(\St\) by intersecting the domain \(\Omega\) with the largest ball that contains neither the Dirichlet boundary nor the silhouette of the Neumann boundary. Points on the boundary of \(\St\) can be sampled by shooting a ray in a random direction \(\vec{v}\).\label{fig:StarShapedSampling}}
 \end{figure}
 
 The WoSt algorithm is almost like the WoS algorithm, except that it simulates random walks that ``reflect'' off the Neumann boundary \(\partial\Omega_N\), in addition to the walks already ``absorbed'' into the Dirichlet boundary \(\partial\Omega_D\).  To do so, WoSt makes just two small changes to WoS.  First, in place of spheres \(S(\vec{x})\), WoSt uses \emph{star-shaped regions} \(\St(\vec{x})\) (see Figure~\ref{fig:StarShapedRegions}).  Unlike the spheres used by WoS, which touch the boundary only at isolated points, the star-shaped regions used by WoSt can include large pieces of the Neumann boundary \(\partial\Omega_N\).  Second, rather than terminating walks at all boundaries, WoSt continues walking from any point on the Neumann part of the boundary \(\partial\Omega_N\).  The overall flow now goes like this:
