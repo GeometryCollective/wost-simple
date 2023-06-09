@@ -494,22 +494,72 @@ where St := starAround(p) {
 
    -- Widgets to draw the smallest ball touching the Dirichlet boundary,
    -- and the smallest ball toughing the Neumann silhouette (currently disabled)
-   -- shape St.dirichletBall = Circle {
-   --    center: p.location
-   --    r: dDirichlet
-   --    fillColor: none()
-   --    strokeColor: #ff6666
-   --    strokeWidth: Global.sphereStrokeWidth
-   --    ensureOnCanvas: false
-   -- }
-   -- shape St.neumannBall = Circle {
-   --    center: p.location
-   --    r: dNeumann
-   --    fillColor: none()
-   --    strokeColor: #6666ff
-   --    strokeWidth: Global.sphereStrokeWidth
-   --    ensureOnCanvas: false
-   -- }
+
+   vec2 c = p.location
+   shape St.dirichletBall = Circle {
+      center: c
+      r: dDirichlet
+      fillColor: none()
+      strokeColor: #ff6666
+      strokeWidth: 1.5 * Global.sphereStrokeWidth
+      ensureOnCanvas: false
+   }
+   shape St.neumannBall = Circle {
+      center: c
+      r: dNeumann
+      fillColor: none()
+      strokeColor: #6666ff
+      strokeWidth: 1.5 * Global.sphereStrokeWidth
+      ensureOnCanvas: false
+   }
+
+   scalar thetaD = ? in walkStage
+   vec2 x0D = c
+   vec2 x1D = c + dDirichlet * (cos(thetaD),sin(thetaD))
+   vec2 mD = (x0D + x1D)/2
+   vec2 nD = rot90(unit(x1D - x0D))
+   shape St.dirichletLine = Line {
+      start: x0D
+      end: x1D
+      strokeColor: St.dirichletBall.strokeColor
+      strokeWidth: St.dirichletBall.strokeWidth
+      fill: "none"
+      ensureOnCanvas: false
+   }
+   shape St.dirichletLabel = Text {
+      center: mD + nD * Global.labelHeight/2
+      string: "Dirichlet"
+      fillColor: St.dirichletBall.strokeColor
+      ensureOnCanvas: false
+      fontFamily: Global.labelFont
+      fontSize: Global.labelSize
+      rotation: toDegrees(-thetaD)
+   }
+   layer p.dot above St.dirichletLine
+
+   scalar thetaN = ? in walkStage
+   vec2 x0N = c
+   vec2 x1N = c + dNeumann * (cos(thetaN),sin(thetaN))
+   vec2 mN = (x0N + x1N)/2
+   vec2 nN = rot90(unit(x1N - x0N))
+   shape St.neumannLine = Line {
+      start: x0N
+      end: x1N
+      strokeColor: St.neumannBall.strokeColor
+      strokeWidth: St.neumannBall.strokeWidth
+      fill: "none"
+      ensureOnCanvas: false
+   }
+   shape St.neumannLabel = Text {
+      center: mN + nN * Global.labelHeight/2
+      string: "silhouette"
+      fillColor: St.neumannBall.strokeColor
+      ensureOnCanvas: false
+      fontFamily: Global.labelFont
+      fontSize: Global.labelSize
+      rotation: toDegrees(-thetaN)
+   }
+   layer p.dot above St.neumannLine
 
    -- color the boundary of the ball according to whether it's defined
    -- by the closest Dirichlet point or closest Neumann silhouette point
