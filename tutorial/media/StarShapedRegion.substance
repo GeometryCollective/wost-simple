@@ -6,8 +6,24 @@ hasMixedBoundaryConditions( U )
 
 Point x
 Star St := starAround( x )
+Ray r1 := toBoundary( x, St )
+Ray r2 := toBoundary( x, St )
+Ray r3 := toBoundary( x, St )
+Ray r4 := toBoundary( x, St )
+Ray r5 := toBoundary( x, St )
+Ray r6 := toBoundary( x, St )
+Ray r7 := toBoundary( x, St )
+Ray r8 := toBoundary( x, St )
+Ray r9 := toBoundary( x, St )
+Ray r10 := toBoundary( x, St )
+Ray r11 := toBoundary( x, St )
+Ray r12 := toBoundary( x, St )
+Ray r13 := toBoundary( x, St )
+Ray r14 := toBoundary( x, St )
+Ray r15 := toBoundary( x, St )
+Ray r16 := toBoundary( x, St )
 
-Label U $\Omega$
-Label x $x$
-Label St $\text{St}(x)$
+--Label U $\Omega$
+--Label x $x$
+--Label St $\text{St}(x)$
 

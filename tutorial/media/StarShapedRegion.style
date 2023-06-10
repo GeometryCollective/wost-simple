@@ -1,1 +1,15 @@
--- TODO
+-- draw uniformly-spaced rays to the boundary of the star-shaped region
+forall Ray r; Point p; Star St; Domain D
+where r := toBoundary(p,St); St := starAround(p) {
+
+   override r.x = St.ball.center
+   override r.theta = 2*MathPI() * (match_id - 1)/match_total
+   
+   scalar dBall  = rayIntersectDistance( St.ball, r.x, r.v )
+   scalar dDomain  = rayIntersectDistance( D.neumannBoundary, r.x, r.v )
+   scalar R = min( dBall, dDomain )
+   override r.L = R
+
+   layer r.icon above St.ball
+   layer p.dot above r.icon
+}

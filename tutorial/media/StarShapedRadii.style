@@ -1,0 +1,134 @@
+resizeCanvas {
+   override canvas.width = 250
+   override canvas.height = 250
+}
+
+-- Widgets to draw the smallest ball touching the Dirichlet boundary,
+-- and the smallest ball toughing the Neumann silhouette.
+forall Star St; Point p; Domain D
+where St := starAround(p) {
+
+   vec2 c = p.location
+   vec2 yDirichlet = closestPoint( D.dirichletBoundary, c )
+   vec2 yNeumann = closestSilhouettePoint( D.neumannBoundary, c )
+
+   shape St.dirichletBall = Circle {
+      center: c
+      r: St.dDirichlet
+      fillColor: none()
+      strokeColor: #ff6666
+      strokeWidth: 1.5 * Global.sphereStrokeWidth
+      ensureOnCanvas: false
+   }
+
+   scalar thetaD = 0
+   vec2 x0D = c
+   vec2 x1D = c + St.dDirichlet * (cos(thetaD),sin(thetaD))
+   vec2 mD = (x0D + x1D)/2
+   vec2 nD = rot90(unit(x1D - x0D))
+   shape St.dirichletLine = Line {
+      start: x0D
+      end: x1D
+      strokeColor: St.dirichletBall.strokeColor
+      strokeWidth: St.dirichletBall.strokeWidth
+      fill: "none"
+      ensureOnCanvas: false
+   }
+   shape St.dirichletLabel = Equation {
+      center: mD + nD * Global.labelHeight * .75
+      string: "d_{\text{Dirichlet}}"
+      texContourColor: "white"
+      fillColor: St.dirichletBall.strokeColor
+      ensureOnCanvas: false
+      fontFamily: Global.labelFont
+      fontSize: Global.labelSize
+      -- rotation: toDegrees(-thetaD)
+   }
+   shape St.dirichletPoint = Circle {
+      center: yDirichlet
+      r: Global.dotSize
+      fillColor : Colors.white
+      strokeColor : St.dirichletBall.strokeColor
+      strokeWidth : 0.5
+      ensureOnCanvas: false
+   }
+   shape St.closestDirichlet = Group {
+      shapes: [ St.dirichletBall, St.dirichletLine, St.dirichletPoint ]
+      ensureOnCanvas: false
+   }
+   layer p.dot above St.closestDirichlet
+   layer St.closestDirichlet above St.ball
+   layer St.closestDirichlet above D.neumannBoundary
+   layer St.dirichletPoint above St.dirichletBall
+
+   shape St.neumannBall = Circle {
+      center: c
+      r: St.dNeumann
+      fillColor: none()
+      strokeColor: #6666ff
+      strokeWidth: 1.5 * Global.sphereStrokeWidth
+      ensureOnCanvas: false
+   }
+   scalar thetaN = MathPI()
+   vec2 x0N = c
+   vec2 x1N = c + St.dNeumann * (cos(thetaN),sin(thetaN))
+   vec2 mN = (x0N + x1N)/2
+   vec2 nN = rot90(unit(x1N - x0N))
+   shape St.neumannLine = Line {
+      start: x0N
+      end: x1N
+      strokeColor: St.neumannBall.strokeColor
+      strokeWidth: St.neumannBall.strokeWidth
+      fill: "none"
+      ensureOnCanvas: false
+   }
+   shape St.neumannLabel = Equation {
+      center: mN - nN * Global.labelHeight * .75
+      string: "d_{\text{silhouette}}"
+      texContourColor: "white"
+      fillColor: St.neumannBall.strokeColor
+      ensureOnCanvas: false
+      fontFamily: Global.labelFont
+      fontSize: Global.labelSize
+      -- rotation: toDegrees(-thetaN)
+   }
+   shape St.neumannPoint = Circle {
+      center: yNeumann
+      r: Global.dotSize
+      fillColor : Colors.white
+      strokeColor : St.neumannBall.strokeColor
+      strokeWidth : 0.5
+      ensureOnCanvas: false
+   }
+   shape St.closestSilhouette = Group {
+      shapes: [ St.neumannBall, St.neumannLine, St.neumannPoint ]
+      ensureOnCanvas: false
+   }
+   layer p.dot above St.closestSilhouette
+   layer St.neumannPoint above St.neumannBall
+   layer St.closestSilhouette above St.ball
+   layer St.closestSilhouette above D.neumannBoundary
+
+   layer St.neumannLabel above St.closestSilhouette
+   layer St.neumannLabel above St.closestDirichlet
+   layer St.dirichletLabel above St.closestSilhouette
+   layer St.dirichletLabel above St.closestDirichlet
+}
+
+forall Star St; Point p; Domain D
+where p has label; St := starAround(p) {
+   ensure disjoint( p.labelText, St.neumannLabel ) in labelStage
+   ensure disjoint( p.labelText, St.dirichletLabel ) in labelStage
+}
+
+forall Star St; Point p; Domain D
+where D has label; St := starAround(p) {
+   ensure disjoint( D.labelText, St.neumannBall ) in labelStage
+   ensure disjoint( D.labelText, St.dirichletBall ) in labelStage
+}
+
+forall Star St; Point p; Domain D
+where St has label; St := starAround(p) {
+   ensure disjoint( St.labelText, St.neumannLabel ) in labelStage
+   ensure disjoint( St.labelText, St.dirichletLabel ) in labelStage
+}

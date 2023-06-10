@@ -170,11 +170,13 @@ In fact, this basic structure will be the same for any ``walk on X'' algorithm (
    \centering
    \includesvg{images/StarShapedRegion.svg}
 
-   \todo{figure showing a region that is / is not star shaped relative to a point $\vec{x}$} 
+   \todo{figure showing a region that is / is not star shaped relative to a point $\vec{x}$, with rays hitting boundary} 
    \caption{A region \(R\) is \emph{star shaped} relative to a point \(\vec{x}\) if every point \(\vec{y} \in R\) is visible from \(\vec{x}\) along a straight line.\label{fig:StarShapedRegions}}
 \end{figure}
 
 \begin{figure}[h!]
+   \includesvg{images/StarShapedRadii.svg}
+
    \todo{figure showing a ray from $\vec{x}$ in some direction $\vec{v}$ hitting the boundary} 
    \caption{WoSt identifies star shaped regions \(\St\) by intersecting the domain \(\Omega\) with the largest ball that contains neither the Dirichlet boundary nor the silhouette of the Neumann boundary. Points on the boundary of \(\St\) can be sampled by shooting a ray in a random direction \(\vec{v}\).\label{fig:StarShapedSampling}}
 \end{figure}

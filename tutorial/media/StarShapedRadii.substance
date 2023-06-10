@@ -1,0 +1,13 @@
+-- Draw a star-shaped region that does not
+-- contain the Neumann boundary.
+Domain U
+hasMixedBoundaryConditions( U )
+-- hasLegend( U )
+
+Point x
+Star St := starAround( x )
+
+Label U $\Omega$
+Label x $x$
+Label St $\text{St}(x)$
+

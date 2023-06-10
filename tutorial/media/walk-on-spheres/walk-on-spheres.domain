@@ -21,3 +21,6 @@ constructor startWalkFrom( Subdomain S ) -> NestedPoint p
 constructor nestedBallAround( NestedPoint p ) -> Ball
 constructor sampleBoundaryNested( Subdomain S ) -> NestedPoint p
 
+type Ray
+constructor toBoundary( Point p, Subdomain S ) -> Ray
+

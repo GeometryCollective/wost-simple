@@ -1,0 +1,6 @@
+{
+  "substance": "./StarShapedRadii.substance",
+  "style": ["./walk-on-spheres/walk-on-spheres.style", "./StarShapedRadii.style"],
+  "domain": "./walk-on-spheres/walk-on-spheres.domain",
+  "variation": "RoadsideCaribou016"
+}
