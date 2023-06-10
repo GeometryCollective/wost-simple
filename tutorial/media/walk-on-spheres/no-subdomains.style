@@ -32,14 +32,14 @@ where D has label {
 }
 forall Point p; Subdomain S; Domain D
 where p := sampleBoundary( S ) {
-   ensure disjoint( D.labelText, p.walkLine, Global.domainLabelPadding ) in labelStage
+   ensure disjoint( D.labelText, p.walkLine, Global.labelPadding ) in labelStage
 }
 forall NestedPoint p; Subdomain S; Domain D
 where p := sampleBoundaryNested( S ) {
-   ensure disjoint( D.labelText, p.walkLine, Global.domainLabelPadding ) in labelStage
+   ensure disjoint( D.labelText, p.walkLine, Global.labelPadding ) in labelStage
 }
 forall Point q; Point p; Domain D
 where q := closestBoundaryPoint( D, p ) {
-   ensure disjoint( D.labelText, q.walkLine, Global.domainLabelPadding ) in labelStage
+   ensure disjoint( D.labelText, q.walkLine, Global.labelPadding ) in labelStage
 }
 

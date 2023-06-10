@@ -1,0 +1,6 @@
+{
+  "substance": "./StarShapedRegion.substance",
+  "style": ["./walk-on-spheres/walk-on-spheres.style", "./StarShapedRegion.style"],
+  "domain": "./walk-on-spheres/walk-on-spheres.domain",
+  "variation": "StormfangHorse95726"
+}
