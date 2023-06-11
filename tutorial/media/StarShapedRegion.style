@@ -10,6 +10,48 @@ where r := toBoundary(p,St); St := starAround(p) {
    scalar R = min( dBall, dDomain )
    override r.L = R
 
+   override r.icon.ensureOnCanvas = false
+
    layer r.icon above St.ball
    layer p.dot above r.icon
 }
+
+forall Domain D {
+   vec2 D.q1 = ((.92,.84) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q2 = ((.84,.88) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q3 = ((.55,.60) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q4 = ((.68,.96) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q5 = ((.59,1.0) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q6 = ((.33,.90) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q7 = ((.41,.58) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q8  = ((.16,.77) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q9  = ((0.0,.49) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q10 = ((.03,.15) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q11 = ((.43,0.0) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q12 = ((.32,.32) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q13 = ((.48,.36) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q14 = ((.46,.06) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q15 = ((.76,0.0) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q16 = ((1.0,.27) - (0.5,0.5)) * D.scale + D.offset
+   vec2 D.q17 = ((.77,.43) - (0.5,0.5)) * D.scale + D.offset
+
+   -- domain boundary
+   override D.geometry.points = ( D.q1, D.q2, D.q3, D.q4, D.q5, D.q6, D.q7, D.q8, D.q9, D.q10, D.q11, D.q12, D.q13, D.q14, D.q15, D.q16, D.q17 )
+
+   -- Dirichlet boundary
+   override D.poly0.points = ( D.q8, D.q9, D.q10, D.q11 )
+
+   -- Neumann boundary
+   override D.poly1.points = ( D.q1, D.q2, D.q3, D.q4, D.q5, D.q6, D.q7, D.q8 )
+
+   -- Dirichlet boundary
+   override D.poly2.points = ( D.q16, D.q17, D.q1 )
+
+   -- Neumann boundary
+   override D.poly3.points = ( D.q11, D.q12, D.q13, D.q14, D.q15, D.q16 )
+}
+
+forall Point `x` {
+   override `x`.location = (0,0)
+}
+
