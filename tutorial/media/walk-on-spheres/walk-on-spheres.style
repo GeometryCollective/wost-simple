@@ -49,30 +49,6 @@ Global {
 }
 
 forall Domain D {
-   -- -- draw the domain as a polygon with some random variation, by
-   -- -- perturbing the vertices of a hexagon by some bounded amount
-   -- -- Note: if the domain shape is changed to something else (like
-   -- -- an ellipse or a rectangle), things _should_ still work as
-   -- -- expected, since later methods just make a call to `signedDistance`
-   -- -- to determine ball radii.  However, signed distance may not yet
-   -- -- be supported for all shapes (like arbitrary Bézier curves).
-   -- scalar maxPerturbation = 15
-   -- scalar w = .8*canvas.width/2
-   -- scalar h = .8*canvas.height/2
-   -- vec2 D.p0 = ( w, -h) + maxPerturbation*diskRandom()
-   -- vec2 D.p1 = ( 0, -h) + maxPerturbation*diskRandom()
-   -- vec2 D.p2 = (-w, -h) + maxPerturbation*diskRandom()
-   -- vec2 D.p3 = (-w,  h) + maxPerturbation*diskRandom()
-   -- vec2 D.p4 = ( 0,  h) + maxPerturbation*diskRandom()
-   -- vec2 D.p5 = ( w,  h) + maxPerturbation*diskRandom()
-   -- shape D.geometry = Polygon {
-   --    points: ( D.p0, D.p1, D.p2, D.p3, D.p4, D.p5 )
-   --    fillColor: Colors.lightGray
-   --    strokeColor: Colors.black
-   --    strokeWidth: Global.domainStrokeWidth
-   --    ensureOnCanvas: false
-   -- }
-
    -- draw the domain as a polygon with the same geometry used in the sample code
    scalar D.scale = canvas.height - 5.
    vec2 D.offset = (0,0)
@@ -621,19 +597,29 @@ forall Ray r; Domain D {
    vec2 a = r.x -- start
    vec2 b = r.x + r.L*r.v -- end
 
-   -- arrowhead, rotated according to ray direction
-   mat2x2 A = s*( (cos(r.theta),-sin(r.theta)), (sin(r.theta),cos(r.theta)) )
-   vec2 p1 = A*( -2.0, -0.3 )
-   vec2 p2 = A*( -2.4, -1.0 )
-   vec2 p3 = A*(  0.0,  0.0 )
-   vec2 p4 = A*( -2.4,  1.0 )
-   vec2 p5 = A*( -2.0,  0.3 )
+   scalar w = .75
+   vec2 u = unit(b-a)
+   vec2 n = rot90(u)
+   shape r.taperedStroke = Polygon {
+      points: ( a, b + w*n - 3.5*u, b - w*n - 3.5*u )
+      fillColor: #ff4411
+      ensureOnCanvas: false
+   }
 
-   shape r.icon = Polygon {
-      points: ( a, b+p1, b+p2, b+p3, b+p4, b+p5 )
-      fillColor: #ff4411aa
+   shape r.arrowHead = Line {
+      start: b - 5*u
+      end: b
+      strokeColor: #ff4411
+      strokeWidth: Global.walkStrokeWidth
       endArrowhead: "straight"
       endArrowheadSize: .5
+      ensureOnCanvas: false
+   }
+
+   shape r.icon = Group {
+      shapes: [ r.taperedStroke, r.arrowHead ]
+      ensureOnCanvas: false
+      opacity: .75
    }
 
    layer r.icon above D.geometry
@@ -993,22 +979,22 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 
 -- StarShapedRegion.style ------------------------
 
--- -- draw uniformly-spaced rays to the boundary of the star-shaped region
--- forall Ray r; Point p; Star St; Domain D
--- where r := toBoundary(p,St); St := starAround(p) {
--- 
---    override r.x = St.ball.center
---    override r.theta = 2*MathPI() * (match_id - 1)/match_total
---    
---    scalar dBall  = rayIntersectDistance( St.ball, r.x, r.v )
---    scalar dDomain  = rayIntersectDistance( D.neumannBoundary, r.x, r.v )
---    scalar R = min( dBall, dDomain )
---    override r.L = R
--- 
---    override r.icon.ensureOnCanvas = false
--- 
---    layer r.icon above St.ball
---    layer p.dot above r.icon
--- }
+-- draw uniformly-spaced rays to the boundary of the star-shaped region
+forall Ray r; Point p; Star St; Domain D
+where r := toBoundary(p,St); St := starAround(p) {
+
+   override r.x = St.ball.center
+   override r.theta = 2*MathPI() * (match_id - 1)/match_total
+   
+   scalar dBall  = rayIntersectDistance( St.ball, r.x, r.v )
+   scalar dDomain  = rayIntersectDistance( D.neumannBoundary, r.x, r.v )
+   scalar R = min( dBall, dDomain )
+   override r.L = R
+
+   override r.icon.ensureOnCanvas = false
+
+   layer r.icon above St.ball
+   layer p.dot above r.icon
+}
 
 
