@@ -8,10 +8,10 @@ Let bc := Segment(b,c)
 
 Point x -- query point
 Let xb := Segment(x,b)
-isDashed(xb)
+IsDashed(xb)
 
-Triangle xab := Tri(x,a,b)
-Triangle xbc := Tri(x,b,c)
+Let xab := Triangle(x,a,b)
+Let xbc := Triangle(x,b,c)
 Vector n1 := Normal(ab)
 Vector n2 := Normal(bc)
 

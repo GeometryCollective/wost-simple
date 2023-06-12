@@ -191,24 +191,62 @@ where s has label {
 -- the middle, going from the first to second point used
 -- to define the segment.
 forall Segment s
-where isOriented( s ) {
+where IsOriented( s ) {
 
-   scalar h = 10 -- size
+   scalar h = global.dotRadius * 2.5
 
    vec2 m = (s.a + s.b)/2
    vec2 t = unit(s.b - s.a) -- tangent
    vec2 n = rot90(t) -- normal
-   shape s.orientationMarker = Path {
-      points: ( m + h*(n-t), m + h*t, m + h*(-n-t) )
+   shape s.orientationMarker = Polyline {
+      points: ( m + h*(n-t/2), m + h*t/2, m + h*(-n-t/2) )
       strokeColor: s.icon.strokeColor
       strokeWidth: s.icon.strokeWidth
    }
 }
 
 forall Segment s
-where isDashed( s ) {
+where IsDashed( s ) {
    override s.icon.style = "dashed"
    override s.icon.strokeDasharray = "4,4"
+}
+
+--------------------------------------------------
+-- Angle markers --------------------------------
+--------------------------------------------------
+
+forall Angle a {
+   scalar a.theta0 = unitRandom() * 2*MathPI()
+   scalar a.theta1 = unitRandom() * 2*MathPI()
+   scalar a.radius = 15
+   vec2 a.center = (0,0)
+
+   shape a.icon = Path {
+      d: circularArc( "open", a.center, a.radius, a.theta0, a.theta1 )
+      strokeColor: #000
+      strokeWidth: 1
+   }
+}
+
+forall Angle a
+where IsOriented( a ) {
+   override a.icon.endArrowhead = "straight"
+   override a.icon.endArrowheadSize = 0.5
+}
+
+forall Angle a; Point x,y,z
+where a := InteriorAngle(x,y,z) {
+   vec2 u = y.x - x.x
+   vec2 v = z.x - x.x
+   override a.theta0 = angleOf(u)
+   scalar s = sign(cross2D(u,v))
+   scalar dTheta = s * angleBetween(u,v)
+   override a.theta1 = a.theta0 + dTheta
+   override a.center = x.x
+}
+
+forall Angle a; Triangle t {
+   layer a.icon above t.icon
 }
 
 --------------------------------------------------
@@ -318,7 +356,7 @@ forall Triangle t
 }
 
 forall Triangle t; Point p1; Point p2; Point p3
-where t := Tri(p1, p2, p3)
+where t := Triangle(p1, p2, p3)
 {
    override t.a = p1.x
    override t.b = p2.x
@@ -326,7 +364,7 @@ where t := Tri(p1, p2, p3)
 }
 
 forall Point p; Triangle t; Point q0; Point q1; Point q2
-where InTri( p, t ); t := Tri(q0, q1, q2) {
+where InTri( p, t ); t := Triangle(q0, q1, q2) {
    override p.x = triangleRandom(q0.x, q1.x, q2.x)
 }
 
