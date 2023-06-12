@@ -7,8 +7,6 @@ Let cd := Segment(c,d)
 IsOriented( cd )
 
 Point x
-Let xab := Triangle(x,a,b)
-Let xcd := Triangle(x,c,d)
 Angle tab := InteriorAngle(x,a,b)
 Angle tcd := InteriorAngle(x,c,d)
 IsOriented( tab )
@@ -16,4 +14,6 @@ IsOriented( tcd )
 
 Label a $a$
 Label b $b$
+Label c $c$
+Label d $d$
 Label x $x$

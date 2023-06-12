@@ -308,13 +308,6 @@ Recall that the routine \code{intersectPolylines} will also update the flag \cod
 
 After all walks are finished we return the average boundary value, which gives our solution estimate.  Again, if you're curious about \emph{why} this algorithm works, you'll have to take a look at the paper!
 
-\section*{Acknowledgements} All diagrams in this document were made using \textsc{Penrose}~\citep{Ye:2020:PFM}.  Special thanks to Wode Ni, Sam Estep, Yiliang Liang, and the rest of the Penrose team for development support during production of this document.
-
-\bibliographystyle{plainnat}
-\bibliography{WoSt-tutorial}
-
-\appendix
-
 \section{Inside-Outside Test (optional)}
 \label{sec:InsideOutsideTest}
 
@@ -327,8 +320,16 @@ This signed angle is computed by just looping over all segments in the polylines
 \inputminted[fontsize=\small,linenos,firstline=182,lastline=189,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 \begin{figure}[h!]
-   \todo{A diagram of a polygon and two segments which give different angle orientations/signs.}
-   \caption{The signed angle subtended by a segment with endpoints \(\vec{a}\) and \(\vec{b}\) relative to the point \(\vec{x}\).  Summing these angles over all edges of a closed simple polygon will yield \(+2\pi\) if \(\vec{x}\) is contained in the polygon.}
+   \includesvg{images/AtomicSignedAngle.svg}
+   \includesvg{images/SignedAngleInside.svg}
+   \includesvg{images/SignedAngleOutside.svg}
+   \caption{\emph{Left:} the signed angle subtended by segments \(ab\) and \(cd\) are positive and negative (\resp{}) with respect to \(x\). Summing these signed angles yields a total angle \(+2\pi\) for any point \(x\) inside a polygon \figloc{(center)}, and a total angle of zero for points \(x\) outside the polygon \figloc{(right)}.\label{fig:InsideOutside}}
 \end{figure}
+
+
+\section*{Acknowledgements} All diagrams in this document were made using \textsc{Penrose}~\citep{Ye:2020:PFM}.  Special thanks to Wode Ni, Sam Estep, Yiliang Liang, and the rest of the Penrose team for development support during production of this document.
+
+\bibliographystyle{plainnat}
+\bibliography{WoSt-tutorial}
 
 \end{document}

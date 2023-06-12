@@ -218,13 +218,14 @@ where IsDashed( s ) {
 forall Angle a {
    scalar a.theta0 = unitRandom() * 2*MathPI()
    scalar a.theta1 = unitRandom() * 2*MathPI()
-   scalar a.radius = 15
+   scalar a.radius = 20
    vec2 a.center = (0,0)
 
    shape a.icon = Path {
       d: circularArc( "open", a.center, a.radius, a.theta0, a.theta1 )
       strokeColor: #000
       strokeWidth: 1
+      ensureOnCanvas: false
    }
 }
 
@@ -240,7 +241,8 @@ where a := InteriorAngle(x,y,z) {
    vec2 v = z.x - x.x
    override a.theta0 = angleOf(u)
    scalar s = sign(cross2D(u,v))
-   scalar dTheta = s * angleBetween(u,v)
+   scalar arrowheadArc = 4
+   scalar dTheta = s * ( angleBetween(u,v) - arrowheadArc/a.radius )
    override a.theta1 = a.theta0 + dTheta
    override a.center = x.x
 }
@@ -730,3 +732,96 @@ where p has label {
 --    override `x`.x = (canvas.width/2 - global.labelHeight, global.labelHeight*2)
 -- }
 
+-- subtended-angles.style
+
+-- -- Shade signed angles blue if they're positive, and red
+-- -- if they're negative
+-- forall Angle t; Point a, b, c
+-- where t := InteriorAngle(a,b,c); IsOriented(t)
+-- {
+--    -- computes a value v equal to zero if the triangle
+--    -- is negatively-oriented, and one if the triangle is
+--    -- positively-oriented
+--    scalar u = sign( cross2D( b.x - a.x, c.x - a.x ))
+--    scalar v = (u + 1)/2
+-- 
+--    shape subtended = Polygon {
+--       points: ( b.x, a.x, c.x )
+--       fillColor: rgba( 1-v, 0, v, .2 )
+--       strokeColor: #0002
+--       strokeWidth: .5
+--       ensureOnCanvas: false
+--    }
+-- 
+--    override t.icon.strokeColor = rgba( 1-v, 0, v, .4 )
+-- }
+
+-- AtomicSignedAngle.style
+
+-- AtomicSignedAngle {
+--    scalar segmentSize = toRadians(50)
+--    override canvas.width = 200
+-- }
+-- 
+-- forall Point `x` {
+--    override `x`.x = (0,0)
+-- }
+-- 
+-- forall Point `a`, `b` {
+--    scalar theta = unitRandom() * 2*MathPI()
+--    scalar dTheta = AtomicSignedAngle.segmentSize
+--    scalar r = .9 * canvas.height/2
+--    override `a`.x = r*(cos(theta-dTheta/2),sin(theta-dTheta/2))
+--    override `b`.x = r*(cos(theta+dTheta/2),sin(theta+dTheta/2))
+-- }
+-- 
+-- forall Point `c`, `d` {
+--    scalar theta = unitRandom() * 2*MathPI()
+--    scalar dTheta = 1.5*AtomicSignedAngle.segmentSize
+--    scalar r = .9 * canvas.height/2
+--    override `c`.x = r*(cos(theta+dTheta/2),sin(theta+dTheta/2))
+--    override `d`.x = r*(cos(theta-dTheta/2),sin(theta-dTheta/2))
+-- }
+
+-- SignedAngle.style
+
+-- SignedAngle {
+--    override canvas.width = 200
+-- }
+-- 
+-- -- put the points on the boundary of the letter "A"
+-- forall Point `a1`, `a2`, `a3`, `a4`, `a5`, `a6`, `a7`, `a8`, `b1`, `b2`, `b3` {
+-- 
+--    scalar s = canvas.height - 10 -- scale
+-- 
+--    -- outer boundary
+--    override `a1`.x = s * (-.169, -.287)
+--    override `a2`.x = s * ( .173, -.287)
+--    override `a3`.x = s * ( .249, -.500)
+--    override `a4`.x = s * ( .500, -.500)
+--    override `a5`.x = s * ( .119,  .500)
+--    override `a6`.x = s * (-.123,  .500)
+--    override `a7`.x = s * (-.500, -.500)
+--    override `a8`.x = s * (-.242, -.500)
+-- 
+--    -- hole
+--    override `b1`.x = s * ( 0.00,  .202)
+--    override `b2`.x = s * ( .105, -.094)
+--    override `b3`.x = s * (-.102, -.094)
+-- }
+-- 
+-- forall Angle a {
+--    override a.radius = 20 + 60*(match_id - 1)/(match_total - 1)
+-- }
+
+-- SignedAngleInside.style
+
+-- forall Point `x` {
+--    override `x`.x = (50,-30)
+-- }
+
+-- SignedAngleOutside.style
+
+-- forall Point `x` {
+--    override `x`.x = (90,50)
+-- }

@@ -1,0 +1,6 @@
+{
+  "substance": "./AtomicSignedAngle.substance",
+  "style": ["./geometry-2d/geometry-2d.style", "./geometry-2d/subtended-angles.style", "./AtomicSignedAngle.style"],
+  "domain": "./geometry-2d/geometry-2d.domain",
+  "variation": "EireSeal4801"
+}

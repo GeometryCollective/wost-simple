@@ -1,0 +1,6 @@
+{
+  "substance": "./SignedAngle.substance",
+  "style": ["./geometry-2d/geometry-2d.style", "./geometry-2d/subtended-angles.style", "./SignedAngle.style", "./SignedAngleOutside.style"],
+  "domain": "./geometry-2d/geometry-2d.domain",
+  "variation": "BollywoodKangaroo140"
+}

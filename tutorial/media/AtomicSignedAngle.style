@@ -1,0 +1,24 @@
+AtomicSignedAngle {
+   scalar segmentSize = toRadians(50)
+   override canvas.width = 200
+}
+
+forall Point `x` {
+   override `x`.x = (0,0)
+}
+
+forall Point `a`, `b` {
+   scalar theta = unitRandom() * 2*MathPI()
+   scalar dTheta = AtomicSignedAngle.segmentSize
+   scalar r = .9 * canvas.height/2
+   override `a`.x = r*(cos(theta-dTheta/2),sin(theta-dTheta/2))
+   override `b`.x = r*(cos(theta+dTheta/2),sin(theta+dTheta/2))
+}
+
+forall Point `c`, `d` {
+   scalar theta = unitRandom() * 2*MathPI()
+   scalar dTheta = AtomicSignedAngle.segmentSize
+   scalar r = .9 * canvas.height/2
+   override `c`.x = r*(cos(theta+dTheta/2),sin(theta+dTheta/2))
+   override `d`.x = r*(cos(theta-dTheta/2),sin(theta-dTheta/2))
+}
