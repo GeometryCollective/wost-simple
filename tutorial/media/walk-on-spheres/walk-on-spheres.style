@@ -65,7 +65,7 @@ forall Domain D {
       fillColor: Global.domainColor
       strokeColor: Colors.black
       strokeWidth: Global.domainStrokeWidth
-      ensureOnCanvas: false
+      -- ensureOnCanvas: false
    }
 }
 
@@ -626,6 +626,17 @@ forall Ray r; Domain D {
 }
 
 
+forall Ray r; Point p
+where p := headOf( r )
+{
+   override p.location = r.arrowHead.end
+   override p.dot.fillColor = Colors.white
+   override p.dot.strokeColor = Colors.black
+   override p.dot.strokeWidth = 0.5
+   layer p.dot above r.icon
+}
+
+
 -- Labeling ------------------------------------------------
 
 forall Subdomain S; Domain D
@@ -842,11 +853,6 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 
 -- StarShapedRadii.style ------------------------
 
--- resizeCanvas {
---    override canvas.width = 250
---    override canvas.height = 250
--- }
--- 
 -- -- Widgets to draw the smallest ball touching the Dirichlet boundary,
 -- -- and the smallest ball toughing the Neumann silhouette.
 -- forall Star St; Point p; Domain D
@@ -996,7 +1002,9 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 --    layer r.icon above St.ball
 --    layer p.dot above r.icon
 -- }
--- 
+
+-- alternate-domain.style ------------------------
+
 -- forall Domain D {
 --    vec2 D.q1 = ((.92,.84) - (0.5,0.5)) * D.scale + D.offset
 --    vec2 D.q2 = ((.84,.88) - (0.5,0.5)) * D.scale + D.offset

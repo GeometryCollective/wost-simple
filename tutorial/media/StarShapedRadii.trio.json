@@ -1,6 +1,6 @@
 {
   "substance": "./StarShapedRadii.substance",
-  "style": ["./walk-on-spheres/walk-on-spheres.style", "./StarShapedRadii.style"],
+  "style": ["./walk-on-spheres/walk-on-spheres.style", "./walk-on-spheres/alternate-domain.style", "./StarShapedRadii.style"],
   "domain": "./walk-on-spheres/walk-on-spheres.domain",
-  "variation": "OverboardLemur92167"
+  "variation": "GravelHyena173"
 }

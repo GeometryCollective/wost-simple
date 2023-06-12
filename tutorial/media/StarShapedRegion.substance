@@ -22,8 +22,8 @@ Ray r13 := toBoundary( x, St )
 Ray r14 := toBoundary( x, St )
 Ray r15 := toBoundary( x, St )
 Ray r16 := toBoundary( x, St )
+Point y := headOf( r2 )
 
---Label U $\Omega$
---Label x $x$
---Label St $\text{St}(x)$
+Label x $x$
+Label y $y$
 

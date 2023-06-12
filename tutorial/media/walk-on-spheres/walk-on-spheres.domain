@@ -23,4 +23,5 @@ constructor sampleBoundaryNested( Subdomain S ) -> NestedPoint p
 
 type Ray
 constructor toBoundary( Point p, Subdomain S ) -> Ray
+constructor headOf( Ray r ) -> Point
 

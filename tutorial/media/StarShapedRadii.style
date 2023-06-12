@@ -1,8 +1,3 @@
-resizeCanvas {
-   override canvas.width = 250
-   override canvas.height = 250
-}
-
 -- Widgets to draw the smallest ball touching the Dirichlet boundary,
 -- and the smallest ball toughing the Neumann silhouette.
 forall Star St; Point p; Domain D
