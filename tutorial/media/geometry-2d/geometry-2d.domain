@@ -10,6 +10,7 @@ type Chord <: Set
 type Length <: Set
 type Polyline <: Set
 
+constructor Segment( Point p, Point q )
 constructor LineSegment( Point p, Point q ) -> Segment
 constructor ClosestPoint( Set s, Point p ) -> Point
 constructor ClosestSegment( Set s, Point p ) -> Segment
@@ -27,4 +28,5 @@ predicate OnCircle( Point p, Circle c )
 predicate InDisk( Point p, Disk d )
 predicate OfDisk( Chord c, Disk d )
 predicate isDashed( Set s )
+predicate isOriented( Segment s )
 

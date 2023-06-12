@@ -2,7 +2,7 @@
 -- labeling the distance t between the first
 -- endpoint and the intersection point
 Point a, b
-Segment ab := LineSegment(a,b)
+Let ab := Segment(a,b)
 
 Point x
 Point y := ClosestPoint(ab,x)

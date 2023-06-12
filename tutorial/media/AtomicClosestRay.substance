@@ -1,6 +1,6 @@
 -- Draw a ray hit and miss
 Point a, b
-Segment s := LineSegment(a,b)
+Let s := Segment(a,b)
 Point x
 Vector v
 

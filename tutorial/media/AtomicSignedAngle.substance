@@ -1,0 +1,4 @@
+Point a, b
+Let s := Segment(a,b)
+isOriented( s )
+

@@ -179,7 +179,7 @@ vector<Polyline> boundaryNeumann = {
 
 // these routines are not used by WoSt itself, but are rather used to check
 // whether a given evaluation point is actually inside the domain
-double solidAngle( Vec2D x, const vector<Polyline>& P )
+double signedAngle( Vec2D x, const vector<Polyline>& P )
 {
    double Theta = 0.;
    for( int i = 0; i < P.size(); i++ )
@@ -195,8 +195,8 @@ bool insideDomain( Vec2D x,
                    const vector<Polyline>& boundaryDirichlet,
                    const vector<Polyline>& boundaryNeumann )
 {
-   double Theta = solidAngle( x, boundaryDirichlet ) +
-                  solidAngle( x, boundaryNeumann );
+   double Theta = signedAngle( x, boundaryDirichlet ) +
+                  signedAngle( x, boundaryNeumann );
    const double delta = 1e-4; // numerical tolerance
    return abs(Theta-2.*M_PI) < delta; // boundary winds around x exactly once
 }

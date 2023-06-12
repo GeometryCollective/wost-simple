@@ -320,11 +320,11 @@ After all walks are finished we return the average boundary value, which gives o
 
 Though not strictly part of the WoSt algorithm itself, we may also want to know whether a given evaluation point \(\vec{x}_0\) is inside or outside the problem domain \(\Omega\) (\eg, for visualizing the solution).  To answer this query, we can just measure the total signed solid angle of the boundary polygon, relative to the query point:
 
-\inputminted[fontsize=\small,linenos,firstline=187,lastline=198,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=191,lastline=202,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 This signed angle is computed by just looping over all segments in the polylines, and adding up the signed angle of the individual segments.  If we represent points by complex numbers, the angle for a segment with endpoints \(\vec{a},\vec{b}\) is just \(\theta := \arg((\vec{b}-\vec{x})/(\vec{a}-\vec{x}))\), \ie, the angle that rotates the vector \(\vec{a}-\vec{x}\) to the vector \(\vec{b}-\vec{x}\):
 
-\inputminted[fontsize=\small,linenos,firstline=176,lastline=185,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
+\inputminted[fontsize=\small,linenos,firstline=182,lastline=189,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
 \begin{figure}[h!]
    \todo{A diagram of a polygon and two segments which give different angle orientations/signs.}

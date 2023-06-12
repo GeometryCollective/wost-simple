@@ -2,13 +2,12 @@
 -- pair of segments including the normals and the
 -- triangles that correspond to the determinant calculation
 
-
 Point a, b, c -- segments
-Segment ab := LineSegment(a,b)
-Segment bc := LineSegment(b,c)
+Let ab := Segment(a,b)
+Let bc := Segment(b,c)
 
 Point x -- query point
-Segment xb := LineSegment(x,b)
+Let xb := Segment(x,b)
 isDashed(xb)
 
 Triangle xab := Tri(x,a,b)

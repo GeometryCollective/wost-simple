@@ -161,7 +161,7 @@ forall Segment s {
 }
 
 forall Segment s; Point p; Point q
-where s := LineSegment(p,q) {
+where s := Segment(p,q) {
    -- replace the endpoints with the
    -- locations of the given points
    override s.a = p.x
@@ -446,7 +446,7 @@ where r := RayFrom(p,v) {
 --------------------------------------------------
 
 forall Point q; Ray r; Point p; Vector v; Segment s; Point a; Point b
-where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := LineSegment(a,b) {
+where q := RaySegmentIntersection(r,s); r := RayFrom(p,v); s := Segment(a,b) {
 
    -- put the intersection point at some random point in the segment
    scalar u = random(.2,.8)
