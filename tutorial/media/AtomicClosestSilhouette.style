@@ -51,7 +51,7 @@ forall Triangle t1; Triangle t2 {
       fontFamily: global.labelFamily
       fontSize: global.labelSize
       fillColor: global.labelColor
-      opacity: 1-s
+      opacity: 1-alpha
    }
 
    shape notSilhouette = Text {
@@ -60,6 +60,6 @@ forall Triangle t1; Triangle t2 {
       fontFamily: global.labelFamily
       fontSize: global.labelSize
       fillColor: global.labelColor
-      opacity: s
+      opacity: alpha
    }
 }

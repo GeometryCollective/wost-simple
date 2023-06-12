@@ -187,6 +187,24 @@ where s has label {
    ensure disjoint( s.labelText, s.icon, global.padding ) in labelStage
 }
 
+-- Oriented segments are given an orientation marker in
+-- the middle, going from the first to second point used
+-- to define the segment.
+forall Segment s
+where isOriented( s ) {
+
+   scalar h = 10 -- size
+
+   vec2 m = (s.a + s.b)/2
+   vec2 t = unit(s.b - s.a) -- tangent
+   vec2 n = rot90(t) -- normal
+   shape s.orientationMarker = Path {
+      points: ( m + h*(n-t), m + h*t, m + h*(-n-t) )
+      strokeColor: s.icon.strokeColor
+      strokeWidth: s.icon.strokeWidth
+   }
+}
+
 forall Segment s
 where isDashed( s ) {
    override s.icon.style = "dashed"
@@ -646,7 +664,7 @@ where p has label {
 --       fontFamily: global.labelFamily
 --       fontSize: global.labelSize
 --       fillColor: global.labelColor
---       opacity: 1-s
+--       opacity: 1-alpha
 --    }
 -- 
 --    shape notSilhouette = Text {
@@ -655,7 +673,7 @@ where p has label {
 --       fontFamily: global.labelFamily
 --       fontSize: global.labelSize
 --       fillColor: global.labelColor
---       opacity: s
+--       opacity: alpha
 --    }
 -- }
 
