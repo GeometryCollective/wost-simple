@@ -102,16 +102,17 @@ For a Laplace equation with Dirichlet and zero-Neumann boundary conditions, WoSt
    \textsc{(Walk on Stars)} \emph{Repeatedly jump to a random point on a \textbf{star-shaped region} around the current point until you reach the \textbf{Dirichlet} boundary.  The average boundary value over many such walks yields the solution.}
 \end{mdframed}
 
-The main implementation effort is in enriching the closest point queries used by WoS with \emph{closest silhouette point queries}, as well as standard ``first hit'' ray intersection queries.  A complete 2D implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.  For simplicity, we omit nonzero Neumann conditions and acceleration of geometric queries---full 3D implementation is detailed in \citet{Sawhney:2023:WoSt}.
+The main implementation effort is in enriching the closest point queries used by WoS with \emph{closest silhouette point queries}, as well as standard ``first hit'' ray intersection queries.  A complete 2D implementation with no external dependencies is provided in about 150 lines of C++ code (ignoring I/O), in the file \code{WoStLaplace.cpp}.  For simplicity, we omit nonzero Neumann conditions and acceleration of geometric queries---full 3D implementation is detailed in \citet{Sawhney:2023:WoSt}.
 
 To emphasize the core ideas of the WoSt algorithm, this tutorial focuses on a bare-bones 2D version of WoSt that solves the Laplace equation
-\[
+\begin{equation}
+   \label{eq:MainPDE}
    \begin{array}{rcll}
       \Delta u &=& 0 & \text{on}\ \Omega, \\
              u &=& g & \text{on}\ \partial\Omega_D, \\
              \tfrac{\partial u}{\partial n} &=& 0 & \text{on}\ \partial\Omega_N, \\
    \end{array}
-\]
+\end{equation}
 where \(\Omega \subset \mathbb{R}^2\) is a closed polygon in the plane, \(g\) is a real-valued function on the Dirichlet part of the boundary \(\partial\Omega_D\), and \(\partial\Omega_N\) is the complementary Neumann part of the boundary.  
 
 \newpage
@@ -123,7 +124,7 @@ where \(\Omega \subset \mathbb{R}^2\) is a closed polygon in the plane, \(g\) is
 \label{sec:WalkOnSpheresOverview}
 
 
-A good way to understand WoSt is to start with the basic WoS algorithm, which solves the same problem but with pure Dirichlet boundary conditions (\(\partial_N = \O\)).  The basic idea is quite simple: to estimate the solution at a point \(\vec{x}_0 \in \Omega\), just take \(M\) random walks to the boundary \(\partial\Omega\) (for some large number \(M\)), and take the average value \(g\) at these boundary points.  The reason this method is called ``walk on \emph{spheres}'' is that these random walks are simulated by repeatedly jumping to the boundary of the largest empty sphere \(S_r(\vec{x}_k) \subset \Omega\) around the current point \(\vec{x}_k\) to get the next point \(\vec{x}_{k+1}\).  Steps hence tend to be big, and the method quickly makes progress toward the boundary (in comparison to taking small, fixed-sized steps).  In a bit more detail, the WoS algorithm looks like this:
+A good way to understand WoSt is to start with the basic WoS algorithm, which solves the same problem but with pure Dirichlet boundary conditions (\(\partial_N = \O\)).  The basic idea is quite simple: to estimate the solution at a point \(\vec{x}_0 \in \Omega\), just take \(M\) random walks to the boundary \(\partial\Omega\) (for some large number \(M\)), and grab the average value \(g\) at these boundary points.  The average boundary value across all walks then gives an estimate of the solution, which becomes more accurate as \(M\) increases.  The reason this method is called ``walk on \emph{spheres}'' is that these random walks are simulated by repeatedly jumping to the boundary of the largest empty sphere \(S_r(\vec{x}_k) \subset \Omega\) around the current point \(\vec{x}_k\) to get the next point \(\vec{x}_{k+1}\).  Steps hence tend to be big, and the method quickly makes progress toward the boundary (in comparison to taking small, fixed-sized steps).  In a bit more detail, the WoS algorithm looks like this:
 
 \begin{itemize}
    \item \textbf{for} \(i = 1, \ldots, M\):
@@ -138,7 +139,7 @@ A good way to understand WoSt is to start with the basic WoS algorithm, which so
    \item Return the estimate \(\widehat{u}/M\).
 \end{itemize}
 
-Figure \ref{fig:WoSvsWoSt}, \figloc{left} shows an example.  To actually implement this algorithm, we really just need two kinds of subroutines:
+Figure \ref{fig:WoSvsWoSt}, \figloc{left} shows an example walk.  To actually implement this algorithm, we just need two kinds of subroutines:
 \begin{itemize}
    \item \textbf{Geometric queries.}  For a given point \(\vec{x}_k \in \Omega\), we need to know how to compute the closest point \(\overline{\vec{x}}_k\) on the boundary.
    \item \textbf{Random sampling.} For a sphere \(S\) with center \(\vec{x}_k\) and radius \(r\), we need to know how to pick a point \(\vec{x}_{k+1}\) on \(S\) uniformly at random.

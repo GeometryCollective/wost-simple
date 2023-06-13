@@ -19,13 +19,15 @@ colors {
 }
 
 global {
+   scalar toPt = 96/72 -- constant for converting sizes from pt to px
+
    -- dot style
    color dotColor = colors.black
-   scalar dotRadius = 1.75
-   scalar dotStroke = .75
+   scalar dotRadius = toPt * 1.75
+   scalar dotStroke = toPt * .75
 
    -- line and arrow style
-   scalar lineWidth = 1
+   scalar lineWidth = toPt * 1
    scalar arrowLength = 25.0
 
    -- label style

@@ -611,7 +611,7 @@ forall Ray r; Domain D {
    }
 
    shape r.arrowHead = Line {
-      start: b - 5*u
+      start: b - 6.5*u
       end: b
       strokeColor: #ff4411
       strokeWidth: Global.walkStrokeWidth
