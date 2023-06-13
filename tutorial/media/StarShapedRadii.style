@@ -44,7 +44,7 @@ where St := starAround(p) {
       r: Global.dotSize
       fillColor : Colors.white
       strokeColor : St.dirichletBall.strokeColor
-      strokeWidth : 0.5
+      strokeWidth : global.openDotWidth
       ensureOnCanvas: false
    }
    shape St.closestDirichlet = Group {
@@ -92,7 +92,7 @@ where St := starAround(p) {
       r: Global.dotSize
       fillColor : Colors.white
       strokeColor : St.neumannBall.strokeColor
-      strokeWidth : 0.5
+      strokeWidth : global.openDotWidth
       ensureOnCanvas: false
    }
    shape St.closestSilhouette = Group {

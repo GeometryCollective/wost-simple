@@ -17,25 +17,28 @@ Colors {
 
 -- global shapes and constants
 Global {
+   scalar toPt = 96/72 -- constant for converting sizes from pt to px
+
    -- default appearance for label text
    string labelFont = "Linux Libertine"
    string labelSize = "13.333px" -- equivalent to 10pt (multiply by 96/72)
-   scalar labelHeight = 13.333
+   scalar labelHeight = toPt * 10
    color labelColor = Colors.black
    color subdomainLabelColor = Colors.deepBlue
    color labelStrokeColor = Colors.white
-   scalar labelStrokeWidth = 1.5
+   scalar labelStrokeWidth = toPt * 1.5
 
    -- appearance of dots/points
-   scalar dotSize = 1.5
+   scalar dotSize = toPt * 1.5
+   scalar openDotWidth = toPt * 0.5
 
    -- style of domains/subdomains
    color domainColor = Colors.lightGray
    color ballColor = rgba(154/255.,160/255.,204/255.,1)
    color sphereColor = rgba(27/255.,31/255.,138/255.,1)
    scalar subdomainOpacity = .35
-   scalar sphereStrokeWidth = .5
-   scalar domainStrokeWidth = 1
+   scalar sphereStrokeWidth = toPt * .5
+   scalar domainStrokeWidth = toPt * 1
    scalar dirichletStrokeWidth = domainStrokeWidth
    scalar neumannStrokeWidth = .65*domainStrokeWidth
    string neumannDash = "2,2"
@@ -44,7 +47,7 @@ Global {
    -- style of lines along a walk
    -- (set color to none() to disable)
    color walkColor = #1b1f8a4c
-   scalar walkStrokeWidth = 1
+   scalar walkStrokeWidth = toPt * 1
 
 }
 
@@ -570,7 +573,7 @@ where q := closestBoundaryPoint( D, p ); hasMixedBoundaryConditions( D )
    override q.dot.center = closestPoint( D.dirichletBoundary, p.location )
    override q.dot.fillColor = Colors.white
    override q.dot.strokeColor = Colors.black
-   override q.dot.strokeWidth = 0.5
+   override q.dot.strokeWidth = global.openDotWidth
 
    shape q.walkLine = Line {
       start: p.dot.center
@@ -632,7 +635,7 @@ where p := headOf( r )
    override p.location = r.arrowHead.end
    override p.dot.fillColor = Colors.white
    override p.dot.strokeColor = Colors.black
-   override p.dot.strokeWidth = 0.5
+   override p.dot.strokeWidth = global.openDotWidth
    layer p.dot above r.icon
 }
 
@@ -796,13 +799,18 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 
 -- WalkOnStars.style
 
--- -- Offset the domain so that it's not covered up
--- -- too much by the legend
--- forall Domain D
--- where hasLegend(D)
--- {
---    override D.offset = (-50,0)
--- }
+-- Make the image wider to accommodate a legend
+legendWidth {
+   override canvas.width = 333.33
+}
+
+-- Offset the domain so that it's not covered up
+-- too much by the legend
+forall Domain D
+where hasLegend(D)
+{
+   override D.offset = (-50,0)
+}
 
 -- walk-on-spheres-no-subdomains.style -----------
 
@@ -899,7 +907,7 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 --       r: Global.dotSize
 --       fillColor : Colors.white
 --       strokeColor : St.dirichletBall.strokeColor
---       strokeWidth : 0.5
+--       strokeWidth : global.openDotWidth
 --       ensureOnCanvas: false
 --    }
 --    shape St.closestDirichlet = Group {
@@ -947,7 +955,7 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 --       r: Global.dotSize
 --       fillColor : Colors.white
 --       strokeColor : St.neumannBall.strokeColor
---       strokeWidth : 0.5
+--       strokeWidth : global.openDotWidth
 --       ensureOnCanvas: false
 --    }
 --    shape St.closestSilhouette = Group {
