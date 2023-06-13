@@ -1,5 +1,5 @@
--- Make the image wider to accommodate a legend
-legendWidth {
+WalkOnStars {
+   -- Make the image wider to accommodate a legend
    override canvas.width = 333.33
 }
 
@@ -11,3 +11,7 @@ where hasLegend(D)
    override D.offset = (-50,0)
 }
 
+-- Place the starting point
+forall Point `x0` {
+   override `x0`.location = (-85,30)
+}

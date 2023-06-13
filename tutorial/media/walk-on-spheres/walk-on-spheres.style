@@ -31,6 +31,7 @@ Global {
    -- appearance of dots/points
    scalar dotSize = toPt * 1.5
    scalar openDotWidth = toPt * 0.5
+   scalar dotLabelDistance = 9
 
    -- style of domains/subdomains
    color domainColor = Colors.lightGray
@@ -42,7 +43,7 @@ Global {
    scalar dirichletStrokeWidth = domainStrokeWidth
    scalar neumannStrokeWidth = .65*domainStrokeWidth
    string neumannDash = "2.66,2.66" -- "2,2"
-   scalar labelPadding = 5
+   scalar labelPadding = 6
 
    -- style of lines along a walk
    -- (set color to none() to disable)
@@ -247,7 +248,7 @@ where p has label {
    -- We want the label to be near the dot, but don't want it
    -- to overlap the dot (which makes it hard to read).
    scalar theta = ? in labelStage
-   p.labelText.center = p.dot.center + 8.*( cos(theta), sin(theta) )
+   p.labelText.center = p.dot.center + Global.dotLabelDistance*( cos(theta), sin(theta) )
 
    -- If we fail to avoid overlap, we should
    -- at least draw the label on top of the dot
@@ -799,8 +800,8 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 
 -- WalkOnStars.style
 
--- -- Make the image wider to accommodate a legend
--- legendWidth {
+-- WalkOnStars {
+--    -- Make the image wider to accommodate a legend
 --    override canvas.width = 333.33
 -- }
 -- 
@@ -810,6 +811,11 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 -- where hasLegend(D)
 -- {
 --    override D.offset = (-50,0)
+-- }
+-- 
+-- -- Place the starting point
+-- forall Point `x0` {
+--    override `x0`.location = (-85,30)
 -- }
 
 -- walk-on-spheres-no-subdomains.style -----------

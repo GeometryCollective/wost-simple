@@ -67,8 +67,16 @@
 
 \begin{figure}[h!]
    \centering
-   \includesvg{images/WalkOnSpheres.svg}
-   \includesvg{images/WalkOnStars.svg}
+   \begin{minipage}{150pt}
+      \centering
+      \figlabel{\phantom{mmmm}\textsc{Walk on Spheres}} \\
+      \includesvg{images/WalkOnSpheres.svg}
+   \end{minipage}
+   \begin{minipage}{250pt}
+      \centering
+      \figlabel{\textsc{Walk on Stars}\phantom{mmmmm}} \\
+      \includesvg{images/WalkOnStars.svg}
+   \end{minipage}
    \caption{Walks taken by the WoS algorithm \emph{(left)} and the WoSt algorithm \emph{(right)}.  The algorithms are virtually identical, except that WoSt replaces spheres with star-shaped regions, enabling walks to reflect off Neumann boundaries.\label{fig:WalkOnStars}}
 \end{figure}
 
@@ -77,7 +85,7 @@
 %    \caption{The domain for our problem.\label{fig:ProblemDomain}}
 % \end{figure}
 
-This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work, the final algorithm is about as simple as the original \emph{walk on spheres (WoS)} method of \citet{muller1956some}.  For a Laplace equation with Dirichlet boundary conditions, WoS essentially says:
+This note provides a step-by-step tutorial on how to implement the \emph{walk on stars (WoSt)} algorithm of \citet{Sawhney:2023:WoSt}.  Though the derivation of algorithm takes some work, the final algorithm remains about as simple as the original \emph{walk on spheres (WoS)} method of \citet{muller1956some}.  For a Laplace equation with Dirichlet boundary conditions, WoS essentially says:
 
 \begin{mdframed}[backgroundcolor=black!10,rightline=false,leftline=false]
    \textsc{(Walk on Spheres)} \emph{Repeatedly jump to a random point on a \textbf{sphere} around the current point until you reach the boundary.  The average boundary value over many such walks yields the solution.}
@@ -89,7 +97,7 @@ For a Laplace equation with Dirichlet and zero-Neumann boundary conditions, WoSt
    \textsc{(Walk on Stars)} \emph{Repeatedly jump to a random point on a \textbf{star-shaped region} around the current point until you reach the \textbf{Dirichlet} boundary.  The average boundary value over many such walks yields the solution.}
 \end{mdframed}
 
-The main implementation effort is in enriching the closest point queries (already used by WoS) with \emph{closest silhouette point queries}, as well as standard ``first hit'' ray intersection queries.  A complete implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.  For simplicity, we omit any acceleration of geometric queries---pointers to more efficient implementation are provided by \citet{Sawhney:2023:WoSt}.
+The main implementation effort is in enriching the closest point queries used by WoS with \emph{closest silhouette point queries}, as well as standard ``first hit'' ray intersection queries.  A complete 2D implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.  For simplicity, we omit nonzero Neumann conditions and acceleration of geometric queries---full 3D implementation is detailed in \citet{Sawhney:2023:WoSt}.
 
 \section{Overview}
 \label{sec:Overview}
