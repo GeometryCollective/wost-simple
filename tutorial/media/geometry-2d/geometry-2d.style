@@ -382,7 +382,7 @@ forall Polyline M {
    scalar theta1 = theta0 + random(.5,1)*MathPI()/2
    scalar theta2 = theta1 + random(.5,1)*MathPI()/2
    scalar theta3 = theta2 - random(.5,1)*MathPI()/2
-   scalar L = canvas.width/4
+   scalar L = canvas.width/5
    vec2 M.p1 = M.p0 + L*(cos(theta0),sin(theta0))
    vec2 M.p2 = M.p1 + L*(cos(theta1),sin(theta1))
    vec2 M.p3 = M.p2 + L*(cos(theta2),sin(theta2))
@@ -575,7 +575,8 @@ where X has label {
    constraint X.labelDisjoint = ensure disjoint( X.icon, X.labelText, global.padding ) in labelStage
 }
 
-forall Length l {
+forall Length l
+where l has label {
    delete l.labelDisjoint
 }
 
@@ -825,3 +826,15 @@ where p has label {
 -- forall Point `x` {
 --    override `x`.x = (90,50)
 -- }
+
+-- AtomicClosestRay.style
+
+-- forall Point `a`, `b`, `x` {
+--    scalar w = canvas.width
+--    scalar h = canvas.height
+--    scalar p = 20
+--    override `a`.x = ( -w/2 + p, -h/2 + p )
+--    override `b`.x = ( w/2 - p, h/2 - p )
+--    override `x`.x = ( -w/4 + p, h/2 - p )
+-- }
+

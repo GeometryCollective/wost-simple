@@ -1,6 +1,6 @@
 {
   "substance": "./AtomicClosestRay.substance",
-  "style": ["./geometry-2d/geometry-2d.style"],
+  "style": ["./geometry-2d/geometry-2d.style", "./AtomicClosestRay.style"],
   "domain": "./geometry-2d/geometry-2d.domain",
-  "variation": "LinearGiraffe016"
+  "variation": "MadangOctopus2274"
 }

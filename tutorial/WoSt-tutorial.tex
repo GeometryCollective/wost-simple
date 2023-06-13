@@ -18,6 +18,11 @@
 \newcommand{\figlabel}[1]{\textsf{#1}}
 \newcommand{\figloc}[1]{\textit{#1}}
 
+\renewcommand{\labelitemi}{$\bullet$}
+\renewcommand{\labelitemii}{---}
+\renewcommand{\labelitemiii}{---}
+\renewcommand{\labelitemiv}{---}
+
 \usepackage{natbib}
 \usepackage{xcolor}
 
@@ -77,7 +82,7 @@
       \figlabel{\textsc{Walk on Stars}\phantom{mmmmm}} \\
       \includesvg{images/WalkOnStars.svg}
    \end{minipage}
-   \caption{Walks taken by the WoS algorithm \emph{(left)} and the WoSt algorithm \emph{(right)}.  The algorithms are virtually identical, except that WoSt replaces spheres with star-shaped regions, enabling walks to reflect off Neumann boundaries.\label{fig:WalkOnStars}}
+   \caption{Walks taken by the WoS algorithm \emph{(left)} and the WoSt algorithm \emph{(right)}.  The algorithms are virtually identical, except that WoSt replaces spheres with star-shaped regions, enabling walks to reflect off Neumann boundaries.\label{fig:WoSvsWoSt}}
 \end{figure}
 
 % \begin{figure}[h!]
@@ -99,12 +104,6 @@ For a Laplace equation with Dirichlet and zero-Neumann boundary conditions, WoSt
 
 The main implementation effort is in enriching the closest point queries used by WoS with \emph{closest silhouette point queries}, as well as standard ``first hit'' ray intersection queries.  A complete 2D implementation with no external dependencies (and ignoring I/O code) is provided in about 150 lines of C++ code, in the file \code{WoStLaplace.cpp}.  For simplicity, we omit nonzero Neumann conditions and acceleration of geometric queries---full 3D implementation is detailed in \citet{Sawhney:2023:WoSt}.
 
-\section{Overview}
-\label{sec:Overview}
-
-\subsection{Walk on Spheres (WoS)}
-\label{sec:WalkOnSpheresOverview}
-
 To emphasize the core ideas of the WoSt algorithm, this tutorial focuses on a bare-bones 2D version of WoSt that solves the Laplace equation
 \[
    \begin{array}{rcll}
@@ -115,12 +114,21 @@ To emphasize the core ideas of the WoSt algorithm, this tutorial focuses on a ba
 \]
 where \(\Omega \subset \mathbb{R}^2\) is a closed polygon in the plane, \(g\) is a real-valued function on the Dirichlet part of the boundary \(\partial\Omega_D\), and \(\partial\Omega_N\) is the complementary Neumann part of the boundary.  
 
-A good place to start understanding WoSt is the simpler \emph{walk on spheres (WoS)} algorithm, which solves the same problem but with only Dirichlet boundary conditions (\ie, \(\partial_N = \emptyset\)).  The basic idea of WoS is quite simple: to estimate the solution at a point \(\vec{x}_0 \in \Omega\), just take \(M\) random walks to the boundary \(\partial\Omega\) (for some large number \(M\)), and take the average value \(g\) at these boundary points.  The reason this method is called ``walk on \emph{spheres}'' is that these random walks are simulated by repeatedly jumping to the boundary of the largest empty sphere \(S_r(\vec{x}_k) \subset \Omega\) around the current point \(\vec{x}_k\) to get the next point \(\vec{x}_{k+1}\).  Steps hence tend to be big, and the method quickly makes progress toward the boundary (in comparison to taking small, fixed-sized steps).  In a bit more detail, the WoS algorithm looks like this:
+\newpage
+
+\section{Overview}
+\label{sec:Overview}
+
+\subsection{Walk on Spheres (WoS)}
+\label{sec:WalkOnSpheresOverview}
+
+
+A good way to understand WoSt is to start with the basic WoS algorithm, which solves the same problem but with pure Dirichlet boundary conditions (\(\partial_N = \O\)).  The basic idea is quite simple: to estimate the solution at a point \(\vec{x}_0 \in \Omega\), just take \(M\) random walks to the boundary \(\partial\Omega\) (for some large number \(M\)), and take the average value \(g\) at these boundary points.  The reason this method is called ``walk on \emph{spheres}'' is that these random walks are simulated by repeatedly jumping to the boundary of the largest empty sphere \(S_r(\vec{x}_k) \subset \Omega\) around the current point \(\vec{x}_k\) to get the next point \(\vec{x}_{k+1}\).  Steps hence tend to be big, and the method quickly makes progress toward the boundary (in comparison to taking small, fixed-sized steps).  In a bit more detail, the WoS algorithm looks like this:
 
 \begin{itemize}
-   \item For \(i = 1, \ldots, M\):
+   \item \textbf{for} \(i = 1, \ldots, M\):
 \begin{itemize}
-   \item Until \(\vec{x}_k\) is within a small distance \(\varepsilon\) of the domain boundary \(\partial\Omega\):
+   \item \textbf{until} \(\vec{x}_k\) is within a small distance \(\varepsilon\) of the domain boundary \(\partial\Omega\):
       \begin{itemize}
          \item Compute the distance \(r\) to the closest point \(\overline{\vec{x}}_k\) on \(\partial\Omega\).
          \item Pick a random point \(\vec{x}_{k+1}\) on the sphere \(S_r(\vec{x}_k)\) of radius \(r\) around \(\vec{x}_k\).
@@ -129,6 +137,45 @@ A good place to start understanding WoSt is the simpler \emph{walk on spheres (W
 \end{itemize}
    \item Return the estimate \(\widehat{u}/M\).
 \end{itemize}
+
+Figure \ref{fig:WoSvsWoSt}, \figloc{left} shows an example.  To actually implement this algorithm, we really just need two kinds of subroutines:
+\begin{itemize}
+   \item \textbf{Geometric queries.}  For a given point \(\vec{x}_k \in \Omega\), we need to know how to compute the closest point \(\overline{\vec{x}}_k\) on the boundary.
+   \item \textbf{Random sampling.} For a sphere \(S\) with center \(\vec{x}_k\) and radius \(r\), we need to know how to pick a point \(\vec{x}_{k+1}\) on \(S\) uniformly at random.
+\end{itemize}
+
+In fact, this basic structure will be the same for any ``walk on X'' algorithm (known more broadly as \emph{grid-free Monte Carlo methods}).  We generally need to perform some small set of geometric queries, and sample from some small set of probability distributions.  Otherwise, the logic is pretty similar: repeatedly apply these operations to simulate a random walk, and average values obtained from each walk to get the final solution estimate.
+
+
+\subsection{Walk on Stars (WoSt)}
+\label{sec:WalkOnStarsOverview}
+
+\begin{figure}[h!]
+   \centering
+   \includesvg{images/StarShapedRegion.svg}
+   \includesvg{images/StarShapedRadii.svg}
+
+   \caption{\figloc{Left:} a region \(R\) is \emph{star shaped} relative to a point \(\vec{x}\) if every point \(\vec{y} \in R\) is visible from \(\vec{x}\) along a straight line. \figloc{Right:} WoSt identifies star shaped regions \(\St\) by finding the largest ball that contains neither the Dirichlet boundary nor the silhouette of the Neumann boundary.\label{fig:StarShapedRegions}}
+\end{figure}
+
+The WoSt algorithm is almost like the WoS algorithm, except that it simulates random walks that ``reflect'' off the Neumann boundary \(\partial\Omega_N\), in addition to the walks already ``absorbed'' into the Dirichlet boundary \(\partial\Omega_D\).  To do so, WoSt makes just two small changes to WoS.  First, in place of spheres \(S(\vec{x})\), WoSt uses \emph{star-shaped regions} \(\St(\vec{x})\) (see Figure~\ref{fig:StarShapedRegions}).  Unlike the spheres used by WoS, which touch the boundary only at isolated points, the star-shaped regions used by WoSt can include large pieces of the Neumann boundary \(\partial\Omega_N\).  Second, rather than terminating walks at all boundaries, WoSt continues walking from any point on the Neumann part of the boundary \(\partial\Omega_N\).  The overall flow now goes like this:
+
+\begin{itemize}
+   \item \textbf{for} \(i = 1, \ldots, M\):
+\begin{itemize}
+   \item \textbf{until} \(\vec{x}_k\) is within a small distance \(\varepsilon\) of the Dirichlet boundary \(\partial\Omega_D\):
+      \begin{itemize}
+         \item Compute the distance \(d_{\text{Dirichlet}}\) to the closest point on \(\partial\Omega_D\).
+         \item Compute the distance \(d_{\text{Silhouette}}\) to the closest \emph{silhouette point} on \(\partial\Omega_N\).
+         \item Let \(r := \min(d_{\text{Dirichlet}},d_{\text{Silhouette}})\).
+         \item Shoot a ray from \(\vec{x}_k\) in a random direction \(v\), letting the next point \(\vec{x}_{k+1}\) be the first point where the ray hits either (i) the sphere \(S(\vec{x}_k,r)\), or (ii) the Neumann boundary \(\partial\Omega_N\).
+      \end{itemize}
+   \item Add the value of \(g(\overline{\vec{x}}_k)\) to a running total \(\widehat{u}\).
+\end{itemize}
+   \item Return the estimate \(\widehat{u}/M\).
+\end{itemize}
+
+Here we've omitted a couple small but important details which we'll cover later---\eg{}, the ray \(\vec{v}\) must be sampled from a hemisphere rather than a sphere if \(\vec{x}_k\) is on the boundary, and we generally want to set some minimum radius \(r_{\min}\).  But our final implementation really won't be much more complicated than the short outline above.  The main thing you may notice is that we now have three geometric queries to implement: a \emph{closest point query}, a \emph{closest silhouette point query}, and a \emph{closest ray intersection}.  We'll first walk through how to implement these queries in Section~\ref{sec:GeometricQueries}, followed by a more detailed implementation of WoSt in Section~\ref{sec:WalkOnStars}.
 
 \begin{figure}[h!]
    \centering
@@ -160,47 +207,10 @@ A good place to start understanding WoSt is the simpler \emph{walk on spheres (W
       \includegraphics[width=150pt]{images/WoSt-65536wpp.png} \\
       \figlabel{reference}
    \end{minipage}
-   \caption{Example walks taken by the WoS algorithm are shown at \figloc{top, left}.  Averaging more and more boundary values (marked by white points) yields a smoother and smoother solution estimate.\label{fig:WoSExample}}
+   \caption{Example walks taken by the WoSt algorithm are shown at \figloc{top, left}.  Averaging more and more boundary values (marked by white points) by taking more walks per point yields a smoother and smoother solution estimate.\label{fig:WoSExample}}
 \end{figure}
 
-Figure \ref{fig:WoSExample} shows an example.  To actually implement this algorithm, we really just need two kinds of subroutines:
-\begin{itemize}
-   \item \textbf{Geometric queries.}  For a given point \(\vec{x}_k \in \Omega\), we need to know how to compute the closest point \(\overline{\vec{x}}_k\) on the boundary.
-   \item \textbf{Random sampling.} For a sphere \(S\) with center \(\vec{x}_k\) and radius \(r\), we need to know how to pick a point \(\vec{x}_{k+1}\) on \(S\) uniformly at random.
-\end{itemize}
-
-In fact, this basic structure will be the same for any ``walk on X'' algorithm (known more broadly as \emph{grid-free Monte Carlo methods}).  We generally need to perform some small set of geometric queries, and sample from some small set of probability distributions.  Otherwise, the logic is pretty similar: repeatedly apply these operations to simulate a random walk, and average values obtained from each walk to get the final solution estimate.
-
-\subsection{Walk on Stars (WoSt)}
-\label{sec:WalkOnStarsOverview}
-
-\begin{figure}[h!]
-   \centering
-   \includesvg{images/StarShapedRegion.svg}
-   \includesvg{images/StarShapedRadii.svg}
-
-   \caption{\figloc{Left:} a region \(R\) is \emph{star shaped} relative to a point \(\vec{x}\) if every point \(\vec{y} \in R\) is visible from \(\vec{x}\) along a straight line. \figloc{Right:} WoSt identifies star shaped regions \(\St\) by finding the largest ball that contains neither the Dirichlet boundary nor the silhouette of the Neumann boundary.\label{fig:StarShapedRegions}}
-\end{figure}
-
-The WoSt algorithm is almost like the WoS algorithm, except that it simulates random walks that ``reflect'' off the Neumann boundary \(\partial\Omega_N\), in addition to the walks already ``absorbed'' into the Dirichlet boundary \(\partial\Omega_D\).  To do so, WoSt makes just two small changes to WoS.  First, in place of spheres \(S(\vec{x})\), WoSt uses \emph{star-shaped regions} \(\St(\vec{x})\) (see Figure~\ref{fig:StarShapedRegions}).  Unlike the spheres used by WoS, which touch the boundary only at isolated points, the star-shaped regions used by WoSt can include large pieces of the Neumann boundary \(\partial\Omega_N\).  Second, rather than terminating walks at all boundaries, WoSt continues walking from any point on the Neumann part of the boundary \(\partial\Omega_N\).  The overall flow now goes like this:
-
-\begin{itemize}
-   \item For \(i = 1, \ldots, M\):
-\begin{itemize}
-   \item Until \(\vec{x}_k\) is within a small distance \(\varepsilon\) of the Dirichlet boundary \(\partial\Omega_D\):
-      \begin{itemize}
-         \item Compute the distance \(d_{\text{Dirichlet}}\) to the closest point on \(\partial\Omega_D\).
-         \item Compute the distance \(d_{\text{Silhouette}}\) to the closest \emph{silhouette point} on \(\partial\Omega_N\).
-         \item Let \(r := min(d_{\text{Dirichlet}},d_{\text{Silhouette}})\).
-         \item Shoot a ray from \(\vec{x}_k\) in a random direction \(v\), letting the next point \(\vec{x}_{k+1}\) be the first point where the ray hits either (i) the sphere \(S(\vec{x}_k,r)\), or (ii) the Neumann boundary \(\partial\Omega_N\).
-      \end{itemize}
-   \item Add the value of \(g(\overline{\vec{x}}_k)\) to a running total \(\widehat{u}\).
-\end{itemize}
-   \item Return the estimate \(\widehat{u}/M\).
-\end{itemize}
-
-Here we've omitted a couple small but important details which we'll cover later---\eg{}, the ray \(\vec{v}\) must be sampled from a hemisphere rather than a sphere if \(\vec{x}_k\) is on the boundary, and we generally want to set some minimum radius \(r_{\min}\).  But our final implementation really won't be much more complicated than the short outline above.  The main thing you may notice is that we now have three geometric queries to implement: a \emph{closest point query}, a \emph{closest silhouette point query}, and a \emph{closest ray intersection}.  We'll first walk through how to implement these queries in Section~\ref{sec:GeometricQueries}, followed by a more detailed implementation of WoSt in Section~\ref{sec:WalkOnStars}.
-
+\newpage
 
 \section{Geometric Queries}
 \label{sec:GeometricQueries}
@@ -220,7 +230,7 @@ A \emph{closest point query} seeks the point closest to the geometry relative to
    \centering
    \includesvg{images/AtomicClosestPoint.svg}
    \includesvg{images/ClosestPoint.svg}
-   \caption{Given a query point \(\vec{x}\), the closest point \(\vec{y}\) on a line segment between \(\vec{a}\) and \(\vec{b}\) can be at either an interior point or one of the endpoints.\label{fig:ClosestPointExamples}}
+   \caption{\figloc{Left:} given a query point \(\vec{x}\), the closest point \(\vec{y}\) on a line segment between \(\vec{a}\) and \(\vec{b}\) can be at either an interior point (\(0 < t < 1\)) or one of the endpoints (\(t=0,1\)). \figloc{Right:} The closest point on the boundary of our polygonal domain is then just the closest point among all segments in the domain boundary.\label{fig:ClosestPointExamples}}
 \end{figure}
 
 \paragraph{Atomic.} Given a query point \(\vec{x}\), we want to find the closest point on a line segment with endpoints \(\vec{a}, \vec{b}\) (Figure~\ref{fig:ClosestPointExamples}).  To find this point, we could first find the closest point on the full line, check if it's inside the segment, and if not, take the closer of the two endpoints.  Fortunately, all these operations boil down to a very simple subroutine (\citet{Quilez:2020:SLS} gives a nice derivation):
@@ -230,7 +240,7 @@ A \emph{closest point query} seeks the point closest to the geometry relative to
 \paragraph{Global.} To find the distance from a query point \(x\) to a collection of polylines, we now just need to apply our atomic closest point query to all segments and keep the smallest distance:
 
 \inputminted[fontsize=\small,linenos,firstline=65,lastline=75,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
-The function \(\code{length}\) computes the length of the given vector, and the constant \code{infinity} is equal to floating-point infinity (INF); as long as the polylines \code{P} contain at least one segment, the final distance \code{d} will be a finite value.
+The function \(\code{length}\) computes the length of the given vector, and the constant \code{infinity} is equal to floating-point infinity (\code{Inf}); as long as the polylines \code{P} contain at least one segment, the final distance \code{d} will be a finite value.
 
 \subsection{Closest Silhouette Point Query}
 \label{sec:ClosestSilhouettePointQuery}
@@ -265,9 +275,8 @@ Note that if all evaluation points \(x_0\) are inside the domain, an easy accele
    \centering
    \includesvg{images/AtomicClosestRay.svg}
    \includesvg{images/FirstRay.svg}
-   %\todo{Diagram showing a hit and a miss for a ray-segment intersection, with the times $s$ and $t$ annotated.}
    \label{fig:RayIntersectionExample}
-   \caption{\emph{Left:} a ray-segment intersection computes the time \(t\) at which the ray intersects the segment, and the parameter \(s\) describing the location of the hit point along the line containing the segment. \emph{Right:} to sample the boundary of a star-shaped region, WoSt computes the first hit along the ray direction, which may be on a segment or on the boundary of a ball.}
+   \caption{\emph{Left:} a ray-segment intersection computes the time \(t \in (0,\infty)\) at which the ray intersects the segment, and the parameter \(s \in [0,1]\) describing the location of the hit point along the line containing the segment. \emph{Right:} the first point where a ray hits a polygonal boundary then corresponds to the smallest positive \(t\) value.}
 \end{figure}
 
 Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest ray intersection query} seeks the ``time'' \(t\) at which the ray \(\vec{x} + t\vec{v}\) first hits a given set.  In our case the set we want to consider is the boundary of the star-shaped domain \(\St(\vec{x},r)\).  Equivalently, we want to find the first \(t\) such that the ray hits either (i) the sphere \(S_r(\vec{x})\) of radius \(r\) around \(\vec{x}\), or (ii) the Neumann boundary \(\partial\Omega_N\) of the domain.  Our atomic query is still just an ordinary ray-segment intersection; logic in the global query then takes care of the ball radius.

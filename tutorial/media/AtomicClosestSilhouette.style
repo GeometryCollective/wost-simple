@@ -50,8 +50,7 @@ forall Triangle t1; Triangle t2 {
       center: (0,-canvas.height/2 + 2*global.labelHeight)
       fontFamily: global.labelFamily
       fontSize: global.labelSize
-      fillColor: global.labelColor
-      opacity: 1-alpha
+      fillColor: rgba( 0, 0, 0, 1-alpha )
    }
 
    shape notSilhouette = Text {
@@ -59,7 +58,8 @@ forall Triangle t1; Triangle t2 {
       center: (0,-canvas.height/2 + 2*global.labelHeight)
       fontFamily: global.labelFamily
       fontSize: global.labelSize
-      fillColor: global.labelColor
+      fillColor: rgba( 0, 0, 0, alpha )
       opacity: alpha
    }
 }
+

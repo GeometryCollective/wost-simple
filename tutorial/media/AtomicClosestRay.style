@@ -1,0 +1,9 @@
+forall Point `a`, `b`, `x` {
+   scalar w = canvas.width
+   scalar h = canvas.height
+   scalar p = 20
+   override `a`.x = ( -w/2 + p, -h/2 + p )
+   override `b`.x = ( w/2 - p, h/2 - p )
+   override `x`.x = ( -w/4 + p, h/2 - p )
+}
+

@@ -549,7 +549,7 @@ where p1 := sampleBoundary(St); St := starAround(p0) {
       end: p1.location -- - Global.dotSize*v
       fill: "none"
       strokeColor: Global.walkColor
-      strokeWidth: 1
+      strokeWidth: Global.walkStrokeWidth
       --endArrowhead: "straight"
       --endArrowheadSize: .5
       ensureOnCanvas: false
@@ -1056,5 +1056,11 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 -- 
 -- forall Point `x` {
 --    override `x`.location = (0,0)
+-- }
+
+-- WalkOnSpheresTrajectories.style -----------
+
+-- forall Point `x0` {
+--    override `x0`.location = (0,0)
 -- }
 

@@ -17,7 +17,7 @@ forall Point `a`, `b` {
 
 forall Point `c`, `d` {
    scalar theta = unitRandom() * 2*MathPI()
-   scalar dTheta = AtomicSignedAngle.segmentSize
+   scalar dTheta = AtomicSignedAngle.segmentSize * 1.5
    scalar r = .9 * canvas.height/2
    override `c`.x = r*(cos(theta+dTheta/2),sin(theta+dTheta/2))
    override `d`.x = r*(cos(theta-dTheta/2),sin(theta-dTheta/2))

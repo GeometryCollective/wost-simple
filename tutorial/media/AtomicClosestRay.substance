@@ -1,17 +1,19 @@
 -- Draw a ray hit and miss
 Point a, b
-Let s := Segment(a,b)
+Let ab := Segment(a,b)
 Point x
 Vector v
 
+RootedAt(x,v)
+Ray r := RayFrom(x,v)
+Point y := RaySegmentIntersection(r,ab)
+
+Length s := LengthBetween(a,y)
+Length t := LengthBetween(x,y)
 
 Label a $a$
 Label b $b$
 Label x $x$
-
-RootedAt(x,v)
-
-Ray r := RayFrom(x,v)
-
-Point y := RaySegmentIntersection(r,s)
+Label s $s$
+Label t $t$
 
