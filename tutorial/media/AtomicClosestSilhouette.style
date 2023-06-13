@@ -47,19 +47,19 @@ forall Triangle t1; Triangle t2 {
 
    shape isSilhouette = Text {
       string: "silhouette"
-      center: (0,-canvas.height/2 + 2*global.labelHeight)
+      center: (0,-canvas.height/2 + 2*global.labelHeight) - canvas.height*(0,alpha)
       fontFamily: global.labelFamily
       fontSize: global.labelSize
-      fillColor: rgba( 0, 0, 0, 1-alpha )
+      fillColor: global.labelColor
+      ensureOnCanvas: false
    }
 
    shape notSilhouette = Text {
       string: "not silhouette"
-      center: (0,-canvas.height/2 + 2*global.labelHeight)
+      center: (0,-canvas.height/2 + 2*global.labelHeight) - canvas.height*(0,1-alpha)
       fontFamily: global.labelFamily
       fontSize: global.labelSize
-      fillColor: rgba( 0, 0, 0, alpha )
-      opacity: alpha
+      fillColor: global.labelColor
+      ensureOnCanvas: false
    }
 }
-
