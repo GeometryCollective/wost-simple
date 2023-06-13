@@ -703,19 +703,21 @@ where p has label {
 -- 
 --    shape isSilhouette = Text {
 --       string: "silhouette"
---       center: (0,-canvas.height/2 + 2*global.labelHeight) - canvas.height*(0,alpha)
+--       center: (0,-canvas.height/2 + 2*global.labelHeight) - 1.5*global.labelHeight*(0,alpha)
 --       fontFamily: global.labelFamily
 --       fontSize: global.labelSize
---       fillColor: global.labelColor
+--       fillColor: rgba( alpha, alpha, alpha, 1-alpha )
+--       opacity: 1 - alpha
 --       ensureOnCanvas: false
 --    }
 -- 
 --    shape notSilhouette = Text {
 --       string: "not silhouette"
---       center: (0,-canvas.height/2 + 2*global.labelHeight) - canvas.height*(0,1-alpha)
+--       center: (0,-canvas.height/2 + 2*global.labelHeight) - 1.5*global.labelHeight*(0,1-alpha)
 --       fontFamily: global.labelFamily
 --       fontSize: global.labelSize
---       fillColor: global.labelColor
+--       fillColor: rgba( 1-alpha, 1-alpha, 1-alpha, alpha )
+--       opacity: alpha
 --       ensureOnCanvas: false
 --    }
 -- }

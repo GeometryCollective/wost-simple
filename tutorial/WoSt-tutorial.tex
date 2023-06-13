@@ -208,7 +208,7 @@ Here we've omitted a couple small but important details which we'll cover later-
       \includegraphics[width=150pt]{images/WoSt-65536wpp.png} \\
       \figlabel{reference}
    \end{minipage}
-   \caption{Example walks taken by the WoSt algorithm are shown at \figloc{top, left}.  Averaging more and more boundary values (marked by white points) by taking more walks per point yields a smoother and smoother solution estimate.\label{fig:WoSExample}}
+   \caption{Example walks taken by the WoSt algorithm are shown at \figloc{top, left}.  Taking more and more walks per point (blue lines), and averaging the resulting boundary values (white points), yields a smoother and more accurate solution estimate \figloc{(bottom right)}.\label{fig:WoSExample}}
 \end{figure}
 
 \newpage
@@ -216,11 +216,13 @@ Here we've omitted a couple small but important details which we'll cover later-
 \section{Geometric Queries}
 \label{sec:GeometricQueries}
 
-A wide variety of algorithms in visual, geometric, and scientific computing need to perform \emph{geometric queries}: given a piece of geometry (\eg{}, a polygon mesh or implicit surface), answer some question about this geometry, relative to a query point \(x\) (\eg{}, how far away is the closest point?).  Many of these queries are well-studied, with extremely efficient implementations available on a variety of platforms.  When the number of geometric primitives gets very large (\eg{}, thousands or millions of triangles), it becomes especially important to use a \emph{spatial data structure} like a bounding volume hierarchy (BVH) or binary space partition (BSP) to accelerate computation.  To keep things simple, we'll here just assume that the number of primitives is small, and check each primitive directly.  For an implementation-oriented introduction to spatial data structures, see \citet[Section 4.2]{pharr2016physically}.
+Numerous algorithms in visual, geometric, and scientific computing must perform \emph{geometric queries}: given a piece of geometry (\eg{}, a polygon mesh or implicit surface), answer some question about this geometry, relative to a query point \(x\) (\eg{}, how far away is the closest point?).  Many queries are well-studied, with extremely efficient implementations available on a variety of platforms.  When the number of geometric primitives gets very large (\eg{}, thousands or millions of triangles), it becomes especially important to use a \emph{spatial data structure} like a bounding volume hierarchy (BVH) or binary space partition (BSP) to accelerate computation.  To keep things simple, we'll here just assume that the number of primitives is small, and check each primitive directly.  For an implementation-oriented introduction to spatial data structures, see \citet[Section 4.2]{pharr2016physically}.
 
-\paragraph{Assumptions.} To keep our discussion (and our code) simple, we'll assume that the geometry of the domain \(\Omega\) is a collection of closed simple polygons in the 2D plane, possibly with holes.  More explicitly, we'll assume we're given two lists of polylines: one for the Dirichlet boundary, and one for the Neumann boundary.  Each polyline is given by a list of 2D points \(\vec{p}_0, \ldots, \vec{p}_m \in \mathbb{R}^2\), which are encoded via a \code{Vec2D} type with all the usual 2D vector operations.  We also assume that all polylines have a consistent winding direction---for instance, if the domain is the letter ``A'', then polylines around the outer boundary should go in counter-clockwise order, and polylines around the inner hole should go in clockwise order.  This final assumption will just make it easier to get a consistent normal direction, and to do inside-outside tests if needed.  In fact, most of these assumptions are not strictly required by the WoSt algorithm itself; they largely just make coding easier.  See especially \citet[Appendix B]{Sawhney:2023:WoSt} for handling of ``messier'' input geometry.
+\paragraph{Assumptions.} To keep our discussion (and our code) simple, we'll assume that the geometry of the domain \(\Omega\) is a collection of closed simple polygons in the 2D plane, possibly with holes.  More explicitly, we'll assume we're given two lists of polylines: one for the Dirichlet boundary, and one for the Neumann boundary.  Each polyline is given by a list of 2D points \(\vec{p}_0, \ldots, \vec{p}_m \in \mathbb{R}^2\), which are encoded via a \code{Vec2D} type with all the usual 2D vector operations.  We also assume that all polylines have a consistent winding direction---for instance, if the domain is the letter ``A'', then polylines around the outer boundary should go in counter-clockwise order, and polylines around the inner hole should go in clockwise order (see Figure~\ref{fig:InsideOutside}).  This final assumption will just make it easier to get a consistent normal direction, and to do inside-outside tests if needed.  In fact, most of these assumptions are not strictly required by the WoSt algorithm itself; they largely just make coding easier.  See especially \citet[Appendix B]{Sawhney:2023:WoSt} for handling of ``messier'' input geometry.
 
-We'll break each query down into an ``atomic'' query for a single line segment, and a ``global'' query which basically just applies the atomic query to each segment in the overall list of polylines.
+\mbox{}
+
+Here we break each query down into an ``atomic'' query for a single line segment, and a ``global'' query which basically just applies the atomic query to each segment in the overall list of polylines.
 
 \subsection{Closest Point Query}
 \label{sec:ClosestPointQuery}
@@ -231,7 +233,7 @@ A \emph{closest point query} seeks the point closest to the geometry relative to
    \centering
    \includesvg{images/AtomicClosestPoint.svg}
    \includesvg{images/ClosestPoint.svg}
-   \caption{\figloc{Left:} given a query point \(\vec{x}\), the closest point \(\vec{y}\) on a line segment between \(\vec{a}\) and \(\vec{b}\) can be at either an interior point (\(0 < t < 1\)) or one of the endpoints (\(t=0,1\)). \figloc{Right:} The closest point on the boundary of our polygonal domain is then just the closest point among all segments in the domain boundary.\label{fig:ClosestPointExamples}}
+   \caption{\figloc{Left:} given a query point \(\vec{x}\), the closest point \(\vec{y}\) on a line segment between \(\vec{a}\) and \(\vec{b}\) can be at either an interior point (\(0 < t < 1\)) or one of the endpoints (\(t=0,1\)). \figloc{Right:} The closest point on the boundary of our polygonal domain is then just the closest point among all segments in the domain boundary (here each black point is connected to the closest white point).\label{fig:ClosestPointExamples}}
 \end{figure}
 
 \paragraph{Atomic.} Given a query point \(\vec{x}\), we want to find the closest point on a line segment with endpoints \(\vec{a}, \vec{b}\) (Figure~\ref{fig:ClosestPointExamples}).  To find this point, we could first find the closest point on the full line, check if it's inside the segment, and if not, take the closer of the two endpoints.  Fortunately, all these operations boil down to a very simple subroutine (\citet{Quilez:2020:SLS} gives a nice derivation):
@@ -277,7 +279,7 @@ Note that if all evaluation points \(x_0\) are inside the domain, an easy accele
    \includesvg{images/AtomicClosestRay.svg}
    \includesvg{images/FirstRay.svg}
    \label{fig:RayIntersectionExample}
-   \caption{\emph{Left:} a ray-segment intersection computes the time \(t \in (0,\infty)\) at which the ray intersects the segment, and the parameter \(s \in [0,1]\) describing the location of the hit point along the line containing the segment. \emph{Right:} the first point where a ray hits a polygonal boundary then corresponds to the smallest positive \(t\) value.}
+   \caption{\emph{Left:} a ray-segment intersection computes the time \(t \in (0,\infty)\) at which the ray \(r(t) = x + tv\) intersects the segment, and the parameter \(s \in [0,1]\) describing the location of the hit point along the line containing the segment. \emph{Right:} the first point where a ray hits a polygonal boundary then corresponds to the smallest positive \(t\) value.}
 \end{figure}
 
 Finally, given a point \(\vec{x}\) and a direction \(\vec{v}\), a \emph{closest ray intersection query} seeks the ``time'' \(t\) at which the ray \(\vec{x} + t\vec{v}\) first hits a given set.  In our case the set we want to consider is the boundary of the star-shaped domain \(\St(\vec{x},r)\).  Equivalently, we want to find the first \(t\) such that the ray hits either (i) the sphere \(S_r(\vec{x})\) of radius \(r\) around \(\vec{x}\), or (ii) the Neumann boundary \(\partial\Omega_N\) of the domain.  Our atomic query is still just an ordinary ray-segment intersection; logic in the global query then takes care of the ball radius.
@@ -324,12 +326,12 @@ Recall that the routine \code{intersectPolylines} will also update the flag \cod
 
 \inputminted[fontsize=\small,linenos,firstline=151,lastline=159,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
-After all walks are finished we return the average boundary value, which gives our solution estimate.  Again, if you're curious about \emph{why} this algorithm works, you'll have to take a look at the paper!
+After all walks are finished we return the average boundary value, which gives our solution estimate.  Figure~\ref{fig:WoSvsWoSt}, \figloc{right} shows an example walk.  (If you're curious about \emph{why} this algorithm works, you'll have to take a look at the full paper!)
 
 \section{Inside-Outside Test (optional)}
 \label{sec:InsideOutsideTest}
 
-Though not strictly part of the WoSt algorithm itself, we may also want to know whether a given evaluation point \(\vec{x}_0\) is inside or outside the problem domain \(\Omega\) (\eg, for visualizing the solution).  To answer this query, we can just measure the total signed solid angle of the boundary polygon, relative to the query point:
+Though not strictly part of the WoSt algorithm itself, we may also want to know whether a given evaluation point \(\vec{x}_0\) is inside or outside the problem domain \(\Omega\) (\eg, for visualizing the solution).  To answer this query, we can just measure the total signed angle of the boundary polygon, relative to the query point:
 
 \inputminted[fontsize=\small,linenos,firstline=191,lastline=202,bgcolor=bg]{cpp}{../code/WoStLaplace2D.cpp}
 
