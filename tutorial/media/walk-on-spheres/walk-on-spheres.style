@@ -799,18 +799,18 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 
 -- WalkOnStars.style
 
--- Make the image wider to accommodate a legend
-legendWidth {
-   override canvas.width = 333.33
-}
-
--- Offset the domain so that it's not covered up
--- too much by the legend
-forall Domain D
-where hasLegend(D)
-{
-   override D.offset = (-50,0)
-}
+-- -- Make the image wider to accommodate a legend
+-- legendWidth {
+--    override canvas.width = 333.33
+-- }
+-- 
+-- -- Offset the domain so that it's not covered up
+-- -- too much by the legend
+-- forall Domain D
+-- where hasLegend(D)
+-- {
+--    override D.offset = (-50,0)
+-- }
 
 -- walk-on-spheres-no-subdomains.style -----------
 
