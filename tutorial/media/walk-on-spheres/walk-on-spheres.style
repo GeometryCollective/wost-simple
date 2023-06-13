@@ -41,7 +41,7 @@ Global {
    scalar domainStrokeWidth = toPt * 1
    scalar dirichletStrokeWidth = domainStrokeWidth
    scalar neumannStrokeWidth = .65*domainStrokeWidth
-   string neumannDash = "2,2"
+   string neumannDash = "2.66,2.66" -- "2,2"
    scalar labelPadding = 5
 
    -- style of lines along a walk
@@ -573,7 +573,7 @@ where q := closestBoundaryPoint( D, p ); hasMixedBoundaryConditions( D )
    override q.dot.center = closestPoint( D.dirichletBoundary, p.location )
    override q.dot.fillColor = Colors.white
    override q.dot.strokeColor = Colors.black
-   override q.dot.strokeWidth = global.openDotWidth
+   override q.dot.strokeWidth = Global.openDotWidth
 
    shape q.walkLine = Line {
       start: p.dot.center
@@ -635,7 +635,7 @@ where p := headOf( r )
    override p.location = r.arrowHead.end
    override p.dot.fillColor = Colors.white
    override p.dot.strokeColor = Colors.black
-   override p.dot.strokeWidth = global.openDotWidth
+   override p.dot.strokeWidth = Global.openDotWidth
    layer p.dot above r.icon
 }
 
@@ -907,7 +907,7 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 --       r: Global.dotSize
 --       fillColor : Colors.white
 --       strokeColor : St.dirichletBall.strokeColor
---       strokeWidth : global.openDotWidth
+--       strokeWidth : Global.openDotWidth
 --       ensureOnCanvas: false
 --    }
 --    shape St.closestDirichlet = Group {
@@ -955,7 +955,7 @@ where hasLegend(D); hasMixedBoundaryConditions(D) {
 --       r: Global.dotSize
 --       fillColor : Colors.white
 --       strokeColor : St.neumannBall.strokeColor
---       strokeWidth : global.openDotWidth
+--       strokeWidth : Global.openDotWidth
 --       ensureOnCanvas: false
 --    }
 --    shape St.closestSilhouette = Group {
