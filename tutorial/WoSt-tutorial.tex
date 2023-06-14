@@ -253,7 +253,7 @@ The function \(\code{length}\) computes the length of the given vector, and the 
    \includesvg{images/AtomicClosestSilhouetteExample1.svg} \(\qquad\)
    \includesvg{images/AtomicClosestSilhouetteExample3.svg} \(\qquad\)
    \includesvg{images/AtomicClosestSilhouetteExample2.svg}
-   \caption{A point \(\vec{b}\) is a \emph{silhouette point} if the segments \(\vec{a}\vec{b}\) and \(\vec{b}\vec{c}\) are front- and back-facing relative to a point \(\vec{x}\), or vice-versa.}
+   \caption{A point \(\vec{b}\) is a \emph{silhouette point} if only one of the segments \(\vec{a}\vec{b}\) or \(\vec{b}\vec{c}\) is front-facing relative to a point \(\vec{x}\).}
 \end{figure}
 
 Silhouette points are points where geometry changes from front-facing to back-facing, relative to a query point \(\vec{x}\).  A \emph{closest silhouette point query} seeks the closest such point along the entire silhouette.  In general, queries of the visibility silhouette are far less common than closest ray or closest point queries---a good reference is the work on \emph{spatialized normal cone hierarchies (SNCH)} by \citet{johnson2001spatialized}; \citet[Section 5.1]{Sawhney:2023:WoSt} explains how to accelerate closest silhouette point queries using an SNCH.  Here we'll again just perform brute-force evaluation, rather than use an acceleration scheme.
