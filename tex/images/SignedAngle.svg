@@ -1,0 +1,1003 @@
+<svg
+  version="1.2"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 306.66 200"
+  penrose="0"
+>
+  <penrose>
+    <croppedViewBox>
+      -72.81230654620336 0.6250009515004393 322.8923065462034 204.34306350026958
+    </croppedViewBox>
+  </penrose>
+  <g fill="none">
+    <line
+      x1="58.33000000000001"
+      y1="195"
+      x2="107.35000000000002"
+      y2="195"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a78`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`beta12`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#ff0000"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`beta12`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#ff0000"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 69.57840235288178 97.92366682361762 A 68 68 0 0 1 74.837076639581 118.0716193832643"
+      marker-end="url(#`beta12`.icon-endArrowId)"
+    ></path>
+    <title>`beta12`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha45`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha45`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 43.67992289413067 135.56604494212849 A 38 38 0 0 0 40.300863848839185 106.32623121603709"
+      marker-end="url(#`alpha45`.icon-endArrowId)"
+    ></path>
+    <title>`alpha45`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="121.22000000000001"
+      y1="154.53"
+      x2="186.20000000000002"
+      y2="154.53"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a12`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`beta31`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`beta31`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 87.06221771770612 120.48918360783874 A 80 80 0 0 0 82.08696886635113 96.85937286581554"
+      marker-end="url(#`beta31`.icon-endArrowId)"
+    ></path>
+    <title>`beta31`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha78`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha78`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 40.21393863818247 170.1926941243371 A 56 56 0 0 0 50.67514232360497 160.2503800049733"
+      marker-end="url(#`alpha78`.icon-endArrowId)"
+    ></path>
+    <title>`alpha78`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="248.33"
+      y1="195"
+      x2="175.94"
+      y2="5"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a45`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha67`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#ff0000"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha67`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#ff0000"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 42.949086475723504 90.02349736142997 A 50 50 0 0 1 39.80798903832641 162.86155091023556"
+      marker-end="url(#`alpha67`.icon-endArrowId)"
+    ></path>
+    <title>`alpha67`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="173.28"
+      y1="117.86"
+      x2="133.95000000000002"
+      y2="117.86"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`b23`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha12`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha12`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 26.547713728272925 129.986990130824 A 20 20 0 0 1 25.87971458317375 132.0820187740102"
+      marker-end="url(#`alpha12`.icon-endArrowId)"
+    ></path>
+    <title>`alpha12`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha23`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#ff0000"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha23`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#ff0000"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 32.840261520201665 129.20430707920036 A 26 26 0 0 1 32.70251379595622 129.96745870580924"
+      marker-end="url(#`alpha23`.icon-endArrowId)"
+    ></path>
+    <title>`alpha23`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha56`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha56`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 43.049097255424485 99.47375690328795 A 44 44 0 0 0 41.3194648865651 97.20077832472388"
+      marker-end="url(#`alpha56`.icon-endArrowId)"
+    ></path>
+    <title>`alpha56`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="186.20000000000002"
+      y1="154.53"
+      x2="200.64000000000001"
+      y2="195"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a23`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="200.64000000000001"
+      y1="195"
+      x2="248.33"
+      y2="195"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a34`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="107.35000000000002"
+      y1="195"
+      x2="121.22000000000001"
+      y2="154.53"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a81`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`beta23`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`beta23`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 81.1200214007145 121.80406629289143 A 74 74 0 0 1 81.18754960738501 124.82215609618655"
+      marker-end="url(#`beta23`.icon-endArrowId)"
+    ></path>
+    <title>`beta23`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="129.96"
+      y1="5"
+      x2="58.33000000000001"
+      y2="195"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a67`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="153.33"
+      y1="61.62"
+      x2="173.28"
+      y2="117.86"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`b12`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha81`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha81`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 57.9995311925458 160.4949155029261 A 62 62 0 0 0 66.07581602015655 144.36365726584444"
+      marker-end="url(#`alpha81`.icon-endArrowId)"
+    ></path>
+    <title>`alpha81`.icon</title>
+  </g>
+  <g>
+    <marker
+      id="`alpha34`.icon-endArrowId"
+      markerUnits="strokeWidth"
+      markerWidth="4.98"
+      markerHeight="4.06"
+      viewBox="0 0 9.95 8.12"
+      refX="2.36"
+      refY="4.06"
+      orient="auto-start-reverse"
+    >
+      <path
+        d="M9.95 4.06 0 8.12 2.36 4.06 0 0 9.95 4.06z"
+        fill="#0000ff"
+        fill-opacity="0.4"
+      ></path>
+    </marker>
+    <filter id="`alpha34`.icon-shadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"></feOffset>
+      <feGaussianBlur
+        result="blurOut"
+        in="offOut"
+        stdDeviation="4"
+      ></feGaussianBlur>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"></feFuncA>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <path
+      fill="none"
+      stroke="#0000ff"
+      stroke-opacity="0.4"
+      stroke-width="1"
+      stroke-linecap="butt"
+      d="M 37.27675530292956 135.86064711333634 A 32 32 0 0 1 36.56556723688466 137.65429840771418"
+      marker-end="url(#`alpha34`.icon-endArrowId)"
+    ></path>
+    <title>`alpha34`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="175.94"
+      y1="5"
+      x2="129.96"
+      y2="5"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`a56`.icon</title>
+  </g>
+  <g fill="none">
+    <line
+      x1="133.95000000000002"
+      y1="117.86"
+      x2="153.33"
+      y2="61.62"
+      stroke="#000000"
+      stroke-opacity="1"
+      stroke-width="1"
+    ></line>
+    <title>`b31`.icon</title>
+  </g>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="7.187693453796641"
+    cy="124.96806445177006"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`x`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="133.95000000000002"
+    cy="117.86"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`b3`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="173.28"
+    cy="117.86"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`b2`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="153.33"
+    cy="61.62"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`b1`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="107.35000000000002"
+    cy="195"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a8`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="58.33000000000001"
+    cy="195"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a7`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="129.96"
+    cy="5"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a6`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="175.94"
+    cy="5"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a5`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="248.33"
+    cy="195"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a4`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="200.64000000000001"
+    cy="195"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a3`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="186.20000000000002"
+    cy="154.53"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a2`.icon</title>
+  </circle>
+  <circle
+    fill="#000000"
+    fill-opacity="1"
+    cx="121.22000000000001"
+    cy="154.53"
+    stroke="none"
+    r="1.75"
+  >
+    <title>`a1`.icon</title>
+  </circle>
+  <text
+    fill="#000000"
+    fill-opacity="1"
+    width="7.626647599999999"
+    height="6.0399849"
+    x="6.787963974934257"
+    y="135.83074747747244"
+    alignment-baseline="alphabetic"
+    dominant-baseline="alphabetic"
+    text-anchor="middle"
+  >
+    $x$
+  </text>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="58.33000000000001,195,7.187693453796641,124.96806445177006,107.35000000000002,195"
+  >
+    <title>47:6:subtended</title>
+  </polygon>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="107.35000000000002,195,7.187693453796641,124.96806445177006,121.22000000000001,154.53"
+  >
+    <title>47:7:subtended</title>
+  </polygon>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="121.22000000000001,154.53,7.187693453796641,124.96806445177006,186.20000000000002,154.53"
+  >
+    <title>47:0:subtended</title>
+  </polygon>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="175.94,5,7.187693453796641,124.96806445177006,129.96,5"
+  >
+    <title>47:4:subtended</title>
+  </polygon>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="173.28,117.86,7.187693453796641,124.96806445177006,133.95000000000002,117.86"
+  >
+    <title>47:9:subtended</title>
+  </polygon>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="200.64000000000001,195,7.187693453796641,124.96806445177006,248.33,195"
+  >
+    <title>47:2:subtended</title>
+  </polygon>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="133.95000000000002,117.86,7.187693453796641,124.96806445177006,153.33,61.62"
+  >
+    <title>47:10:subtended</title>
+  </polygon>
+  <polygon
+    fill="#ff0000"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="186.20000000000002,154.53,7.187693453796641,124.96806445177006,200.64000000000001,195"
+  >
+    <title>47:1:subtended</title>
+  </polygon>
+  <polygon
+    fill="#ff0000"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="153.33,61.62,7.187693453796641,124.96806445177006,173.28,117.86"
+  >
+    <title>47:8:subtended</title>
+  </polygon>
+  <polygon
+    fill="#0000ff"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="248.33,195,7.187693453796641,124.96806445177006,175.94,5"
+  >
+    <title>47:3:subtended</title>
+  </polygon>
+  <polygon
+    fill="#ff0000"
+    fill-opacity="0.2"
+    stroke="#000000"
+    stroke-opacity="0.13333333333333333"
+    stroke-width="0.5"
+    transform="scale(1)"
+    points="129.96,5,7.187693453796641,124.96806445177006,58.33000000000001,195"
+  >
+    <title>47:5:subtended</title>
+  </polygon>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="138.79102315734696,90.38280384657648,144.35267382990003,87.67184849362347,147.06362918285305,93.23349916617656"
+  >
+    <title>`b31`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="151.522500336642,150.15500067328398,155.89749966335802,154.53,151.522500336642,158.904999326716"
+  >
+    <title>`a12`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="196.8054344831449,171.23447546757748,194.15512291634005,176.82527869974246,188.56431968417508,174.1749671329376"
+  >
+    <title>`a23`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="222.29750045869147,190.62500091738292,226.67249954130855,195,222.29750045869147,199.37499908261708"
+  >
+    <title>`a34`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="208.82550587452948,103.60180892469369,211.35617525521664,97.95584056487306,217.00214361503728,100.48650994556021"
+  >
+    <title>`a45`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="155.1374995242498,9.37499904849956,150.76250047575024,5,155.1374995242498,0.6250009515004393"
+  >
+    <title>`a56`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="99.0104122311258,99.49646974806187,93.3733296545501,102.04687094283794,90.82292845977403,96.40978836626226"
+  >
+    <title>`a67`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="80.65250044624635,190.62500089249266,85.02749955375369,195,80.65250044624635,199.37499910750734"
+  >
+    <title>`a78`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="166.6969404335885,86.21572513471094,164.03632185939793,91.80163114649321,158.4504158476157,89.14101257230264"
+  >
+    <title>`b12`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="155.80249944380895,122.23499888761788,151.42750055619106,117.86,155.80249944380895,113.48500111238212"
+  >
+    <title>`b23`.orientationMarker</title>
+  </polyline>
+  <polyline
+    fill="none"
+    stroke="#000000"
+    stroke-opacity="1"
+    stroke-width="1"
+    stroke-linecap="butt"
+    transform="scale(1)"
+    points="109.43710625754295,175.41591960069064,114.99421090821517,172.69565858287905,117.71447192602675,178.25276323355126"
+  >
+    <title>`a81`.orientationMarker</title>
+  </polyline>
+</svg>
