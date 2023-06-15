@@ -36,6 +36,18 @@ where $\Omega \subset \mathbb{R}^2$ is a closed polygon in the plane, $g$ is a r
 
 All diagrams in this document were made using [Penrose](https://github.com/penrose/penrose).  Special thanks to [Wode Ni](https://github.com/wodeni), [Sam Estep](https://github.com/samestep), [Yiliang Liang](https://github.com/liangyiliang), and the rest of the Penrose team for development support during production of this document.
 
+## Citation
+
+```
+@software{WalkOnStarsIG,
+author = {Sawhney, Rohan and Miller, Bailey and Gkioulekas, Ioannis and Crane, Keenan},
+month = jun,
+title = {{Walk on Stars (Implementation Guide)}},
+version = {1.0},
+year = {2023}
+}
+```
+
 ## License
 
 <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/GeometryCollective/wost-simple">Walk on Stars (Implementation Guide)</a> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://rohansawhney.io/" property="cc:attributionName" rel="cc:attributionURL">Rohan Sawhney</a>, 
@@ -44,4 +56,5 @@ All diagrams in this document were made using [Penrose](https://github.com/penro
 <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.cs.cmu.edu/~kmcrane/" property="cc:attributionName" rel="cc:attributionURL">Keenan Crane</a> is licensed under <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY 4.0.</p>
 
 Code is released under an [MIT License](LICENSE).
+
 
