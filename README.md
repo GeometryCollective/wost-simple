@@ -2,7 +2,7 @@
 
 ![Walk on Stars](WoSt-simple.jpg)
 
-This repository provides basic example code and a [step-by-step tutorial](WoSt-tutorial.pdf) on how to implement the _walk on stars (WoSt)_ algorithm, introduced in the paper
+This repository provides [basic example code](code/WoStLaplace.cpp) and a [step-by-step tutorial](WoSt-tutorial.pdf) on how to implement the _walk on stars (WoSt)_ algorithm, introduced in the paper
 
 > Sawhney, Miller, Gkioulekas, Crane  
 > [_Walk on Stars: A Grid-Free Monte Carlo Method for PDEs with Neumann Boundary Conditions_](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html)  
