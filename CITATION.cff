@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this material, please cite it as below."
+authors:
+  - family-names: Sawhney
+    given-names: Rohan
+    orcid: https://orcid.org/0000-0002-3661-1554
+  - family-names: Miller
+    given-names: Bailey
+    orcid: https://orcid.org/0009-0009-0881-0351
+  - family-names: Gkioulekas
+    given-names: Ioannis
+    orcid: https://orcid.org/0000-0001-6932-4642
+  - family-names: Crane
+    given-names: Keenan
+    orcid: https://orcid.org/0000-0003-2772-7034
+title: "Walk on Stars (Implementation Guide)"
+version: 1.0
+date-released: 2023-06-15
