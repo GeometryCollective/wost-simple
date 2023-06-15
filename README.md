@@ -2,10 +2,10 @@
 
 ![Walk on Stars](WoSt-simple.jpg)
 
-This repository provides basic example code and a step-by-step tutorial on how to implement the [_walk on stars (WoSt)_ algorithm](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html), introduced in the paper
+This repository provides basic example code and a [step-by-step tutorial](WoSt-tutorial.pdf) on how to implement the _walk on stars (WoSt)_ algorithm, introduced in the paper
 
 > Sawhney, Miller, Gkioulekas, Crane  
-> _Walk on Stars: A Grid-Free Monte Carlo Method for PDEs with Neumann Boundary Conditions_  
+> [_Walk on Stars: A Grid-Free Monte Carlo Method for PDEs with Neumann Boundary Conditions_](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html) 
 > **ACM Transactions on Graphics (2023)**
 
 WoSt is a grid-free Monte Carlo method for solving basic partial differential equations (PDEs) like the Laplace or Poisson equation, with both Dirichlet and Neumann boundary conditions.  Unlike finite element, boundary element, or finite difference methods it does not require a volumetric grid or mesh, nor a high-quality boundary mesh.  Instead, it uses random walks to solve the problem directly on the original boundary representation; moreover, it can provide accurate solution values at a single query point, rather than needing to solve the problem over the entire domain.
@@ -34,8 +34,7 @@ where $\Omega \subset \mathbb{R}^2$ is a closed polygon in the plane, $g$ is a r
 
 #### Acknowledgements
 
-All diagrams in this document were made using [Penrose](https://github.com/penrose/penrose).  Special thanks to Wode Ni (@wodeni), Sam Estep (@samestep), Yiliang Liang (@liangyiliang), and the rest of the Penrose team for development support during production of this document.
-
+All diagrams in this document were made using [Penrose](https://github.com/penrose/penrose).  Special thanks to [Wode Ni](https://github.com/wodeni), [Sam Estep](https://github.com/samestep), [Yiliang Liang](https://github.com/liangyiliang), and the rest of the Penrose team for development support during production of this document.
 
 ## License
 
