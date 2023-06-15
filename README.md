@@ -2,7 +2,7 @@
 
 ![Walk on Stars](WoSt-simple.jpg)
 
-This repository provides [basic example code](code/WoStLaplace.cpp) and a [step-by-step tutorial](WoSt-tutorial.pdf) on how to implement the _walk on stars (WoSt)_ algorithm, introduced in the paper
+This repository provides [basic example code](code/WoStLaplace2D.cpp) and a [step-by-step tutorial](WoSt-tutorial.pdf) on how to implement the _walk on stars (WoSt)_ algorithm, introduced in the paper
 
 > Sawhney, Miller, Gkioulekas, Crane  
 > [_Walk on Stars: A Grid-Free Monte Carlo Method for PDEs with Neumann Boundary Conditions_](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html)  
@@ -18,7 +18,7 @@ For a Laplace equation with Dirichlet and zero-Neumann boundary conditions, WoSt
 
 > **(Walk on Stars)** _Repeatedly jump to a random point on a **star-shaped region** around the current point until you reach the **Dirichlet** boundary.  The average boundary value over many such walks yields the solution._
 
-The main implementation effort is in enriching the closest point queries used by WoS with _closest silhouette point queries_, as well as standard "first hit" ray intersection queries.  A complete 2D implementation with no external dependencies is provided here in about 150 lines of C++ code (ignoring I/O), in the file [WoStLaplace.cpp](code/WoStLaplace.cpp).  For simplicity, we omit nonzero Neumann conditions and acceleration of geometric queries—a full 3D implementation is discussed in [Sawhney et al (2023)](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html).
+The main implementation effort is in enriching the closest point queries used by WoS with _closest silhouette point queries_, as well as standard "first hit" ray intersection queries.  A complete 2D implementation with no external dependencies is provided here in about 150 lines of C++ code (ignoring I/O), in the file [WoStLaplace2D.cpp](code/WoStLaplace2D.cpp).  For simplicity, we omit nonzero Neumann conditions and acceleration of geometric queries—a full 3D implementation is discussed in [Sawhney et al (2023)](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html).
 
 To emphasize the core ideas of the WoSt algorithm, this tutorial focuses on a bare-bones 2D version of WoSt that solves the Laplace equation
 
