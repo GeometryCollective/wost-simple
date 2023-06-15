@@ -39,8 +39,10 @@ All diagrams in this document were made using [Penrose](https://github.com/penro
 
 ## License
 
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Walk on Stars (Implementation Guide)</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://rohansawhney.io/" property="cc:attributionName" rel="cc:attributionURL">Rohan Sawhney</a>, 
+<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/GeometryCollective/wost-simple">Walk on Stars (Implementation Guide)</a> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://rohansawhney.io/" property="cc:attributionName" rel="cc:attributionURL">Rohan Sawhney</a>, 
 <a xmlns:cc="http://creativecommons.org/ns#" href="https://www.bailey-miller.com/" property="cc:attributionName" rel="cc:attributionURL">Bailey Miller</a>, 
 <a xmlns:cc="http://creativecommons.org/ns#" href="https://www.cs.cmu.edu/~igkioule/" property="cc:attributionName" rel="cc:attributionURL">Ioannis Gkioulekas</a>, and
-<a xmlns:cc="http://creativecommons.org/ns#" href="http://www.cs.cmu.edu/~kmcrane/" property="cc:attributionName" rel="cc:attributionURL">Keenan Crane</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.  Code is released under an [MIT License](LICENSE).
+<a xmlns:cc="http://creativecommons.org/ns#" href="http://www.cs.cmu.edu/~kmcrane/" property="cc:attributionName" rel="cc:attributionURL">Keenan Crane</a> is licensed under <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"></a></p>
+
+Code is released under an [MIT License](LICENSE).
 
