@@ -1,6 +1,6 @@
 # wost-simple
 
-![Walk on Stars](Wost-simple.jpg)
+![Walk on Stars](WoSt-simple.jpg)
 
 This repository provides basic example code and a step-by-step tutorial on how to implement the [_walk on stars (WoSt)_ algorithm](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html), introduced in the paper
 
