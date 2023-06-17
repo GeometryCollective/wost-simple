@@ -8,7 +8,7 @@ This repository provides [basic example code](code/WoStLaplace2D.cpp) and a [ste
 > [_Walk on Stars: A Grid-Free Monte Carlo Method for PDEs with Neumann Boundary Conditions_](https://www.cs.cmu.edu/~kmcrane/Projects/WalkOnStars/index.html)  
 > **ACM Transactions on Graphics (2023)**
 
-WoSt is a grid-free Monte Carlo method for solving basic partial differential equations (PDEs) like the Laplace or Poisson equation, with both Dirichlet and Neumann boundary conditions.  Unlike finite element, boundary element, or finite difference methods it does not require a volumetric grid or mesh, nor a high-quality boundary mesh.  Instead, it uses random walks to solve the problem directly on the original boundary representation; moreover, it can provide accurate solution values at a single query point, rather than needing to solve the problem over the entire domain.
+WoSt is a grid-free Monte Carlo method for solving basic partial differential equations (PDEs) like the Laplace or Poisson equation, with both Dirichlet and Neumann boundary conditions.  Unlike finite element, boundary element, or finite difference methods it does not require a volumetric grid or mesh, nor a high-quality boundary mesh.  Instead, it uses random walks to solve the problem directly from the original boundary representation; moreover, it can provide accurate solution values at a single query point, rather than needing to solve the problem over the entire domain.
 
 Though the derivation of algorithm takes some work, the final algorithm remains about as simple as the original _walk on spheres (WoS)_ method of [Muller (1956)](https://doi.org/10.1214%2Faoms%2F1177728169).  For a Laplace equation with Dirichlet boundary conditions, WoS essentially says:
 
